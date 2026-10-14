@@ -1,14 +1,11 @@
 keys,en,fr
 APP_TITLE,Scientific Calculator,Calculatrice scientifique
-LANGUAGE_BUTTON,FR,EN
-LANGUAGE_TOOLTIP,Passer en français,Switch to English
+APP_TITLE_SHORT,Calculator,Calculatrice
 HISTORY,History,Historique
-HISTORY_TOOLTIP,Show / hide history (H),Afficher / masquer l'historique (H)
 HISTORY_EMPTY,No calculations yet,Aucun calcul pour l'instant
 CLEAR_HISTORY,Clear history,Effacer l'historique
 ANGLE_DEG,DEG,DEG
 ANGLE_RAD,RAD,RAD
-ANGLE_TOOLTIP,Angle unit: degrees / radians (F2),Unité d'angle : degrés / radians (F2)
 MEMORY_INDICATOR,M,M
 COPIED,Result copied,Résultat copié
 PASTED,Pasted,Collé
@@ -56,3 +53,34 @@ TIP_ADD,Add (+),Addition (+)
 TIP_SUB,Subtract (-),Soustraction (-)
 TIP_MUL,Multiply (*),Multiplication (*)
 TIP_DIV,Divide (/),Division (/)
+HISTORY_TOOLTIP,History (H),Historique (H)
+ANGLE_TOOLTIP,Angle unit: degrees / radians (F2),Unité d'angle : degrés / radians (F2)
+SETTINGS,Settings,Réglages
+SETTINGS_TOOLTIP,Settings (F4),Réglages (F4)
+CLOSE,Close,Fermer
+THEME,Theme,Thème
+THEME_AUTO,Auto,Auto
+THEME_DARK,Dark,Sombre
+THEME_LIGHT,Light,Clair
+LANGUAGE,Language,Langue
+LANG_EN,English,English
+LANG_FR,Français,Français
+ANGLE_UNIT,Angle unit,Unité d'angle
+DEGREES,Degrees,Degrés
+RADIANS,Radians,Radians
+SOUND,Sounds,Sons
+VIBRATION,Vibration,Vibration
+VIBRATION_MOBILE_ONLY,Vibration (mobile only),Vibration (mobile uniquement)
+ON,On,Activé
+OFF,Off,Désactivé
+SELF_TEST,On-screen tests,Tests à l'écran
+SELF_TEST_HINT,Checks the math engine and the input rules on this device.,Vérifie le moteur de calcul et les règles de saisie sur cet appareil.
+SELF_TEST_RUN,Run tests,Lancer les tests
+SELF_TEST_RESULT,%d / %d tests passed,%d / %d tests réussis
+SELF_TEST_FAILURES,Failures,Échecs
+DEVICE,Device,Appareil
+TEST_SOUND,Test sound,Tester le son
+TEST_VIBRATION,Test vibration,Tester la vibration
+ABOUT,About,À propos
+ABOUT_TEXT,Version %s · made with Godot %s,Version %s · créée avec Godot %s
+THEME_TOOLTIP,Switch theme (F6),Changer de thème (F6)

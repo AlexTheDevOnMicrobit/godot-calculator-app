@@ -1,0 +1,16 @@
+name: 💡 Feedback / Suggestion
+description: Ideas, design or usability feedback — Idées, retours sur le design ou l'ergonomie
+labels: ["enhancement", "beta-feedback"]
+body:
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Feedback
+      description: What would make the calculator better? / Qu'est-ce qui améliorerait la calculatrice ?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area / Domaine
+      options: [Calculations / Calculs, Keypad & keyboard / Clavier, Design / Thèmes, Sounds & vibration / Sons & vibration, Translations / Traductions, Other / Autre]

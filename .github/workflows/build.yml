@@ -1,0 +1,79 @@
+name: Build
+
+# Exports the app for Android (debug APK), Windows, Linux and Web and
+# uploads the builds as workflow artifacts. Runs on version tags and manually.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+env:
+  GODOT_VERSION: "4.3"
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot and export templates
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates
+
+      - name: Download Godot and export templates
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          cd ~/godot
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip && mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot && rm godot.zip
+          curl -sSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          unzip -q -j templates.tpz "templates/android_*" "templates/linux_*x86_64" "templates/windows_*x86_64.exe" "templates/web_nothreads_*" "templates/version.txt" \
+            -d ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          rm templates.tpz
+
+      - name: Configure Android SDK, Java and debug keystore
+        run: |
+          ~/godot/godot --headless --path . --import || true
+          SETTINGS=~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          sed -i "s|export/android/android_sdk_path = .*|export/android/android_sdk_path = \"${ANDROID_SDK_ROOT}\"|" "$SETTINGS"
+          sed -i "s|export/android/java_sdk_path = .*|export/android/java_sdk_path = \"${JAVA_HOME_17_X64}\"|" "$SETTINGS"
+          grep "export/android" "$SETTINGS"
+
+      - name: Run tests
+        run: |
+          ~/godot/godot --headless --path . --script res://tests/test_runner.gd
+          ~/godot/godot --headless --path . --script res://tests/test_ui.gd
+
+      - name: Export
+        run: |
+          VERSION=$(grep '^config/version=' project.godot | cut -d'"' -f2)
+          mkdir -p build/android build/windows build/linux build/web
+          ~/godot/godot --headless --path . --export-debug "Android" "build/android/GodotCalculator-${VERSION}-debug.apk"
+          ~/godot/godot --headless --path . --export-release "Windows Desktop" build/windows/GodotCalculator.exe
+          ~/godot/godot --headless --path . --export-release "Linux" build/linux/GodotCalculator.x86_64
+          ~/godot/godot --headless --path . --export-release "Web" build/web/index.html
+          rm -f build/android/*.idsig
+          ls -la build/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: build/windows
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: build/linux
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: build/web

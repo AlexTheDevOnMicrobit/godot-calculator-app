@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
-[ext_resource type="Theme" path="res://assets/theme/calculator_theme.tres" id="2_theme"]
+[ext_resource type="Theme" path="res://assets/theme/dark_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/icons/history.svg" id="3_history"]
+[ext_resource type="Texture2D" path="res://assets/icons/settings.svg" id="4_settings"]
+[ext_resource type="Texture2D" path="res://assets/icons/close.svg" id="5_close"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -20,81 +23,95 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"BackgroundPanel"
 
 [node name="Margin" type="MarginContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
 
 [node name="Calculator" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="TopBar" type="HBoxContainer" parent="Margin/Calculator"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Margin/Calculator/TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"TitleLabel"
 text = "APP_TITLE"
 vertical_alignment = 1
 text_overrun_behavior = 3
 
 [node name="AngleButton" type="Button" parent="Margin/Calculator/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 40)
+custom_minimum_size = Vector2(60, 44)
 layout_mode = 2
-tooltip_text = "ANGLE_TOOLTIP"
 focus_mode = 0
-theme_type_variation = &"ToggleButton"
-theme_override_font_sizes/font_size = 16
-text = "ANGLE_DEG"
+theme_type_variation = &"ChipButton"
+tooltip_text = "ANGLE_TOOLTIP"
+text = "DEG"
+
+[node name="ThemeButton" type="Button" parent="Margin/Calculator/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"IconButton"
+tooltip_text = "THEME_TOOLTIP"
+text = "☾"
 
 [node name="HistoryButton" type="Button" parent="Margin/Calculator/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 40)
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"IconButton"
 tooltip_text = "HISTORY_TOOLTIP"
-focus_mode = 0
-theme_type_variation = &"ToggleButton"
-theme_override_font_sizes/font_size = 18
 toggle_mode = true
-text = "⟲"
+icon = ExtResource("3_history")
+icon_alignment = 1
+expand_icon = false
 
-[node name="LanguageButton" type="Button" parent="Margin/Calculator/TopBar"]
+[node name="SettingsButton" type="Button" parent="Margin/Calculator/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(52, 40)
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
-tooltip_text = "LANGUAGE_TOOLTIP"
 focus_mode = 0
-theme_type_variation = &"FunctionButton"
-theme_override_font_sizes/font_size = 16
-text = "LANGUAGE_BUTTON"
+theme_type_variation = &"IconButton"
+tooltip_text = "SETTINGS_TOOLTIP"
+toggle_mode = true
+icon = ExtResource("4_settings")
+icon_alignment = 1
+expand_icon = false
 
 [node name="Display" type="PanelContainer" parent="Margin/Calculator"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"DisplayPanel"
 
 [node name="Margin" type="MarginContainer" parent="Margin/Calculator/Display"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="Margin/Calculator/Display/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 2
 
 [node name="Status" type="HBoxContainer" parent="Margin/Calculator/Display/Margin/VBox"]
 layout_mode = 2
@@ -116,7 +133,7 @@ text = "2nd"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"StatusLabel"
-text = "MEMORY_INDICATOR"
+text = "M"
 
 [node name="MessageLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox/Status"]
 unique_name_in_owner = true
@@ -133,10 +150,11 @@ theme_type_variation = &"ExpressionLabel"
 horizontal_alignment = 2
 autowrap_mode = 1
 max_lines_visible = 3
+auto_translate_mode = 2
 
 [node name="ResultLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 66)
 layout_mode = 2
 theme_type_variation = &"ResultLabel"
 text = "0"
@@ -144,55 +162,220 @@ horizontal_alignment = 2
 vertical_alignment = 1
 clip_text = true
 
-[node name="Keypad" type="GridContainer" parent="Margin/Calculator"]
+[node name="Body" type="HBoxContainer" parent="Margin/Calculator"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Keypad" type="GridContainer" parent="Margin/Calculator/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 5
 
-[node name="HistoryPanel" type="PanelContainer" parent="Margin/Calculator"]
+[node name="SidePanel" type="PanelContainer" parent="Margin/Calculator/Body"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_type_variation = &"SidePanel"
+theme_type_variation = &"CardPanel"
 
-[node name="Margin" type="MarginContainer" parent="Margin/Calculator/HistoryPanel"]
+[node name="Margin" type="MarginContainer" parent="Margin/Calculator/Body/SidePanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
 
-[node name="VBox" type="VBoxContainer" parent="Margin/Calculator/HistoryPanel/Margin"]
+[node name="Pages" type="Control" parent="Margin/Calculator/Body/SidePanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
 
-[node name="HistoryTitle" type="Label" parent="Margin/Calculator/HistoryPanel/Margin/VBox"]
+[node name="HistoryView" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView"]
 layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
 text = "HISTORY"
+vertical_alignment = 1
 
-[node name="HistoryList" type="ItemList" parent="Margin/Calculator/HistoryPanel/Margin/VBox"]
+[node name="ClearHistoryButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"ClearButton"
+theme_override_font_sizes/font_size = 14
+text = "CLEAR_HISTORY"
+
+[node name="HistoryList" type="ItemList" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 0
 auto_translate_mode = 2
+auto_height = false
+text_overrun_behavior = 3
 
-[node name="HistoryEmpty" type="Label" parent="Margin/Calculator/HistoryPanel/Margin/VBox"]
+[node name="HistoryEmpty" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"ExpressionLabel"
+size_flags_vertical = 6
+theme_type_variation = &"MutedLabel"
 text = "HISTORY_EMPTY"
 horizontal_alignment = 1
 
-[node name="ClearHistoryButton" type="Button" parent="Margin/Calculator/HistoryPanel/Margin/VBox"]
+[node name="SettingsView" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/SettingsView"]
 layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/SettingsView/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+text = "SETTINGS"
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/SettingsView"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SettingsList" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/SettingsView/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TestsView" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+text = "SELF_TEST"
+vertical_alignment = 1
+
+[node name="TestsHint" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "SELF_TEST_HINT"
+autowrap_mode = 3
+
+[node name="TestButtons" type="HBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RunTestsButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView/TestButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
-theme_type_variation = &"ClearButton"
-theme_override_font_sizes/font_size = 18
-text = "CLEAR_HISTORY"
+theme_type_variation = &"SegmentButton"
+theme_override_font_sizes/font_size = 14
+text = "SELF_TEST_RUN"
+text_overrun_behavior = 3
+
+[node name="TestSoundButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView/TestButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_type_variation = &"SegmentButton"
+theme_override_font_sizes/font_size = 14
+text = "TEST_SOUND"
+text_overrun_behavior = 3
+
+[node name="TestVibrationButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView/TestButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_type_variation = &"SegmentButton"
+theme_override_font_sizes/font_size = 14
+text = "TEST_VIBRATION"
+text_overrun_behavior = 3
+
+[node name="TestsSummary" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+
+[node name="TestsReport" type="RichTextLabel" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+bbcode_enabled = true
+selection_enabled = false
+auto_translate_mode = 2
+
+[node name="CloseButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView/Header"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+tooltip_text = "CLOSE"
+focus_mode = 0
+theme_type_variation = &"IconButton"
+icon = ExtResource("5_close")
+icon_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/SettingsView/Header"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+tooltip_text = "CLOSE"
+focus_mode = 0
+theme_type_variation = &"IconButton"
+icon = ExtResource("5_close")
+icon_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/TestsView/Header"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+tooltip_text = "CLOSE"
+focus_mode = 0
+theme_type_variation = &"IconButton"
+icon = ExtResource("5_close")
+icon_alignment = 1

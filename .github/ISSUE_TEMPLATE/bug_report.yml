@@ -1,0 +1,38 @@
+name: 🐞 Bug / Bogue
+description: Report a problem found while testing the beta — Signaler un problème trouvé pendant la bêta
+labels: ["bug", "beta-feedback"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Settings → About / Réglages → À propos
+      placeholder: 1.0.0-beta.2
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform / Plateforme
+      options: [Android, Windows, Linux, macOS, Web, Godot editor / éditeur]
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps / Étapes
+      description: Keys pressed, expression typed… / Touches appuyées, expression saisie…
+      placeholder: "1. Type 2+×3\n2. Press =\n3. …"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual / Attendu vs obtenu
+    validations:
+      required: true
+  - type: textarea
+    id: selftest
+    attributes:
+      label: On-screen tests / Tests à l'écran
+      description: Optional — paste the result of Settings → On-screen tests / Facultatif — résultat de Réglages → Tests à l'écran

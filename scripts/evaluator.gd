@@ -166,6 +166,14 @@ func _peek_is(type: String, value = null) -> bool:
 	return value == null or t.get("value") == value
 
 
+## A number may follow ")" or a constant implicitly ((2)3, π2), never another number.
+func _previous_allows_number() -> bool:
+	if _pos == 0:
+		return false
+	var previous: Dictionary = _tokens[_pos - 1]
+	return previous["type"] == "rparen" or previous["type"] == "const"
+
+
 func _parse_expression() -> float:
 	var value := _parse_term()
 	while _error == "" and (_peek_is("op", "+") or _peek_is("op", "-")):
@@ -183,8 +191,8 @@ func _parse_term() -> float:
 		if _peek_is("op", "*") or _peek_is("op", "/") or _peek_is("op", "mod"):
 			op = _tokens[_pos]["value"]
 			_pos += 1
-		elif _peek_is("num") or _peek_is("const") or _peek_is("func") or _peek_is("lparen"):
-			op = "*" # implicit multiplication: 2π, 3(4+1), 2sin(30)
+		elif _peek_is("const") or _peek_is("func") or _peek_is("lparen") or (_peek_is("num") and _previous_allows_number()):
+			op = "*" # implicit multiplication: 2π, 3(4+1), 2sin(30), (1+1)2
 		else:
 			break
 		var rhs := _parse_unary()
@@ -393,8 +401,9 @@ func _factorial(x: float) -> float:
 # --- Formatting ------------------------------------------------------------
 
 ## Formats a number for display (max ~12 significant digits, scientific
-## notation for very large/small values). [param decimal_sep] is "." or ",".
-static func format_number(value: float, decimal_sep: String = ".") -> String:
+## notation for very large/small values). [param decimal_sep] is "." or ",",
+## [param group_sep] (optional) separates thousands: "1,234,567.5".
+static func format_number(value: float, decimal_sep: String = ".", group_sep: String = "") -> String:
 	if is_nan(value) or is_inf(value):
 		return "—"
 	if value == 0.0:
@@ -413,7 +422,24 @@ static func format_number(value: float, decimal_sep: String = ".") -> String:
 		var int_digits := int(floor(log(a) / log(10.0))) + 1
 		var decimals := clampi(12 - int_digits, 0, 12)
 		text = _trim(String.num(value, decimals))
+		if group_sep != "":
+			text = _group_thousands(text, group_sep)
 	return text.replace(".", decimal_sep)
+
+
+static func _group_thousands(text: String, group_sep: String) -> String:
+	var sign := ""
+	if text.begins_with("-"):
+		sign = "-"
+		text = text.substr(1)
+	var parts := text.split(".")
+	var int_part: String = parts[0]
+	var grouped := ""
+	while int_part.length() > 3:
+		grouped = group_sep + int_part.right(3) + grouped
+		int_part = int_part.left(int_part.length() - 3)
+	grouped = int_part + grouped
+	return sign + grouped + ("." + parts[1] if parts.size() > 1 else "")
 
 
 static func _trim(s: String) -> String:

@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      GODOT_VERSION: 4.3
+      GODOT_VERSION: "4.3"
     steps:
       - uses: actions/checkout@v4
 
@@ -21,8 +21,8 @@ jobs:
       - name: Import project
         run: ./godot --headless --path . --import
 
-      - name: Evaluator tests
+      - name: Unit tests (math engine, formatting, input rules)
         run: ./godot --headless --path . --script res://tests/test_runner.gd
 
-      - name: UI tests
+      - name: UI tests (keyboard, numpad, settings, themes, panels)
         run: ./godot --headless --path . --script res://tests/test_ui.gd
