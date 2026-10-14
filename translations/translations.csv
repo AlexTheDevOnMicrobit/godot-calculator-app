@@ -117,3 +117,6 @@ TIP_SHR,Shift right (>),Décalage à droite (>)
 TIP_BASE,Next base: HEX → DEC → OCT → BIN,Base suivante : HEX → DEC → OCT → BIN
 TIP_SWAP,Swap units,Inverser les unités
 TIP_COPY,Copy the result (Enter),Copier le résultat (Entrée)
+KNOWLEDGE,Basic knowledge,Connaissances de base
+KNOWLEDGE_TOOLTIP,"Basic knowledge: squares, primes, π, formulas… (K)","Connaissances de base : carrés, nombres premiers, π, formules… (K)"
+INSERTED,Inserted,Inséré

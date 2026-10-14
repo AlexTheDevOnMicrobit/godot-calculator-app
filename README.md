@@ -12,6 +12,7 @@
   <img src="docs/screenshots/basic_light_fr.png" width="200" alt="Basic mode, light theme, French">
   <img src="docs/screenshots/programmer.png" width="200" alt="Programmer mode">
   <img src="docs/screenshots/converter_light.png" width="200" alt="Converter mode">
+  <img src="docs/screenshots/knowledge.png" width="200" alt="Basic knowledge page">
 </p>
 
 🇫🇷 [Français](#-français) · 🇬🇧 [English](#-english)
@@ -54,7 +55,11 @@ travers une vraie application : une calculatrice.
 - **Aperçu en direct**, séparateur de milliers, réglage du **nombre de décimales**
 - **Historique** lisible (`³√27 + 3⁄4 = 3,75`), cliquer sur une ligne pour la reprendre
 - **Thème sombre / clair / automatique**, **sons et vibrations**, **français / anglais**
-- **Tests à l'écran** : la suite de tests (≈ 230 vérifications) tourne sur l'appareil
+- **Connaissances de base** (icône livre ou `K`) : carrés et cubes parfaits, nombres premiers, π (décimales
+  et moyen mnémotechnique), constantes, puissances de 2, factorielles, valeurs trigonométriques exactes,
+  formules d'algèbre et de géométrie, critères de divisibilité, préfixes des unités. Touchez un nombre pour
+  l'utiliser dans le calcul.
+- **Tests à l'écran** : la suite de tests (≈ 280 vérifications) tourne sur l'appareil
 - **Pavé numérique** (même avec Verr. Num désactivé) et clavier complet
 - **Android** : APK, icône adaptative, bouton retour, zones sûres (encoche)
 - Sur grand écran, l'historique s'affiche à côté du clavier
@@ -85,6 +90,7 @@ travers une vraie application : une calculatrice.
 | `P` `E` `A` | π, e, Ans |
 | `Tab` | 2nd |
 | `H` | Historique |
+| `K` / `F8` | Connaissances de base |
 | `Ctrl+1`…`Ctrl+4`, `F7` | Changer de mode |
 | `F2` / `F3` / `F4` / `F6` | DEG/RAD · langue · réglages · thème |
 | `Ctrl+C` / `Ctrl+Maj+C` / `Ctrl+V` | Copier le résultat / copier en LaTeX / coller (texte ou LaTeX) |
@@ -147,7 +153,10 @@ a calculator.
 - **Live preview**, thousands separators, **decimal places** setting
 - Readable **history** (`³√27 + 3⁄4 = 3.75`), click a line to reuse it
 - **Dark / light / auto theme**, **sounds and vibration**, **French / English**
-- **On-screen tests**: the test suite (≈ 230 checks) runs on the device
+- **Basic knowledge** (book icon or `K`): perfect squares and cubes, prime numbers, π (digits and a
+  mnemonic), constants, powers of 2, factorials, exact trig values, algebra and geometry formulas,
+  divisibility rules, unit prefixes. Tap a number to use it in the calculation.
+- **On-screen tests**: the test suite (≈ 280 checks) runs on the device
 - **Numeric keypad** (even with NumLock off) and full keyboard support
 - **Android**: APK, adaptive icon, back button, safe areas (notches)
 - On wide screens the history is docked next to the keypad
@@ -178,6 +187,7 @@ a calculator.
 | `P` `E` `A` | π, e, Ans |
 | `Tab` | 2nd |
 | `H` | History |
+| `K` / `F8` | Basic knowledge |
 | `Ctrl+1`…`Ctrl+4`, `F7` | Switch mode |
 | `F2` / `F3` / `F4` / `F6` | DEG/RAD · language · settings · theme |
 | `Ctrl+C` / `Ctrl+Shift+C` / `Ctrl+V` | Copy result / copy as LaTeX / paste (text or LaTeX) |
@@ -221,6 +231,8 @@ godot-calculator-app/
 │   ├── programmer_evaluator.gd    # 64-bit integer evaluator, bases, bitwise operators
 │   ├── units.gd                   # Converter units (11 categories, FR / EN names)
 │   ├── converter_view.gd          # Converter display
+│   ├── knowledge.gd               # "Basic knowledge" content (tables, formulas, rules)
+│   ├── knowledge_view.gd          # "Basic knowledge" page (built on first use)
 │   ├── settings.gd                # Preferences, memory, history (user://settings.cfg)
 │   ├── feedback.gd                # Sounds & haptics
 │   └── self_test.gd               # Test suite shared by CI and the on-screen tests
@@ -245,7 +257,7 @@ godot --headless --path . --script res://tools/export_icons.gd    # Android icon
 - [x] Scientific calculator core, FR / EN, numpad, history, memory (beta.1)
 - [x] Light theme, settings, sounds / haptics, Android export, on-screen tests (beta.2)
 - [x] Basic / Scientific / Programmer / Converter modes (beta.3)
-- [x] Textbook display, smart templates, fractions, LaTeX copy / paste (beta.3)
+- [x] Textbook display, smart templates, fractions, LaTeX copy / paste, basic knowledge page (beta.3)
 - [ ] Test the APK on several real phones / tablets
 - [ ] Complex numbers (a + bi), equation solver, graphs (ideas)
 - [ ] Signed release APK / AAB for the Play Store

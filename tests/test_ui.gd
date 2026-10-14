@@ -301,6 +301,24 @@ func _test_beta3() -> void:
 	_check(_main.converter_view.value_text == "0", "Esc clears the converter")
 	_main._set_mode("scientific")
 
+	# --- Basic knowledge page ---
+	_key(KEY_ESCAPE)
+	_check(_main.knowledge_list.section_count() == 0, "knowledge page not built before use")
+	_char("k")
+	_check(_main.knowledge_view.visible and _main.knowledge_list.section_count() == 12,
+		"K opens the knowledge page with 12 sections (got %d)" % _main.knowledge_list.section_count())
+	_main._on_knowledge_value("144")
+	_check(_main.editor.text == "144" and not _main.knowledge_view.visible, "tapping 12² inserts 144 and closes the page")
+	_char("k")
+	_main._on_knowledge_value("π")
+	_check(_main.editor.text == "144×π", "a value after a number is multiplied (got '%s')" % _main.editor.text)
+	_main._set_language("fr")
+	_main._open_page("knowledge")
+	var title: Label = _main.knowledge_list.get_child(0)
+	_check(title.text == "Carrés parfaits", "knowledge page rebuilt in French (got '%s')" % title.text)
+	_main._set_language("en")
+	_main._close_page()
+
 
 func _ctrl_key(keycode: Key, shift := false) -> void:
 	var ev := InputEventKey.new()

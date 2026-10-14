@@ -19,7 +19,7 @@ extends RefCounted
 ##   { "type": "logb", "base": row, "arg": row, "closed": bool }
 ##   { "type": "caret" }
 
-const OPERATORS := ["+", "−", "-", "×", "÷", "mod", "&", "|", "⊕", "<<", ">>", "~"]
+const OPERATORS := ["+", "−", "-", "×", "÷", "mod", "&", "|", "⊕", "<<", ">>", "~", "=", "±"]
 const NAMED := {
 	"asin": "sin⁻¹", "acos": "cos⁻¹", "atan": "tan⁻¹",
 	"asinh": "sinh⁻¹", "acosh": "cosh⁻¹", "atanh": "tanh⁻¹",
@@ -360,6 +360,10 @@ func _latex_item(node: Dictionary) -> String:
 					return " + "
 				"mod":
 					return " \\bmod "
+				"±":
+					return " \\pm "
+				"=":
+					return " = "
 				"π":
 					return "\\pi "
 				"φ":

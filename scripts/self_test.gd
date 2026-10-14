@@ -7,6 +7,7 @@ const ExpressionEditor := preload("res://scripts/expression_editor.gd")
 const MathFormat := preload("res://scripts/math_format.gd")
 const ProgrammerEvaluator := preload("res://scripts/programmer_evaluator.gd")
 const Units := preload("res://scripts/units.gd")
+const Knowledge := preload("res://scripts/knowledge.gd")
 
 var passed := 0
 var failed := 0
@@ -30,6 +31,7 @@ func run() -> RefCounted:
 	_section("LaTeX", _test_latex)
 	_section("Programmer", _test_programmer)
 	_section("Converter", _test_converter)
+	_section("Knowledge", _test_knowledge)
 	return self
 
 
@@ -339,6 +341,34 @@ func _test_converter() -> void:
 		var defaults: Array = Units.DEFAULTS[category]
 		_check(defaults[0] < Units.unit_count(category) and defaults[1] < Units.unit_count(category),
 			"default units exist for " + category)
+
+
+func _test_knowledge() -> void:
+	var primes := Knowledge.primes_below(200)
+	_check(primes.size() == 46, "46 primes under 200 (got %d)" % primes.size())
+	_check(primes[0] == 2 and primes[primes.size() - 1] == 199, "primes from 2 to 199")
+	_check(Knowledge.primes_below(100).size() == 25, "25 primes under 100")
+	_check(Knowledge.factorial(10) == 3628800, "10! = 3628800")
+	_check(Knowledge.grouped(1307674368000, " ") == "1 307 674 368 000", "15! grouped")
+	_check(Knowledge.PI_DIGITS.begins_with(str(PI).left(10)), "π digits match Godot's PI")
+	var ev := Evaluator.new()
+	var mf := MathFormat.new()
+	for entry in Knowledge.CONSTANTS:
+		_check(ev.evaluate(entry[1])["ok"], "constant %s evaluates" % entry[0])
+	for row in Knowledge.TRIG:
+		for i in range(1, 4):
+			if row[i] != "—":
+				var r := ev.evaluate(row[i])
+				_check(r["ok"], "trig value %s evaluates" % row[i])
+	# sin / cos table matches the evaluator (degrees)
+	for row in Knowledge.TRIG:
+		var angle: String = row[0].trim_suffix("°")
+		_check(is_equal_approx(ev.evaluate(row[1])["value"], ev.evaluate("sin(" + angle + ")")["value"]), "sin(%s°) = %s" % [angle, row[1]])
+		_check(is_equal_approx(ev.evaluate(row[2])["value"], ev.evaluate("cos(" + angle + ")")["value"]), "cos(%s°) = %s" % [angle, row[2]])
+	# Formulas parse into a math tree without stray symbols
+	for entry in Knowledge.IDENTITIES + Knowledge.GEOMETRY:
+		var tree := mf.parse(entry[0])
+		_check(tree["items"].size() > 2, "formula %s parses" % entry[0])
 
 
 # --- Helpers ---------------------------------------------------------------

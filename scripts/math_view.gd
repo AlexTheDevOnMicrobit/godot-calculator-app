@@ -13,6 +13,8 @@ const MathFormat := preload("res://scripts/math_format.gd")
 @export var font_size_min := 14
 ## Draw the content in bold (used for results).
 @export var bold := false
+## 0 = left, 1 = center, 2 = right (default: right, like a calculator display).
+@export_enum("Left", "Center", "Right") var alignment := 2
 
 var text := "":
 	set(value):
@@ -24,6 +26,11 @@ var show_caret := false:
 		if value != show_caret:
 			show_caret = value
 			_caret_on = true
+			if _blink:
+				if value:
+					_blink.start()
+				else:
+					_blink.stop()
 			_invalidate()
 var decimal_separator := ".":
 	set(value):
@@ -52,6 +59,7 @@ var _layout_key := ""
 var _caret_on := true
 var _blink: Timer
 var _font: Font
+var _root: Dictionary = {}
 
 
 func _ready() -> void:
@@ -63,7 +71,8 @@ func _ready() -> void:
 		if show_caret:
 			queue_redraw())
 	add_child(_blink)
-	_blink.start()
+	if show_caret:
+		_blink.start()
 	resized.connect(_invalidate)
 
 
@@ -92,6 +101,7 @@ func _ensure_layout() -> void:
 	if _font == null:
 		_font = ThemeDB.fallback_font
 	var tree := _format.parse(text, show_caret)
+	_root = tree
 	var font_size := font_size_max
 	_layout = _layout_row(tree, font_size)
 	while _layout["w"] > size.x and font_size > font_size_min:
@@ -107,7 +117,9 @@ func _draw() -> void:
 	if _layout.is_empty():
 		return
 	var total_height: float = _layout["asc"] + _layout["desc"]
-	var origin := Vector2(size.x - _layout["w"], (size.y - total_height) / 2.0 + _layout["asc"])
+	var free_space: float = size.x - _layout["w"]
+	var x: float = [0.0, free_space / 2.0, free_space][alignment] if free_space > 0.0 else free_space
+	var origin := Vector2(x, (size.y - total_height) / 2.0 + _layout["asc"])
 	for cmd in _layout["cmds"]:
 		var col: Color = color
 		match cmd.get("tone", "normal"):
@@ -173,6 +185,9 @@ func _placeholder(font_size: int) -> Dictionary:
 func _layout_row(row: Dictionary, font_size: int) -> Dictionary:
 	var items: Array = row["items"]
 	var only_caret: bool = items.size() == 1 and items[0]["type"] == "caret"
+	if only_caret and row == _root:
+		# Nothing typed yet: just the caret, no empty-slot box.
+		return _box(4.0, font_size * 0.75, font_size * 0.15, [_caret_cmd(Vector2(1.0, 0.0), font_size)])
 	if items.is_empty() or only_caret:
 		var empty := _placeholder(font_size)
 		if only_caret:

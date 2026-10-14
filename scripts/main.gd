@@ -38,7 +38,7 @@ const CHAR_ACTIONS := {
 	"^": "^(", "(": "(", ")": ")", "!": "!", "%": "%", ";": ";",
 	"=": "key:equals",
 	"s": "sin(", "c": "cos(", "t": "tan(", "l": "ln(", "g": "log(", "r": "√(",
-	"p": "π", "e": "e", "a": "Ans", "h": "history", "f": "frac(",
+	"p": "π", "e": "e", "a": "Ans", "h": "history", "k": "knowledge", "f": "frac(",
 	"&": "&", "|": "|", "~": "~", "<": "<<", ">": ">>",
 }
 
@@ -72,7 +72,7 @@ var mode := "scientific"
 var error_key := "" # translation key of the error currently displayed
 var second_active := false
 var show_fraction := false # S⇔D: show the result as a fraction
-var side_page := "" # "", "history", "functions", "settings" or "tests"
+var side_page := "" # "", "history", "functions", "knowledge", "settings" or "tests"
 
 var _keypads := {} # mode -> GridContainer
 var _buttons := {} # mode -> { id -> Button }
@@ -91,6 +91,7 @@ var _last_copied := "" # what the last copy put in the clipboard (for tests)
 @onready var title_label: Label = %Title
 @onready var angle_button: Button = %AngleButton
 @onready var theme_button: Button = %ThemeButton
+@onready var knowledge_button: Button = %KnowledgeButton
 @onready var history_button: Button = %HistoryButton
 @onready var settings_button: Button = %SettingsButton
 @onready var mode_bar: HBoxContainer = %ModeBar
@@ -112,6 +113,8 @@ var _last_copied := "" # what the last copy put in the clipboard (for tests)
 @onready var history_view: VBoxContainer = %HistoryView
 @onready var functions_view: VBoxContainer = %FunctionsView
 @onready var settings_view: VBoxContainer = %SettingsView
+@onready var knowledge_view: VBoxContainer = %KnowledgeView
+@onready var knowledge_list: VBoxContainer = %KnowledgeList
 @onready var tests_view: VBoxContainer = %TestsView
 @onready var history_list: ItemList = %HistoryList
 @onready var history_empty: Label = %HistoryEmpty
@@ -150,6 +153,8 @@ func _ready() -> void:
 	angle_button.pressed.connect(_toggle_angle_mode)
 	theme_button.pressed.connect(_toggle_theme)
 	history_button.pressed.connect(_toggle_page.bind("history"))
+	knowledge_button.pressed.connect(_toggle_page.bind("knowledge"))
+	knowledge_list.value_chosen.connect(_on_knowledge_value)
 	settings_button.pressed.connect(_toggle_page.bind("settings"))
 	latex_button.pressed.connect(_copy_latex)
 	history_list.item_clicked.connect(_on_history_item_clicked)
@@ -158,7 +163,7 @@ func _ready() -> void:
 	%TestSoundButton.pressed.connect(func(): feedback.preview(Feedback.Kind.RESULT))
 	%TestVibrationButton.pressed.connect(func(): Input.vibrate_handheld(300))
 	%TestVibrationButton.disabled = not Feedback.can_vibrate()
-	for view in [history_view, functions_view, settings_view, tests_view]:
+	for view in [history_view, functions_view, knowledge_view, settings_view, tests_view]:
 		view.get_node("Header/CloseButton").pressed.connect(_close_page)
 	converter_view.changed.connect(_on_converter_changed)
 	result_label.resized.connect(_fit_result_font)
@@ -666,6 +671,11 @@ func _apply_language_formats() -> void:
 		view.list_separator = "; " if french else ", "
 	converter_view.language = settings.language
 	converter_view.decimal_separator = _decimal_separator()
+	knowledge_list.language = settings.language
+	knowledge_list.decimal_separator = _decimal_separator()
+	knowledge_list.group_separator = "\u202F" if french else ","
+	if side_page == "knowledge":
+		knowledge_list.ensure_built()
 	converter_view.group_separator = " " if french else ","
 	converter_view.precision = settings.precision
 
@@ -780,9 +790,13 @@ func _update_layout() -> void:
 	history_view.visible = page == "history"
 	functions_view.visible = page == "functions"
 	settings_view.visible = page == "settings"
+	knowledge_view.visible = page == "knowledge"
+	if page == "knowledge":
+		knowledge_list.ensure_built() # built on first use only
 	tests_view.visible = page == "tests"
 	history_view.get_node("Header/CloseButton").visible = not _wide
 	history_button.set_pressed_no_signal(page == "history")
+	knowledge_button.set_pressed_no_signal(page == "knowledge")
 	settings_button.set_pressed_no_signal(page == "settings" or page == "tests")
 
 
@@ -809,6 +823,21 @@ func _build_functions_panel() -> void:
 			button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 			button.pressed.connect(_on_function_chosen.bind(entry[1]))
 			grid.add_child(button)
+
+
+## A value tapped on the knowledge page goes into the calculator.
+func _on_knowledge_value(insert: String) -> void:
+	if mode not in ["simple", "scientific"]:
+		_set_mode("scientific")
+	# After a number or ")", multiply instead of gluing digits together.
+	if not editor.just_evaluated and editor.text != "":
+		var last := editor.text[editor.text.length() - 1]
+		if last.is_valid_int() or last in [")", "π", "e", "φ", "s", "!", "%"]:
+			editor.insert("×")
+	_insert_text(insert)
+	_show_message(tr("INSERTED"))
+	if not _wide:
+		_close_page()
 
 
 func _on_function_chosen(insert: String) -> void:
@@ -870,6 +899,8 @@ func _apply_theme() -> void:
 		view.color = get_theme_color("text", "App")
 		view.muted_color = get_theme_color("muted", "App")
 		view.accent_color = get_theme_color("accent", "App")
+	knowledge_list.apply_colors(get_theme_color("text", "App"), get_theme_color("muted", "App"),
+		get_theme_color("accent", "App"))
 	_refresh_display()
 
 
@@ -1136,6 +1167,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_toggle_angle_mode()
 		"history":
 			_toggle_page("history")
+		"knowledge":
+			_toggle_page("knowledge")
 		"settings":
 			_toggle_page("settings")
 		"language":
@@ -1200,6 +1233,8 @@ func _action_for_event(event: InputEventKey) -> String:
 			return "theme"
 		KEY_F7:
 			return "mode"
+		KEY_F8:
+			return "knowledge"
 		KEY_TAB:
 			return "key:second"
 	if event.unicode == 0:

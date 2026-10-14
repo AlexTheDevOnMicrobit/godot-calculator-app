@@ -22,11 +22,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/), versions: [SemVer](http
 - New functions: `frac`, `root` (ⁿ√x), `logb`, `nCr`, `nPr`, `gcd`, `lcm`, `round`,
   `floor`, `ceil`, `asinh`, `acosh`, `atanh`, `randint`, golden ratio `φ`.
 - **f(x) panel** listing every function by category.
+- **Basic knowledge** page (book icon, `K` or `F8`): perfect squares and cubes,
+  prime numbers under 200, π (50 decimals and a mnemonic), constants, powers of 2,
+  factorials, exact trigonometric values, algebra and geometry formulas drawn in
+  textbook form, divisibility rules and unit prefixes, in English and French.
+  Tapping a number inserts it into the calculation. Built on first use only.
 - **±** key, `%` and `EXP` as 2nd functions; 2nd functions shown as small hints on the keys.
 - **Decimal places** setting (Auto, 2, 4, 6, 8).
 - Readable history (`³√27 + 3⁄4 = 3.75`, `log₂(8)`, `2³`).
-- On-screen tests: 232 checks (new sections: functions, fractions, LaTeX,
-  programmer, converter) with timing and memory usage.
+- On-screen tests: 282 checks (new sections: functions, fractions, LaTeX,
+  programmer, converter, knowledge) with timing and memory usage.
 
 ### Fixed
 - Letters glued to a function were rejected (`esin(90)`, `2πe`): identifiers are
