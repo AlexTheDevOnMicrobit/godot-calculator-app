@@ -19,11 +19,21 @@ const POSTFIX_OPS := ["!", "%", "^2", "^3", "^(−1)"]
 ## Insertions that continue the previous result (prefixed with "Ans").
 const CONTINUATION_INSERTS := ["+", "−", "×", "÷", "^", "^(", "^2", "^3", "^(−1)", "!", "%", "mod",
 	"&", "|", "⊕", "<<", ">>"]
-## Multi-argument functions (name -> arity); others take one argument.
-const MULTI_ARG := { "frac": 2, "root": 2, "logb": 2, "nCr": 2, "nPr": 2, "gcd": 2, "lcm": 2, "randint": 2 }
+## Arguments → moves through (required ones); others take one argument.
+const MULTI_ARG := {
+	"frac": 2, "root": 2, "logb": 2, "nCr": 2, "nPr": 2, "gcd": 2, "lcm": 2, "randint": 2,
+	"min": 2, "max": 2, "remainder": 2, "deriv": 2, "integral": 3, "sum": 3, "prod": 3, "solve": 2,
+	"fmin": 3, "fmax": 3, "binompdf": 3, "binomcdf": 3, "poissonpdf": 2, "poissoncdf": 2,
+	"randnorm": 2, "randbin": 2, "normalcdf": 2,
+}
+## Optional extra arguments typed with ";" (round(x;n), normalpdf(x;μ;σ)...).
+const MAX_ARGS := { "round": 2, "normalpdf": 3, "normalcdf": 4, "invnorm": 3 }
 ## Multi-character tokens removed in one go by backspace (sorted longest first).
 const BACKSPACE_TOKENS := [
-	"randint(", "asinh(", "acosh(", "atanh(", "floor(", "round(", "^(−1)",
+	"remainder(", "normalpdf(", "normalcdf(", "poissonpdf(", "poissoncdf(", "integral(",
+	"binompdf(", "binomcdf(", "randnorm(", "invnorm(", "randbin(", "randint(", "gamma(", "deriv(",
+	"solve(", "ipart(", "fpart(", "real(", "imag(", "conj(", "prod(", "fmin(", "fmax(",
+	"asinh(", "acosh(", "atanh(", "floor(", "round(", "^(−1)", "sum(", "min(", "max(", "arg(", "int(",
 	"asin(", "acos(", "atan(", "sinh(", "cosh(", "tanh(", "frac(", "root(", "logb(", "ceil(",
 	"sin(", "cos(", "tan(", "log(", "abs(", "exp(", "nCr(", "nPr(", "gcd(", "lcm(",
 	"10^(", "rand", "ln(", "Ans", "mod", "e^(", "√(", "∛(", "^(", "<<", ">>",
@@ -225,7 +235,8 @@ func _insert_rparen() -> bool:
 
 func _insert_separator() -> bool:
 	var open := innermost_open()
-	if MULTI_ARG.get(open["name"], 1) <= open["args"]:
+	var limit: int = maxi(MULTI_ARG.get(open["name"], 1), MAX_ARGS.get(open["name"], 1))
+	if limit <= open["args"]:
 		return false
 	if text.ends_with("(") or text.ends_with(";") or _ends_with_operator():
 		return false
@@ -288,7 +299,7 @@ func _trailing_number() -> String:
 
 ## Number or constant at the end (what ± applies to).
 func _trailing_operand() -> String:
-	for constant in ["Ans", "π", "φ", "e"]:
+	for constant in ["Ans", "π", "φ", "e", "i", "x"]:
 		if text.ends_with(constant) and not (constant == "e" and programmer):
 			return constant
 	return _trailing_number()

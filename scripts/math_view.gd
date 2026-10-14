@@ -266,6 +266,10 @@ func _layout_item(node: Dictionary, font_size: int) -> Dictionary:
 				_shift(base["cmds"], Vector2(1.0, drop)))
 			var arg := _wrap(_layout_row(node["arg"], font_size), font_size, "(", ")" if node["closed"] else "", not node["closed"])
 			return _concat([log_box, base_box, arg])
+		"bigop":
+			return _layout_bigop(node, font_size)
+		"deriv":
+			return _layout_deriv(node, font_size)
 	return _box(0.0, 0.0, 0.0)
 
 
@@ -377,3 +381,76 @@ func _layout_frac(node: Dictionary, font_size: int) -> Dictionary:
 	cmds.append({ "kind": "line", "at": Vector2(pad * 0.5, -axis), "to": Vector2(w - pad * 0.5, -axis),
 		"width": stroke, "tone": "normal" })
 	return _box(w + 2.0, -num_baseline + num["asc"], den_baseline + den["desc"], cmds)
+
+
+## ∫ with its bounds on the right, Σ / Π with the bounds above and below.
+func _layout_bigop(node: Dictionary, font_size: int) -> Dictionary:
+	var small := maxi(int(font_size * 0.6), 10)
+	var integral: bool = node["symbol"] == "∫"
+	var symbol_size := int(font_size * (1.6 if integral else 1.35))
+	var symbol := _text_box(node["symbol"], symbol_size)
+	var lower := _layout_row(node["lower"], small)
+	var upper := _layout_row(node["upper"], small)
+	var axis := font_size * 0.3
+	# centre the symbol on the maths axis
+	var symbol_baseline: float = -axis + (symbol["asc"] - symbol["desc"]) / 2.0
+	var symbol_top: float = symbol_baseline - symbol["asc"]
+	var symbol_bottom: float = symbol_baseline + symbol["desc"]
+	var cmds := []
+	var w := 0.0
+	var asc := -symbol_top
+	var desc := symbol_bottom
+	if integral:
+		cmds.append_array(_shift(symbol["cmds"], Vector2(0.0, symbol_baseline)))
+		var x: float = symbol["w"] * 0.85
+		var upper_baseline: float = symbol_top + upper["asc"]
+		var lower_baseline: float = symbol_bottom - lower["desc"]
+		cmds.append_array(_shift(upper["cmds"], Vector2(x, upper_baseline)))
+		cmds.append_array(_shift(lower["cmds"], Vector2(x, lower_baseline)))
+		w = x + maxf(upper["w"], lower["w"])
+		asc = maxf(asc, -upper_baseline + upper["asc"])
+		desc = maxf(desc, lower_baseline + lower["desc"])
+	else:
+		w = maxf(symbol["w"], maxf(upper["w"], lower["w"]))
+		cmds.append_array(_shift(symbol["cmds"], Vector2((w - symbol["w"]) / 2.0, symbol_baseline)))
+		var upper_baseline: float = symbol_top - 1.0 - upper["desc"]
+		var lower_baseline: float = symbol_bottom + 1.0 + lower["asc"]
+		cmds.append_array(_shift(upper["cmds"], Vector2((w - upper["w"]) / 2.0, upper_baseline)))
+		cmds.append_array(_shift(lower["cmds"], Vector2((w - lower["w"]) / 2.0, lower_baseline)))
+		asc = -upper_baseline + upper["asc"]
+		desc = lower_baseline + lower["desc"]
+	var head := _box(w + font_size * 0.15, asc, desc, cmds)
+	var parts := [head, _layout_row(node["body"], font_size)]
+	if node["suffix"] != "":
+		parts.append(_box(font_size * 0.15, 0.0, 0.0))
+		parts.append(_text_box(node["suffix"], font_size))
+	if not node["closed"]:
+		parts.append(_text_box(")", font_size, "muted"))
+	return _concat(parts)
+
+
+## d/dx (f) |x=a
+func _layout_deriv(node: Dictionary, font_size: int) -> Dictionary:
+	var row_d := { "type": "row", "items": [{ "type": "text", "kind": "name", "text": "d" }] }
+	var row_dx := { "type": "row", "items": [{ "type": "text", "kind": "name", "text": "dx" }] }
+	var fraction := _layout_frac({ "num": row_d, "den": row_dx }, font_size)
+	var body := _wrap(_layout_row(node["body"], font_size), font_size, "(", ")", false)
+	var small := maxi(int(font_size * 0.6), 10)
+	var at_row: Dictionary = node["at"]
+	var at := _layout_row(at_row, small)
+	var label := _text_box("x=", small)
+	var height: float = maxf(body["asc"], font_size * 0.8)
+	var depth: float = maxf(body["desc"], font_size * 0.2)
+	var stroke := maxf(1.2, font_size * 0.05)
+	var bar_x := font_size * 0.12
+	var sub_baseline: float = depth + label["asc"] * 0.6
+	var cmds := [{ "kind": "line", "at": Vector2(bar_x, -height), "to": Vector2(bar_x, depth + 2.0),
+		"width": stroke, "tone": "normal" }]
+	cmds.append_array(_shift(label["cmds"], Vector2(bar_x + 3.0, sub_baseline)))
+	cmds.append_array(_shift(at["cmds"], Vector2(bar_x + 3.0 + label["w"], sub_baseline)))
+	var bar := _box(bar_x + 3.0 + label["w"] + at["w"] + 2.0, height,
+		sub_baseline + maxf(label["desc"], at["desc"]), cmds)
+	var parts := [fraction, body, bar]
+	if not node["closed"]:
+		parts.append(_text_box(")", font_size, "muted"))
+	return _concat(parts)

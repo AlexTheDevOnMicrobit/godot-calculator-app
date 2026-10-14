@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Theme" path="res://assets/theme/dark_theme.tres" id="2_theme"]
@@ -11,6 +11,8 @@
 [ext_resource type="Texture2D" path="res://assets/icons/chevron_left.svg" id="9_back"]
 [ext_resource type="Script" path="res://scripts/knowledge_view.gd" id="10_knowledge"]
 [ext_resource type="Texture2D" path="res://assets/icons/close.svg" id="11_close"]
+[ext_resource type="Script" path="res://scripts/graph_panel.gd" id="12_graph"]
+[ext_resource type="Script" path="res://scripts/stats_panel.gd" id="13_stats"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -205,6 +207,20 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 script = ExtResource("7_converter")
+
+[node name="GraphPanel" type="VBoxContainer" parent="Margin/Root/Content/LeftColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("12_graph")
+
+[node name="StatsPanel" type="VBoxContainer" parent="Margin/Root/Content/LeftColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("13_stats")
 
 [node name="Body" type="HBoxContainer" parent="Margin/Root/Content/LeftColumn"]
 unique_name_in_owner = true
@@ -442,6 +458,47 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
+[node name="TableView" type="VBoxContainer" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/TableView"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/TableView/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+text = "GRAPH_TABLE"
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[node name="TableSteps" type="HBoxContainer" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/TableView"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/TableView"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="TableGrid" type="GridContainer" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/TableView/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 6
+
 [node name="TestsView" type="VBoxContainer" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages"]
 unique_name_in_owner = true
 visible = false
@@ -565,6 +622,15 @@ icon = ExtResource("11_close")
 icon_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/HelpView/Header"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+tooltip_text = "CLOSE"
+focus_mode = 0
+theme_type_variation = &"IconButton"
+icon = ExtResource("11_close")
+icon_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Margin/Root/Content/LeftColumn/Body/SidePanel/Margin/Pages/TableView/Header"]
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 tooltip_text = "CLOSE"

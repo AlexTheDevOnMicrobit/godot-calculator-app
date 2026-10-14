@@ -5,7 +5,7 @@ extends RefCounted
 ## (the "2nd" function), style (theme type variation) and tip/tip2 (tooltip
 ## translation keys). Catalog entries starting with "@" trigger a key action.
 
-const MODES := ["simple", "scientific", "programmer", "converter"]
+const MODES := ["simple", "scientific", "graph", "stats", "programmer", "converter"]
 
 const SIMPLE := { "columns": 4, "keys": [
 	{ "id": "clear", "label": "AC", "style": "ClearButton", "tip": "TIP_CLEAR" },
@@ -32,7 +32,7 @@ const SIMPLE := { "columns": 4, "keys": [
 
 const SCIENTIFIC := { "columns": 5, "keys": [
 	{ "id": "second", "label": "2nd", "style": "ToggleButton", "tip": "TIP_SECOND" },
-	{ "id": "pi", "label": "π", "insert": "π", "label2": "e", "insert2": "e", "style": "FunctionButton", "tip": "TIP_PI", "tip2": "TIP_E" },
+	{ "id": "pi", "label": "π", "insert": "π", "label2": "i", "insert2": "i", "style": "FunctionButton", "tip": "TIP_PI", "tip2": "TIP_I" },
 	{ "id": "square", "label": "x²", "insert": "^2", "label2": "x³", "insert2": "^3", "style": "FunctionButton", "tip": "TIP_SQUARE", "tip2": "TIP_CUBE" },
 	{ "id": "power", "label": "xʸ", "insert": "^(", "label2": "ⁿ√x", "insert2": "root(", "style": "FunctionButton", "tip": "TIP_POWER", "tip2": "TIP_NROOT" },
 	{ "id": "fx", "label": "f(x)", "style": "FunctionButton", "tip": "TIP_FX" },
@@ -72,6 +72,70 @@ const SCIENTIFIC := { "columns": 5, "keys": [
 	{ "id": "sd", "label": "⇄", "label2": "x!", "insert2": "!", "style": "FunctionButton", "tip": "TIP_SD", "tip2": "TIP_FACT" },
 	{ "id": "ans", "label": "Ans", "insert": "Ans", "label2": "±", "style": "FunctionButton", "tip": "TIP_ANS", "tip2": "TIP_NEGATE" },
 	{ "id": "equals", "label": "=", "style": "EqualsButton", "tip": "TIP_EQUALS" },
+] }
+
+const GRAPH := { "columns": 5, "keys": [
+	{ "id": "x", "label": "x", "insert": "x", "style": "OperatorButton", "tip": "TIP_X" },
+	{ "id": "square", "label": "x²", "insert": "^2", "style": "FunctionButton", "tip": "TIP_SQUARE" },
+	{ "id": "power", "label": "xʸ", "insert": "^(", "style": "FunctionButton", "tip": "TIP_POWER" },
+	{ "id": "sqrt", "label": "√", "insert": "√(", "style": "FunctionButton", "tip": "TIP_SQRT" },
+	{ "id": "back", "label": "", "icon": "res://assets/icons/backspace.svg", "style": "ClearButton", "tip": "TIP_BACKSPACE" },
+
+	{ "id": "sin", "label": "sin", "insert": "sin(", "style": "FunctionButton", "tip": "TIP_SIN" },
+	{ "id": "cos", "label": "cos", "insert": "cos(", "style": "FunctionButton", "tip": "TIP_COS" },
+	{ "id": "tan", "label": "tan", "insert": "tan(", "style": "FunctionButton", "tip": "TIP_TAN" },
+	{ "id": "ln", "label": "ln", "insert": "ln(", "style": "FunctionButton", "tip": "TIP_LN" },
+	{ "id": "clear", "label": "AC", "style": "ClearButton", "tip": "TIP_CLEAR_FUNCTION" },
+
+	{ "id": "7", "label": "7", "insert": "7", "style": "DigitButton" },
+	{ "id": "8", "label": "8", "insert": "8", "style": "DigitButton" },
+	{ "id": "9", "label": "9", "insert": "9", "style": "DigitButton" },
+	{ "id": "lparen", "label": "(", "insert": "(", "style": "FunctionButton", "tip": "TIP_LPAREN" },
+	{ "id": "rparen", "label": ")", "insert": ")", "style": "FunctionButton", "tip": "TIP_RPAREN" },
+
+	{ "id": "4", "label": "4", "insert": "4", "style": "DigitButton" },
+	{ "id": "5", "label": "5", "insert": "5", "style": "DigitButton" },
+	{ "id": "6", "label": "6", "insert": "6", "style": "DigitButton" },
+	{ "id": "mul", "label": "×", "insert": "×", "style": "OperatorButton", "tip": "TIP_MUL" },
+	{ "id": "div", "label": "÷", "insert": "÷", "style": "OperatorButton", "tip": "TIP_DIV" },
+
+	{ "id": "1", "label": "1", "insert": "1", "style": "DigitButton" },
+	{ "id": "2", "label": "2", "insert": "2", "style": "DigitButton" },
+	{ "id": "3", "label": "3", "insert": "3", "style": "DigitButton" },
+	{ "id": "add", "label": "+", "insert": "+", "style": "OperatorButton", "tip": "TIP_ADD" },
+	{ "id": "sub", "label": "−", "insert": "−", "style": "OperatorButton", "tip": "TIP_SUB" },
+
+	{ "id": "0", "label": "0", "insert": "0", "style": "DigitButton" },
+	{ "id": "dot", "label": ".", "insert": ".", "style": "DigitButton", "tip": "TIP_DECIMAL" },
+	{ "id": "pi", "label": "π", "insert": "π", "style": "FunctionButton", "tip": "TIP_PI" },
+	{ "id": "next", "label": "→", "style": "FunctionButton", "tip": "TIP_NEXT" },
+	{ "id": "enter", "label": "↵", "style": "EqualsButton", "tip": "TIP_NEXT_FUNCTION" },
+] }
+
+const STATS := { "columns": 5, "keys": [
+	{ "id": "7", "label": "7", "style": "DigitButton" },
+	{ "id": "8", "label": "8", "style": "DigitButton" },
+	{ "id": "9", "label": "9", "style": "DigitButton" },
+	{ "id": "back", "label": "", "icon": "res://assets/icons/backspace.svg", "style": "ClearButton", "tip": "TIP_BACKSPACE" },
+	{ "id": "up", "label": "↑", "style": "FunctionButton", "tip": "TIP_UP" },
+
+	{ "id": "4", "label": "4", "style": "DigitButton" },
+	{ "id": "5", "label": "5", "style": "DigitButton" },
+	{ "id": "6", "label": "6", "style": "DigitButton" },
+	{ "id": "neg", "label": "±", "style": "FunctionButton", "tip": "TIP_NEGATE" },
+	{ "id": "down", "label": "↓", "style": "FunctionButton", "tip": "TIP_DOWN" },
+
+	{ "id": "1", "label": "1", "style": "DigitButton" },
+	{ "id": "2", "label": "2", "style": "DigitButton" },
+	{ "id": "3", "label": "3", "style": "DigitButton" },
+	{ "id": "exp", "label": "EXP", "style": "FunctionButton", "tip": "TIP_EXPONENT" },
+	{ "id": "delete_row", "label": "", "icon": "res://assets/icons/trash.svg", "style": "ClearButton", "tip": "TIP_DELETE_ROW" },
+
+	{ "id": "0", "label": "0", "style": "DigitButton" },
+	{ "id": "dot", "label": ".", "style": "DigitButton", "tip": "TIP_DECIMAL" },
+	{ "id": "switch", "label": "X⇄Y", "style": "FunctionButton", "tip": "TIP_SWITCH_COLUMN" },
+	{ "id": "clear_all", "label": "AC", "style": "ClearButton", "tip": "TIP_CLEAR_DATA" },
+	{ "id": "enter", "label": "↵", "style": "EqualsButton", "tip": "TIP_NEXT_CELL" },
 ] }
 
 const PROGRAMMER := { "columns": 5, "keys": [
@@ -146,14 +210,26 @@ const FUNCTION_CATALOG := [
 		["√", "√("], ["∛", "∛("], ["ⁿ√x", "root("]]],
 	["FX_LOG", [["ln", "ln("], ["log", "log("], ["log_b", "logb("]]],
 	["FX_COMBI", [["x!", "!"], ["nCr", "nCr("], ["nPr", "nPr("], ["gcd", "gcd("], ["lcm", "lcm("], ["mod", "mod"]]],
-	["FX_NUMBERS", [["|x|", "abs("], ["±", "@neg"], ["%", "%"], ["EXP", "E"], ["round", "round("], ["floor", "floor("], ["ceil", "ceil("], ["1/x", "^(−1)"]]],
-	["FX_RANDOM", [["Rand", "rand"], ["RandInt", "randint("]]],
+	["FX_NUMBERS", [["|x|", "abs("], ["±", "@neg"], ["%", "%"], ["EXP", "E"], ["round", "round("], ["iPart", "ipart("],
+		["fPart", "fpart("], ["int", "int("], ["floor", "floor("], ["ceil", "ceil("], ["min", "min("], ["max", "max("],
+		["remainder", "remainder("], ["1/x", "^(−1)"], ["e", "e"]]],
+	["FX_COMPLEX", [["i", "i"], ["|z|", "abs("], ["arg", "arg("], ["conj", "conj("], ["Re", "real("], ["Im", "imag("]]],
+	["FX_CALCULUS", [["x", "x"], ["d/dx", "deriv("], ["∫", "integral("], ["Σ", "sum("], ["Π", "prod("],
+		["solve", "solve("], ["fMin", "fmin("], ["fMax", "fmax("]]],
+	["FX_PROBABILITY", [["normalpdf", "normalpdf("], ["normalcdf", "normalcdf("], ["invNorm", "invnorm("],
+		["binompdf", "binompdf("], ["binomcdf", "binomcdf("], ["poissonpdf", "poissonpdf("], ["poissoncdf", "poissoncdf("],
+		["Γ", "gamma("]]],
+	["FX_RANDOM", [["Rand", "rand"], ["RandInt", "randint("], ["randNorm", "randnorm("], ["randBin", "randbin("]]],
 	["FX_CONSTANTS", [["π", "π"], ["e", "e"], ["φ", "φ"], ["Ans", "Ans"]]],
 ]
 
 
 static func layout(mode: String) -> Dictionary:
 	match mode:
+		"graph":
+			return GRAPH
+		"stats":
+			return STATS
 		"simple":
 			return SIMPLE
 		"programmer":

@@ -23,17 +23,33 @@ const OPERATORS := ["+", "−", "-", "×", "÷", "mod", "&", "|", "⊕", "<<", "
 const NAMED := {
 	"asin": "sin⁻¹", "acos": "cos⁻¹", "atan": "tan⁻¹",
 	"asinh": "sinh⁻¹", "acosh": "cosh⁻¹", "atanh": "tanh⁻¹",
+	"invnorm": "invNorm", "ipart": "iPart", "fpart": "fPart", "randnorm": "randNorm",
+	"randbin": "randBin", "real": "Re", "imag": "Im", "fmin": "fMin", "fmax": "fMax", "gamma": "Γ",
+	"randint": "randInt",
 }
-## Every word the parser knows (longest first), see Evaluator.FUNCTIONS.
+## Every word the parser knows (sorted longest first in _init), see Evaluator.FUNCTIONS.
 const WORDS := [
 	"randint", "asinh", "acosh", "atanh", "floor", "round",
 	"asin", "acos", "atan", "sinh", "cosh", "tanh", "sqrt", "cbrt", "frac",
 	"root", "logb", "ceil", "rand", "sin", "cos", "tan", "abs", "exp", "nCr",
 	"nPr", "gcd", "lcm", "log", "mod", "Ans", "phi", "pi", "ln", "e",
+	"remainder", "normalpdf", "normalcdf", "poissonpdf", "poissoncdf", "integral", "binompdf",
+	"binomcdf", "randnorm", "invnorm", "randbin", "gamma", "deriv", "solve", "ipart", "fpart",
+	"real", "imag", "conj", "prod", "fmin", "fmax", "sum", "min", "max", "arg", "int", "i", "x",
 ]
+## Big operators: function -> symbol.
+const BIG_OPERATORS := { "integral": "∫", "sum": "Σ", "prod": "Π" }
+
+var _words: Array = []
 
 var _text := ""
 var _pos := 0
+
+
+func _init() -> void:
+	_words = WORDS.duplicate()
+	_words.sort_custom(func(a, b): return a.length() > b.length())
+
 var _with_caret := false
 var _caret_row = null
 
@@ -143,7 +159,7 @@ func _parse_number() -> Dictionary:
 
 func _parse_word() -> Dictionary:
 	var word := ""
-	for candidate in WORDS:
+	for candidate in _words:
 		if _text.substr(_pos, candidate.length()) == candidate:
 			word = candidate
 			break
@@ -159,7 +175,7 @@ func _parse_word() -> Dictionary:
 			return _text_node("π", "name")
 		"phi":
 			return _text_node("φ", "name")
-		"e", "Ans", "rand":
+		"e", "Ans", "rand", "i", "x":
 			return _text_node(word, "name")
 		"mod":
 			return _text_node("mod", "op")
@@ -187,6 +203,16 @@ func _parse_word() -> Dictionary:
 			return { "type": "root", "index": args[0], "row": _arg(args, 1), "closed": closed }
 		"logb":
 			return { "type": "logb", "base": args[0], "arg": _arg(args, 1), "closed": closed }
+		"integral", "sum", "prod":
+			var lower := _arg(args, 1)
+			if word != "integral": # Σ / Π: "x = a" under the symbol
+				var with_variable := _row()
+				with_variable["items"] = [_text_node("x", "name"), _text_node("=", "symbol")] + lower["items"]
+				lower = with_variable
+			return { "type": "bigop", "symbol": BIG_OPERATORS[word], "body": args[0], "lower": lower,
+				"upper": _arg(args, 2), "suffix": "dx" if word == "integral" else "", "closed": closed }
+		"deriv":
+			return { "type": "deriv", "body": args[0], "at": _arg(args, 1), "closed": closed }
 	return { "type": "func", "name": NAMED.get(word, word), "args": args, "closed": closed }
 
 
@@ -313,6 +339,15 @@ func _linear_item(node: Dictionary, sep: String) -> String:
 			for arg in node["args"]:
 				args.append(_linear_row(arg, sep).strip_edges())
 			return node["name"] + "(" + sep.join(args) + ")"
+		"bigop":
+			var body := _linear_row(node["body"], sep).strip_edges()
+			var lower := _linear_row(node["lower"], sep).strip_edges()
+			var upper := _linear_row(node["upper"], sep).strip_edges()
+			if node["symbol"] == "∫":
+				return "∫[%s%s%s] %s dx" % [lower, sep, upper, body]
+			return "%s(%s…%s) %s" % [node["symbol"], lower, upper, body]
+		"deriv":
+			return "d/dx(%s)|x=%s" % [_linear_row(node["body"], sep).strip_edges(), _linear_row(node["at"], sep).strip_edges()]
 	return ""
 
 
@@ -407,6 +442,13 @@ func _latex_item(node: Dictionary) -> String:
 					return "\\left\\lceil " + args[0] + " \\right\\rceil"
 			var command: String = LATEX_FUNCTIONS.get(name, "\\operatorname{" + name + "}")
 			return command + "\\left(" + ", ".join(args) + "\\right)"
+		"bigop":
+			var command: String = { "∫": "\\int", "Σ": "\\sum", "Π": "\\prod" }[node["symbol"]]
+			var tail := "\\,dx" if node["symbol"] == "∫" else ""
+			return "%s_%s^%s %s%s" % [command, _latex_group(node["lower"]), _latex_group(node["upper"]),
+				_latex_row(node["body"]), tail]
+		"deriv":
+			return "\\left.\\frac{d}{dx}\\left(%s\\right)\\right|_{x=%s}" % [_latex_row(node["body"]), _latex_row(node["at"])]
 	return ""
 
 

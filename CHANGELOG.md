@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/), versions: [SemVer](https://semver.org/).
 
+## [1.0.0-beta.5] - 2026-10-14
+
+### Added — complex numbers, graphs, TI-84 functions
+- **Graph mode**: 6 functions Y1…Y6 with their own colors, drawn with pan
+  (drag), zoom (wheel, pinch, trackpad), asymptote breaks and a smart grid.
+  Tools (⋯): trace with x, y and dy/dx, zeros, minimum, maximum,
+  intersections, integral between two tapped bounds (shaded), table of values
+  (steps 0.1 → 10), zoom standard / trig / fit / in / out. Functions and window
+  are saved.
+- **Statistics mode**: X / Y data table (keypad, arrows, X⇄Y, delete row,
+  AC twice to clear), 1-Var stats (n, mean, Σx, Σx², s, σ, min, Q1, median,
+  Q3, max), 2-Var stats (Σxy, r…), regressions linear, quadratic,
+  exponential, power and logarithmic with r², scatter plot + fitted curve.
+- **Complex numbers**: `i` (2nd + π, or the `i` key), every operation and
+  function (√, ln, ^, trig…), `conj`, `Re`, `Im`, `arg`; display `a + bi` or
+  `r∠θ`, or **Real** (non-real results give an error, like a TI-84) — new
+  setting *Complex numbers*. History and `Ans` keep the imaginary part.
+- **TI-84 equivalents** in f(x): `d/dx` (nDeriv), `∫` (fnInt, adaptive
+  Simpson), `Σ`, `Π`, `solve`, `fMin`, `fMax`, `normalpdf`, `normalcdf`,
+  `invNorm`, `binompdf`, `binomcdf`, `poissonpdf`, `poissoncdf`, `randNorm`,
+  `randBin`, `iPart`, `fPart`, `int`, `min`, `max`, `remainder`, Γ and
+  factorials of non-integers. ∫, Σ, Π and d/dx are drawn like in a textbook
+  and exported to LaTeX.
+- Keyboard: Ctrl+1…6 select the modes; `i`, `x`, arrows and Enter work in
+  the new modes. Help pages for graphs, statistics and complex numbers.
+- Tests: 397 engine checks (complex, calculus, probability, statistics) and
+  105 UI checks.
+
+### Changed
+- Mode menu with 6 modes; `√(−1)` is an error in Real mode (use `i`).
+
 ## [1.0.0-beta.4] - 2026-10-14
 
 ### Changed — minimal redesign

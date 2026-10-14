@@ -31,7 +31,7 @@ const SAVE_DELAY := 0.4
 const KEY_DESIGN_HEIGHT := 60.0
 
 const MODE_KEYS := {
-	"simple": "MODE_SIMPLE", "scientific": "MODE_SCIENTIFIC",
+	"simple": "MODE_SIMPLE", "scientific": "MODE_SCIENTIFIC", "graph": "MODE_GRAPH", "stats": "MODE_STATS",
 	"programmer": "MODE_PROGRAMMER", "converter": "MODE_CONVERTER",
 }
 const LANGUAGE_NAMES := {
@@ -71,10 +71,12 @@ const KEYPAD_SHORTCUTS := {
 ## Help page keyboard table: [keys, description key]
 const SHORTCUTS := [
 	["0–9  + − × ÷  ^", "SC_DIGITS"], ["Enter  =", "SC_ENTER"], ["⌫  Esc", "SC_EDIT"], ["→", "SC_NEXT"],
-	["S C T L G R F", "SC_FUNCTIONS"], ["H  K  F4", "SC_PANELS"], ["F7  Ctrl+1…4", "SC_MODES"],
+	["S C T L G R F", "SC_FUNCTIONS"], ["H  K  F4", "SC_PANELS"], ["F7  Ctrl+1…6", "SC_MODES"],
 	["Ctrl+C  Ctrl+⇧+C  Ctrl+V", "SC_COPY"], ["F2", "SC_ANGLE"],
 ]
-const HELP_TOPICS := ["MODES", "TEMPLATES", "SECOND", "DISPLAY", "TOOLS"]
+const HELP_TOPICS := ["MODES", "TEMPLATES", "SECOND", "DISPLAY", "TOOLS", "GRAPH", "STATS", "COMPLEX"]
+const TABLE_STEPS := [0.1, 0.5, 1.0, 2.0, 5.0, 10.0]
+const TABLE_ROWS := 21
 
 enum DisplayAction { COPY, COPY_LATEX, PASTE }
 
@@ -104,6 +106,7 @@ var _shake_tween: Tween
 var _save_timer: Timer
 var _last_copied := "" # what the last copy put in the clipboard (for tests)
 var _startup_ms := 0
+var _table_step := 1.0
 
 @onready var background: PanelContainer = %Background
 @onready var margin: MarginContainer = %Margin
@@ -124,6 +127,11 @@ var _startup_ms := 0
 @onready var result_math: Control = %ResultMath
 @onready var base_rows: VBoxContainer = %BaseRows
 @onready var converter_view: VBoxContainer = %ConverterView
+@onready var graph_panel: VBoxContainer = %GraphPanel
+@onready var stats_panel: VBoxContainer = %StatsPanel
+@onready var table_view: VBoxContainer = %TableView
+@onready var table_steps: HBoxContainer = %TableSteps
+@onready var table_grid: GridContainer = %TableGrid
 @onready var body: HBoxContainer = %Body
 @onready var keypads: MarginContainer = %Keypads
 @onready var side_panel: PanelContainer = %SidePanel
@@ -152,6 +160,8 @@ func _ready() -> void:
 	mode = settings.mode
 	evaluator.angle_mode = settings.angle_mode as Evaluator.AngleMode
 	evaluator.last_answer = settings.last_answer
+	evaluator.last_answer_im = settings.last_answer_im
+	evaluator.allow_complex = settings.complex_format != 0
 	programmer.base = settings.programmer_base
 	programmer_editor.programmer = true
 
@@ -178,11 +188,17 @@ func _ready() -> void:
 	%TestSoundButton.pressed.connect(func(): feedback.preview(Feedback.Kind.RESULT))
 	%TestVibrationButton.pressed.connect(func(): Input.vibrate_handheld(300))
 	%TestVibrationButton.disabled = not Feedback.can_vibrate()
-	for view in [history_view, functions_view, settings_view, knowledge_view, help_view, tests_view]:
+	for view in [history_view, functions_view, settings_view, knowledge_view, help_view, table_view, tests_view]:
 		view.get_node("Header/CloseButton").pressed.connect(_close_page)
 		if view.has_node("Header/BackButton"):
 			view.get_node("Header/BackButton").pressed.connect(_open_page.bind("settings"))
 	converter_view.changed.connect(_save)
+	graph_panel.changed.connect(_save)
+	graph_panel.table_requested.connect(_open_page.bind("table"))
+	graph_panel.functions_requested.connect(_toggle_page.bind("functions"))
+	graph_panel.feedback.connect(func(ok): feedback.play(Feedback.Kind.RESULT if ok else Feedback.Kind.ERROR))
+	stats_panel.changed.connect(_save)
+	stats_panel.message.connect(func(key): _show_message(tr(key)))
 	result_label.resized.connect(_fit_result_font)
 	get_viewport().size_changed.connect(_on_viewport_resized)
 
@@ -190,6 +206,8 @@ func _ready() -> void:
 	TranslationServer.set_locale(settings.language)
 	_apply_language_formats()
 	converter_view.set_state(settings.converter)
+	graph_panel.set_state(settings.graph)
+	stats_panel.set_state(settings.stats)
 	_apply_theme()
 	_apply_feedback_settings()
 	_set_mode(mode, false)
@@ -253,14 +271,18 @@ func _set_mode(new_mode: String, animate := true) -> void:
 		_keypads[keypad_mode].visible = keypad_mode == new_mode
 	mode_button.text = MODE_KEYS[new_mode]
 	var calculator := new_mode in ["simple", "scientific"]
-	display.visible = new_mode != "converter"
+	display.visible = new_mode not in ["converter", "graph", "stats"]
 	converter_view.visible = new_mode == "converter"
+	graph_panel.visible = new_mode == "graph"
+	stats_panel.visible = new_mode == "stats"
 	base_rows.visible = new_mode == "programmer"
 	angle_button.visible = new_mode == "scientific"
 	base_label.visible = false
 	display.tooltip_text = "DISPLAY_TOOLTIP" if calculator else ""
-	if side_page == "functions" and new_mode != "scientific":
+	if (side_page == "functions" and new_mode not in ["scientific", "graph"]) or (side_page == "table" and new_mode != "graph"):
 		_close_page()
+	if new_mode == "stats":
+		stats_panel.show_tab(stats_panel.tab)
 	error_key = ""
 	_save()
 	_update_layout()
@@ -334,6 +356,10 @@ func _scale_keypad(keypad_mode: String) -> void:
 
 func _on_key_pressed(id: String) -> void:
 	match mode:
+		"graph":
+			_graph_key(id)
+		"stats":
+			feedback.play(Feedback.Kind.KEY if stats_panel.press(id) else Feedback.Kind.ERROR)
 		"converter":
 			if id == "copy":
 				_copy_result()
@@ -407,6 +433,9 @@ func _calculator_key(id: String) -> void:
 ## Inserts text typed on the keyboard or chosen in a panel.
 func _insert_text(text: String) -> void:
 	error_key = ""
+	if mode == "graph":
+		feedback.play(Feedback.Kind.KEY if graph_panel.insert(text) else Feedback.Kind.ERROR)
+		return
 	var target := programmer_editor if mode == "programmer" else editor
 	var accepted := target.insert(text)
 	if accepted:
@@ -442,10 +471,12 @@ func _evaluate() -> bool:
 		return false
 	editor.text += ")".repeat(maxi(editor.open_parens(), 0)) # close what was left open
 	evaluator.last_answer = result["value"]
+	evaluator.last_answer_im = result["im"]
 	settings.last_answer = result["value"]
+	settings.last_answer_im = result["im"]
 	# A plain number ("12") is not worth an history entry.
 	if not editor.text.replace("−", "-").is_valid_float():
-		settings.history.push_front({ "expr": editor.text, "value": result["value"] })
+		settings.history.push_front({ "expr": editor.text, "value": result["value"], "im": result["im"] })
 		if settings.history.size() > MAX_HISTORY:
 			settings.history.resize(MAX_HISTORY)
 		_add_history_item(settings.history[0])
@@ -636,7 +667,7 @@ func _refresh_display() -> void:
 			result_math.visible = true
 			result_label.visible = false
 		else:
-			result_label.text = _format(evaluator.last_answer, true)
+			result_label.text = _format_result(evaluator.last_answer, evaluator.last_answer_im)
 	elif editor.is_empty():
 		result_label.text = "0"
 		result_label.add_theme_color_override("font_color", get_theme_color("preview", "App"))
@@ -644,7 +675,7 @@ func _refresh_display() -> void:
 		result_label.text = "" # no live preview for random numbers
 	else:
 		var preview := _preview(editor.text)
-		result_label.text = _format(preview["value"], true) if preview["ok"] else ""
+		result_label.text = _format_result(preview["value"], preview["im"]) if preview["ok"] else ""
 		result_label.add_theme_color_override("font_color", get_theme_color("preview", "App"))
 	_fit_result_font()
 
@@ -696,6 +727,15 @@ func _format(value: float, grouped := false) -> String:
 	return Evaluator.format_number(value, _decimal_separator(), group, settings.precision).replace("-", "−")
 
 
+## A result, real or complex (a + bi or r∠θ, see the settings).
+func _format_result(re: float, im: float) -> String:
+	if im == 0.0:
+		return _format(re, true)
+	var text := Evaluator.format_complex(re, im, settings.complex_format == 2,
+		evaluator.angle_mode == Evaluator.AngleMode.DEG, _decimal_separator(), _group_separator(), settings.precision)
+	return text.replace("-", "−")
+
+
 func _apply_language_formats() -> void:
 	var list_separator := "; " if _uses_decimal_comma() else ", "
 	for view in [expression_view, result_math]:
@@ -708,6 +748,11 @@ func _apply_language_formats() -> void:
 	knowledge_list.decimal_separator = _decimal_separator()
 	knowledge_list.group_separator = _group_separator()
 	knowledge_list.list_separator = list_separator
+	graph_panel.decimal_separator = _decimal_separator()
+	stats_panel.decimal_separator = _decimal_separator()
+	stats_panel.group_separator = _group_separator()
+	if stats_panel.is_node_ready():
+		stats_panel.refresh_results()
 
 
 func _fit_result_font() -> void:
@@ -871,11 +916,17 @@ func _update_layout() -> void:
 	var display_expands := layout == "landscape" and page == ""
 	display.size_flags_vertical = Control.SIZE_EXPAND_FILL if display_expands else Control.SIZE_FILL
 	converter_view.size_flags_vertical = display.size_flags_vertical
+	# Graph and statistics panels always share the height with the keypad.
+	for panel in [graph_panel, stats_panel]:
+		panel.size_flags_vertical = Control.SIZE_EXPAND_FILL if layout == "landscape" and page != "" or layout != "landscape" or page == "" else Control.SIZE_FILL
+	body.size_flags_stretch_ratio = 1.1 if mode in ["graph", "stats"] else 1.0
 	display_spacer.visible = display_expands
 	expression_view.font_size_max = 34 if layout == "landscape" else 26
 	expression_view.queue_redraw()
-	for view in [history_view, functions_view, settings_view, knowledge_view, help_view, tests_view]:
+	for view in [history_view, functions_view, settings_view, knowledge_view, help_view, table_view, tests_view]:
 		view.visible = view.name.to_lower().begins_with(page) and page != ""
+	if page == "table":
+		_build_table_page()
 	history_view.get_node("Header/CloseButton").visible = layout != "wide"
 	history_button.set_pressed_no_signal(page == "history")
 	menu_button.set_pressed_no_signal(page in ["settings", "knowledge", "help", "tests"])
@@ -931,6 +982,9 @@ func _build_functions_page() -> void:
 
 
 func _on_function_chosen(insert: String) -> void:
+	if insert.begins_with("@") and mode == "graph":
+		feedback.play(Feedback.Kind.ERROR)
+		return
 	if insert.begins_with("@"):
 		_calculator_key(insert.substr(1)) # memory, ±
 	else:
@@ -1040,6 +1094,8 @@ func _build_settings_page() -> void:
 	_segmented("angle", ["DEGREES", "RADIANS"], evaluator.angle_mode)
 	_section("PRECISION")
 	_segmented("precision", ["PREC_AUTO", "2", "4", "6", "8"], Settings.PRECISIONS.find(settings.precision))
+	_section("COMPLEX_FORMAT")
+	_segmented("complex", ["CPX_REAL", "CPX_RECT", "CPX_POLAR"], settings.complex_format)
 
 	_section("SECTION_FEEDBACK")
 	_switch("sound", "SOUND", settings.sound)
@@ -1093,6 +1149,13 @@ func _on_setting_chosen(setting: String, index: int) -> void:
 			_set_angle_mode(index)
 		"precision":
 			_set_precision(index)
+		"complex":
+			settings.complex_format = index
+			evaluator.allow_complex = index != 0
+			_preview_cache["text"] = null
+			_refresh_history()
+			_refresh_display()
+			_save()
 		"sound":
 			settings.sound = index == 0
 			_apply_feedback_settings()
@@ -1150,6 +1213,10 @@ func _apply_theme() -> void:
 		view.muted_color = get_theme_color("muted", "App")
 		view.accent_color = get_theme_color("accent", "App")
 	knowledge_list.apply_colors(get_theme_color("text", "App"), get_theme_color("muted", "App"),
+		get_theme_color("accent", "App"))
+	graph_panel.apply_colors(get_theme_color("text", "App"), get_theme_color("muted", "App"),
+		get_theme_color("accent", "App"))
+	stats_panel.apply_colors(get_theme_color("text", "App"), get_theme_color("muted", "App"),
 		get_theme_color("accent", "App"))
 	_refresh_display()
 
@@ -1218,10 +1285,88 @@ func _build_help_page() -> void:
 		grid.add_child(description)
 
 
+# --- Graph mode ------------------------------------------------------------
+
+func _graph_key(id: String) -> void:
+	error_key = ""
+	var def: Dictionary = _key_defs["graph"].get(id, {})
+	var ok := true
+	if id in ["back", "clear", "next", "enter", "neg"]:
+		ok = graph_panel.press(id)
+	elif def.has("insert"):
+		ok = graph_panel.insert(def["insert"])
+	else:
+		return
+	feedback.play(Feedback.Kind.KEY if ok else Feedback.Kind.ERROR)
+
+
+## [param value] rounded to [param digits] significant digits.
+static func _significant(value: float, digits: int) -> float:
+	if value == 0.0 or absf(value) >= 1e15:
+		return value
+	var magnitude := floori(log(absf(value)) / log(10.0))
+	return snappedf(value, pow(10.0, magnitude - digits + 1))
+
+
+func _build_table_page() -> void:
+	_clear_children(table_steps)
+	var group := ButtonGroup.new()
+	for step in TABLE_STEPS:
+		var button := Button.new()
+		button.text = Evaluator.format_number(step, _decimal_separator())
+		button.toggle_mode = true
+		button.button_group = group
+		button.button_pressed = is_equal_approx(step, _table_step)
+		button.focus_mode = Control.FOCUS_NONE
+		button.theme_type_variation = &"SegmentButton"
+		button.custom_minimum_size = Vector2(0, 32)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		button.pressed.connect(func():
+			_table_step = step
+			_build_table_page())
+		table_steps.add_child(button)
+	_clear_children(table_grid)
+	var graph = graph_panel.graph
+	var center: float = roundf((graph.x_min + graph.x_max) / 2.0 / _table_step) * _table_step
+	var data: Dictionary = graph_panel.table(center - _table_step * (TABLE_ROWS / 2), _table_step, TABLE_ROWS)
+	var used: Array = data["functions"]
+	table_grid.columns = used.size() + 1
+	var header := ["x"]
+	for i in used:
+		header.append("Y%d" % (i + 1))
+	for c in header.size():
+		var label := Label.new()
+		label.text = header[c]
+		label.theme_type_variation = &"SectionLabel"
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if c > 0:
+			label.add_theme_color_override("font_color", graph_panel.COLORS[used[c - 1]])
+		table_grid.add_child(label)
+	for row in data["rows"]:
+		var cells: Array = [row[0]] + row[1]
+		for c in cells.size():
+			var label := Label.new()
+			var value: float = cells[c]
+			label.text = "—" if not is_finite(value) else Evaluator.format_number(_significant(value, 8), _decimal_separator()).replace("-", "−")
+			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+			label.theme_type_variation = &"MutedLabel" if c == 0 else &"Label"
+			label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			table_grid.add_child(label)
+	if used.is_empty():
+		var empty := Label.new()
+		empty.text = "GRAPH_EMPTY"
+		empty.theme_type_variation = &"MutedLabel"
+		table_grid.add_child(empty)
+
+
 # --- History ---------------------------------------------------------------
 
 func _history_text(entry: Dictionary) -> String:
-	return "%s = %s" % [_linear(entry["expr"]), _format(entry["value"], true)]
+	return "%s = %s" % [_linear(entry["expr"]), _format_result(entry["value"], float(entry.get("im", 0.0)))]
 
 
 ## One-line form of an expression for lists ("3⁄4 + ³√27").
@@ -1261,6 +1406,7 @@ func _on_history_item_clicked(index: int, _at: Vector2, _mouse_button: int) -> v
 	editor.text = entry["expr"]
 	editor.just_evaluated = true
 	evaluator.last_answer = entry["value"]
+	evaluator.last_answer_im = float(entry.get("im", 0.0))
 	error_key = ""
 	show_fraction = false
 	feedback.play(Feedback.Kind.KEY)
@@ -1337,6 +1483,8 @@ func _flush_save() -> void:
 	settings.angle_mode = evaluator.angle_mode
 	settings.last_answer = evaluator.last_answer
 	settings.converter = converter_view.get_state()
+	settings.graph = graph_panel.get_state()
+	settings.stats = stats_panel.get_state()
 	settings.save()
 
 
@@ -1402,7 +1550,7 @@ func _action_for_event(event: InputEventKey) -> String:
 				return "copy_latex" if event.shift_pressed else "copy"
 			KEY_V:
 				return "paste"
-			KEY_1, KEY_2, KEY_3, KEY_4:
+			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6:
 				return "mode:" + Keypads.MODES[keycode - KEY_1]
 		return ""
 	# Physical key first: the numeric keypad always types digits, even with
@@ -1411,8 +1559,24 @@ func _action_for_event(event: InputEventKey) -> String:
 		return "key:" + KEYPAD_SHORTCUTS[event.physical_keycode]
 	if KEYPAD_SHORTCUTS.has(keycode):
 		return "key:" + KEYPAD_SHORTCUTS[keycode]
+	if mode == "stats":
+		match keycode:
+			KEY_ENTER, KEY_KP_ENTER:
+				return "key:enter"
+			KEY_UP:
+				return "key:up"
+			KEY_DOWN:
+				return "key:down"
+			KEY_TAB, KEY_LEFT, KEY_RIGHT:
+				return "key:switch"
+			KEY_ESCAPE:
+				return "key:clear_all"
+			KEY_DELETE:
+				return "key:delete_row"
 	match keycode:
 		KEY_ENTER:
+			if mode == "graph":
+				return "key:enter"
 			return "key:copy" if mode == "converter" else "key:equals"
 		KEY_BACKSPACE:
 			return "key:back"
@@ -1441,13 +1605,19 @@ func _action_for_event(event: InputEventKey) -> String:
 		return "key:" + character
 	if mode == "programmer" and programmer.base == 16 and character.to_upper() in ["A", "B", "C", "D", "E", "F"]:
 		return "key:" + character.to_upper()
-	if mode == "converter":
+	if mode in ["converter", "stats"]:
 		match character:
 			"-":
 				return "key:neg"
 			".", ",":
 				return "key:dot"
+			"e", "E":
+				return "key:exp" if mode == "stats" else ""
 		return ""
+	if mode == "graph" and character.to_lower() == "x":
+		return "x"
+	if character == "i" and mode in ["simple", "scientific"]:
+		return "i"
 	return CHAR_ACTIONS.get(character.to_lower(), "")
 
 

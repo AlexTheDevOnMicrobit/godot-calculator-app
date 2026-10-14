@@ -3,23 +3,23 @@
 **A minimal scientific calculator built with Godot 4 — Android, Web (PWA), Windows, macOS, Linux.**
 
 ![Godot 4.3](https://img.shields.io/badge/Godot-4.3-478cbf?logo=godotengine&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.0.0--beta.4-orange)
+![Version](https://img.shields.io/badge/version-1.0.0--beta.5-orange)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Languages](https://img.shields.io/badge/languages-EN%20FR%20ES%20DE%20IT%20PT-informational)
 
 <p align="center">
   <img src="docs/screenshots/scientific.png" width="190" alt="Scientific mode">
-  <img src="docs/screenshots/basic_light_fr.png" width="190" alt="Basic mode, light theme">
+  <img src="docs/screenshots/graph_fr.png" width="190" alt="Graph mode">
+  <img src="docs/screenshots/stats_fr.png" width="190" alt="Statistics mode">
   <img src="docs/screenshots/programmer.png" width="190" alt="Programmer mode">
-  <img src="docs/screenshots/converter_light.png" width="190" alt="Converter mode">
 </p>
 <p align="center">
-  <img src="docs/screenshots/landscape_de.png" width="560" alt="Landscape layout">
+  <img src="docs/screenshots/graph_landscape.png" width="560" alt="Graphs in landscape">
 </p>
 
 🇬🇧 [English](#-english) · 🇫🇷 [Français](#-français)
 
-> ⚠️ **Beta** (`1.0.0-beta.4`) — goal: a stable **v1.0**. Bugs or ideas: [open an issue](../../issues/new/choose).
+> ⚠️ **Beta** (`1.0.0-beta.5`) — goal: a stable **v1.0**. Bugs or ideas: [open an issue](../../issues/new/choose).
 
 ---
 
@@ -27,8 +27,18 @@
 
 ### What's inside
 
-- **4 modes** — tap the mode name at the top left: **Basic**, **Scientific**, **Programmer**
-  (HEX / DEC / OCT / BIN, AND OR XOR NOT, shifts) and **Converter** (11 unit categories).
+- **6 modes** — tap the mode name at the top left (or Ctrl+1…6): **Basic**, **Scientific**, **Graph**,
+  **Statistics**, **Programmer** (HEX / DEC / OCT / BIN, AND OR XOR NOT, shifts) and **Converter**
+  (11 unit categories).
+- **Graphs** — up to 6 functions Y1…Y6, pan / pinch-zoom, trace (x, y, dy/dx), zeros, minimum,
+  maximum, intersections, shaded integral, table of values, zoom standard / trig / fit.
+- **Statistics** — data table X / Y, 1-Var and 2-Var stats (mean, Σ, σ, s, quartiles, r), regressions
+  (linear, quadratic, exponential, power, logarithmic) with r², scatter plot and fitted curve.
+- **Complex numbers** — `i` (2nd + π), results as `a + bi` or `r∠θ` (Settings), `conj`, `Re`, `Im`,
+  `arg`, `abs`; like a TI-84, the "Real" setting reports non-real results as an error.
+- **TI-84 functions** — `d/dx` (nDeriv), `∫` (fnInt), `Σ`, `Π`, `solve`, `fMin` / `fMax`,
+  `normalpdf` / `normalcdf` / `invNorm`, `binompdf` / `binomcdf`, `poissonpdf` / `poissoncdf`,
+  `randNorm`, `randBin`, `iPart`, `fPart`, `int`, `min`, `max`, `remainder`, Γ… (f(x) panel).
 - **Textbook display** — real fractions, roots with a bar, exponents; templates (`a⁄b`, `√`, `xʸ`, `ⁿ√x`,
   `log_b`, `nCr`…) are filled box by box with **→**.
 - **Results** — live preview, `⇄` fraction ⇄ decimal, `Ans`, history (clock icon).
@@ -82,8 +92,17 @@ On a device: **Settings → On-screen tests**.
 
 ### Contenu
 
-- **4 modes** — touchez le nom du mode en haut à gauche : **Simple**, **Scientifique**, **Programmeur**
-  (HEX / DEC / OCT / BIN, AND OR XOR NOT, décalages) et **Convertisseur** (11 catégories d'unités).
+- **6 modes** — touchez le nom du mode en haut à gauche (ou Ctrl+1…6) : **Simple**, **Scientifique**,
+  **Graphique**, **Statistiques**, **Programmeur** (HEX / DEC / OCT / BIN, AND OR XOR NOT, décalages) et
+  **Convertisseur** (11 catégories d'unités).
+- **Graphiques** — jusqu'à 6 fonctions Y1…Y6, déplacement / zoom à deux doigts, trace (x, y, dy/dx), zéros,
+  minimum, maximum, intersections, intégrale hachurée, tableau de valeurs, zooms standard / trigo / ajusté.
+- **Statistiques** — tableau X / Y, stats à 1 et 2 variables (moyenne, Σ, σ, s, quartiles, r), régressions
+  (linéaire, quadratique, exponentielle, puissance, logarithmique) avec r², nuage de points et courbe.
+- **Nombres complexes** — `i` (2nd + π), résultats en `a + bi` ou `r∠θ` (Réglages), `conj`, `Re`, `Im`,
+  `arg`, `abs` ; comme une TI-84, le réglage « Réel » signale les résultats non réels.
+- **Fonctions TI-84** — `d/dx` (nDeriv), `∫` (fnInt), `Σ`, `Π`, `solve`, `fMin` / `fMax`, lois normale,
+  binomiale et de Poisson (`normalcdf`, `invNorm`, `binompdf`…), `randNorm`, `iPart`, `fPart`, Γ… (panneau f(x)).
 - **Affichage comme dans un manuel** — vraies fractions, racines avec barre, exposants ; les modèles
   (`a⁄b`, `√`, `xʸ`, `ⁿ√x`, `log_b`, `nCr`…) se remplissent case par case avec **→**.
 - **Résultats** — aperçu en direct, `⇄` fraction ⇄ décimal, `Ans`, historique (icône horloge).
@@ -123,7 +142,10 @@ scenes/main.tscn            Main screen (top bar, display, keypads, side sheet)
 scripts/
   main.gd                   UI: modes, layouts, menus, settings, help, keyboard
   keypads.gd                Keypad layouts + f(x) catalog
-  evaluator.gd              Math engine, number / fraction formatting
+  evaluator.gd              Math engine (real + complex), calculus, probability, formatting
+  stats.gd                  1-Var / 2-Var statistics, regressions
+  graph_view.gd / graph_panel.gd   Graph drawing, gestures, analysis; Y= editor and tools
+  stats_panel.gd            Statistics mode (data table, results, plot)
   expression_editor.gd      Smart input (templates, → slots, ±, operators)
   math_format.gd            Expression ⇄ math tree ⇄ LaTeX, one-line history form
   math_view.gd              Draws the math tree (fractions, radicals, caret)
@@ -151,8 +173,8 @@ tests/                      Unit + UI tests
 - [x] beta.2 — themes, settings, sounds / haptics, Android, on-screen tests
 - [x] beta.3 — modes, textbook display, templates, LaTeX, basic knowledge
 - [x] beta.4 — minimal redesign, landscape & screen adaptation, 6 languages, all platforms, performance
+- [x] beta.5 — complex numbers, graphs, statistics & regressions, TI-84 functions (calculus, probability)
 - [ ] Test on real phones / tablets, collect feedback
-- [ ] Complex numbers, equation solver, graphs (ideas)
 - [ ] Store releases (Play Store AAB, signed desktop builds) and v1.0
 
 ## 📄 License

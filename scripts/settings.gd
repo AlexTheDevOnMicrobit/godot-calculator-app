@@ -4,7 +4,7 @@ extends RefCounted
 enum ThemeMode { AUTO, DARK, LIGHT }
 
 const DEFAULT_PATH := "user://settings.cfg"
-const MODES := ["simple", "scientific", "programmer", "converter"]
+const MODES := ["simple", "scientific", "graph", "stats", "programmer", "converter"]
 const LANGUAGES := ["en", "fr", "es", "de", "it", "pt"]
 ## Precision setting: -1 = automatic, otherwise number of decimals.
 const PRECISIONS := [-1, 2, 4, 6, 8]
@@ -22,6 +22,11 @@ var last_answer := 0.0
 var history: Array = [] # Array of { "expr": String, "value": float }
 var programmer_base := 10
 var converter := {} # ConverterView state
+## 0 = real only, 1 = a+bi, 2 = r∠θ
+var complex_format := 0
+var last_answer_im := 0.0
+var graph := {} # GraphPanel state
+var stats := {} # StatsPanel state
 
 
 func load_settings() -> void:
@@ -52,6 +57,12 @@ func load_settings() -> void:
 		programmer_base = 10
 	var saved_converter = config.get_value("converter", "state", {})
 	converter = saved_converter if saved_converter is Dictionary else {}
+	complex_format = clampi(int(config.get_value("app", "complex_format", 0)), 0, 2)
+	last_answer_im = float(config.get_value("app", "last_answer_im", 0.0))
+	var saved_graph = config.get_value("graph", "state", {})
+	graph = saved_graph if saved_graph is Dictionary else {}
+	var saved_stats = config.get_value("stats", "state", {})
+	stats = saved_stats if saved_stats is Dictionary else {}
 
 
 func save() -> void:
@@ -68,4 +79,8 @@ func save() -> void:
 	config.set_value("app", "history", history)
 	config.set_value("programmer", "base", programmer_base)
 	config.set_value("converter", "state", converter)
+	config.set_value("app", "complex_format", complex_format)
+	config.set_value("app", "last_answer_im", last_answer_im)
+	config.set_value("graph", "state", graph)
+	config.set_value("stats", "state", stats)
 	config.save(path)

@@ -39,6 +39,9 @@ func _run() -> void:
 	_test_scientific()
 	_test_programmer()
 	_test_converter()
+	_test_complex()
+	_test_graph()
+	_test_stats()
 	_test_pages()
 	_test_layouts()
 	_test_languages()
@@ -329,6 +332,111 @@ func _test_languages() -> void:
 	_check(title.text == "Carrés parfaits", "knowledge page rebuilt in French (got '%s')" % title.text)
 	_main._close_page()
 	_main._set_language("en")
+
+
+func _test_complex() -> void:
+	_key(KEY_ESCAPE)
+	_main.editor.text = "√(−4)"
+	_main._evaluate()
+	_check(_main.error_key == "ERR_NONREAL", "real mode: √(−4) is non-real (got '%s')" % _main.error_key)
+	_main._on_setting_chosen("complex", 1)
+	_key(KEY_ESCAPE)
+	_main.editor.text = "√(−4)"
+	_main._evaluate()
+	_main._refresh_display()
+	_check(_main.result_label.text == "2i", "a+bi: √(−4) = 2i (got '%s')" % _main.result_label.text)
+	_key(KEY_ESCAPE)
+	_typed(["(", "1", "+", "2"])
+	_char("i")
+	_typed_more([")", "*", "(", "3", "-"])
+	_char("i")
+	_typed_more([")"])
+	_key(KEY_ENTER)
+	_check(_main.result_label.text == "5 + 5i", "keyboard i: (1+2i)(3−i) = 5 + 5i (got '%s')" % _main.result_label.text)
+	_check(_main.settings.history[0].get("im", 0.0) == 5.0, "history keeps the imaginary part")
+	_main._on_setting_chosen("complex", 2)
+	_check(_main.result_label.text.begins_with("7.071067") and _main.result_label.text.ends_with("∠45°"),
+		"r∠θ: 5 + 5i = 7.07∠45° (got '%s')" % _main.result_label.text)
+	_main._on_setting_chosen("complex", 0)
+	_key(KEY_ESCAPE)
+	_main.editor.text = "(−1)^0.5"
+	_main._evaluate()
+	_check(_main.error_key == "ERR_NONREAL", "back to real mode")
+	_key(KEY_ESCAPE)
+
+
+func _test_graph() -> void:
+	_ctrl_key(KEY_3)
+	_check(_main.mode == "graph" and _main.graph_panel.visible, "Ctrl+3 opens the graph mode")
+	var panel = _main.graph_panel
+	for i in panel.COUNT:
+		panel.select(i)
+		panel.press("clear")
+	panel.select(0)
+	for id in ["x", "square", "sub", "4"]:
+		_press(id)
+	_check(panel.editors[0].text == "x^2−4", "Y1 typed with the keypad (got '%s')" % panel.editors[0].text)
+	_check(panel.graph.functions.size() >= 1, "Y1 is drawn")
+	panel.graph.set_window(-10.0, 10.0, -10.0, 10.0)
+	panel.use_tool(panel.Tool.ZEROS)
+	_check(panel.readout.text.contains("−2") and panel.readout.text.contains("x = 2"), "zeros of x²−4 (got '%s')" % panel.readout.text)
+	panel.use_tool(panel.Tool.MINIMUM)
+	_check(panel.readout.text.contains("(0 ; −4)"), "minimum (0 ; −4) (got '%s')" % panel.readout.text)
+	panel.show_integral(0.0, 3.0)
+	_check(panel.readout.text.ends_with("= −3"), "∫ from 0 to 3 of x²−4 = −3 (got '%s')" % panel.readout.text)
+	# Y2 = x via Enter (next function) and the keyboard
+	_key(KEY_ENTER)
+	_check(panel.active == 1, "Enter moves to Y2")
+	_char("x")
+	panel.use_tool(panel.Tool.INTERSECTION)
+	_check(panel.readout.text.contains("2.56155") and panel.readout.text.contains("−1.56155"),
+		"intersections of x²−4 and x (got '%s')" % panel.readout.text)
+	panel.use_tool(panel.Tool.TRACE)
+	_check(panel.graph.trace_enabled and panel.readout.text.contains("dy/dx"), "trace shows x, y and the slope")
+	panel.use_tool(panel.Tool.TRACE)
+	# Table of values
+	panel.use_tool(panel.Tool.TABLE)
+	_check(_main.table_view.visible and _main.table_grid.columns == 3, "table page with x, Y1, Y2")
+	_close_page_now()
+	var state: Dictionary = panel.get_state()
+	_check(state["functions"][0] == "x^2−4" and state["functions"][1] == "x", "graph state saved")
+	panel.select(1)
+	panel.press("clear")
+	panel.select(0)
+	_ctrl_key(KEY_2)
+	_check(_main.mode == "scientific" and not _main.graph_panel.visible, "Ctrl+2 back to scientific")
+
+
+func _test_stats() -> void:
+	_ctrl_key(KEY_4)
+	_check(_main.mode == "stats" and _main.stats_panel.visible, "Ctrl+4 opens the statistics mode")
+	var panel = _main.stats_panel
+	_press("clear_all")
+	_press("clear_all")
+	_check(panel.xs.is_empty(), "AC twice clears the data")
+	# (1, 2) (2, 4.1) (3, 5.9) (4, 8.2) typed with the keypad and the keyboard
+	for pair in [["1", "2"], ["2", "4.1"], ["3", "5.9"], ["4", "8.2"]]:
+		for v in pair:
+			for ch in v:
+				_char(ch)
+			_key(KEY_ENTER)
+	_check(panel.xs.size() == 4 and panel.ys.size() == 4 and panel.ys[1] == "4.1", "4 data rows entered (got %s %s)" % [panel.xs, panel.ys])
+	panel.analysis = "linear"
+	var fit: Dictionary = panel.regression()
+	_check(fit["ok"] and absf(fit["coefficients"]["a"] - 2.04) < 1e-9 and fit["expression"] == "2.04×x−0.05", "LinReg y = 2.04x − 0.05 (got %s)" % fit)
+	panel.show_tab(1)
+	panel.refresh_results()
+	_check(panel._results.get_parsed_text().contains("2.04"), "results tab shows the regression")
+	panel.show_tab(2)
+	_check(panel._plot.visible, "plot tab shown")
+	_key(KEY_UP)
+	_check(panel.tab == 0 and panel.row == 3, "arrow up goes back to the data (row %d)" % panel.row)
+	_check(panel.get_state()["y"].size() == 4, "stats state saved")
+	_ctrl_key(KEY_2)
+
+
+func _close_page_now() -> void:
+	_main._close_page()
 
 
 # --- Input helpers ---------------------------------------------------------
