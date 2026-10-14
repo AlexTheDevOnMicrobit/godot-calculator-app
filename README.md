@@ -1,269 +1,160 @@
 # Godot Calculator 🧮
 
-**Calculatrice scientifique faite avec Godot 4 — Scientific calculator built with Godot 4.**
+**A minimal scientific calculator built with Godot 4 — Android, Web (PWA), Windows, macOS, Linux.**
 
 ![Godot 4.3](https://img.shields.io/badge/Godot-4.3-478cbf?logo=godotengine&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.0.0--beta.3-orange)
+![Version](https://img.shields.io/badge/version-1.0.0--beta.4-orange)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-informational)
+![Languages](https://img.shields.io/badge/languages-EN%20FR%20ES%20DE%20IT%20PT-informational)
 
 <p align="center">
-  <img src="docs/screenshots/scientific.png" width="200" alt="Scientific mode, textbook display">
-  <img src="docs/screenshots/basic_light_fr.png" width="200" alt="Basic mode, light theme, French">
-  <img src="docs/screenshots/programmer.png" width="200" alt="Programmer mode">
-  <img src="docs/screenshots/converter_light.png" width="200" alt="Converter mode">
-  <img src="docs/screenshots/knowledge.png" width="200" alt="Basic knowledge page">
+  <img src="docs/screenshots/scientific.png" width="190" alt="Scientific mode">
+  <img src="docs/screenshots/basic_light_fr.png" width="190" alt="Basic mode, light theme">
+  <img src="docs/screenshots/programmer.png" width="190" alt="Programmer mode">
+  <img src="docs/screenshots/converter_light.png" width="190" alt="Converter mode">
+</p>
+<p align="center">
+  <img src="docs/screenshots/landscape_de.png" width="560" alt="Landscape layout">
 </p>
 
-🇫🇷 [Français](#-français) · 🇬🇧 [English](#-english)
+🇬🇧 [English](#-english) · 🇫🇷 [Français](#-français)
 
----
-
-## 🇫🇷 Français
-
-Projet pour tester les fonctionnalités de Godot 4 (UI, thèmes, traductions,
-dessin personnalisé, entrées clavier, tweens, sauvegarde, export Android…) à
-travers une vraie application : une calculatrice.
-
-> ⚠️ **Version bêta** (`1.0.0-beta.3`) — objectif : une **v1.0** stable.
-> Un bug ou une idée ? [Ouvrir une issue](../../issues/new/choose).
-
-### 4 modes
-
-| Mode | Contenu |
-|---|---|
-| **Simple** | Le clavier de base : `+ − × ÷`, `%`, `±` |
-| **Scientifique** | Trigo, logs, puissances, racines, fractions, mémoire, `2nd`, `f(x)` (toutes les fonctions), `S⇔D` |
-| **Programmeur** | Entiers 64 bits, HEX / DEC / OCT / BIN affichés en même temps, `AND OR XOR NOT << >> mod` |
-| **Convertir** | 11 catégories d'unités : longueur, masse, température, surface, volume, vitesse, temps, données, angle, énergie, pression |
-
-### Affichage « comme dans le manuel »
-
-- **Fractions** empilées, **racines** avec la barre au-dessus du radicande (et l'indice pour ⁿ√x),
-  **exposants** en hauteur, parenthèses et valeurs absolues qui grandissent avec leur contenu.
-- **Saisie intelligente des modèles** : `a⁄b`, `ⁿ√x`, `xʸ`, `log_b`, `nCr`… affichent des cases vides
-  et un curseur ; la touche **→** (ou la flèche droite du clavier) passe à la case suivante.
-- **S⇔D** : résultat en fraction (`15⁄4`) ou en décimal (`3,75`).
-- **LaTeX** : bouton `TeX` (ou `Ctrl+Maj+C`) pour copier le calcul en LaTeX
-  (`\frac{1}{2} + \sqrt{9} = 3.5`) ; **coller du LaTeX** (`Ctrl+V`) le calcule directement.
-
-### Autres fonctionnalités
-
-- Fonctions : `sin cos tan` et inverses, hyperboliques, `ln log log_b`, `eˣ 10ˣ`, `x² x³ xʸ`, `√ ∛ ⁿ√x`,
-  `x!`, `nCr nPr`, `pgcd/gcd ppcm/lcm`, `|x|`, `round floor ceil`, `mod`, `%`, `Rand`, `RandInt`, `π e φ`, `Ans`
-- Multiplication implicite (`2π`, `3(4+1)`, `2sin(30)`), degrés / radians, mémoire **MC / MR / M+ / M−**
-- **Aperçu en direct**, séparateur de milliers, réglage du **nombre de décimales**
-- **Historique** lisible (`³√27 + 3⁄4 = 3,75`), cliquer sur une ligne pour la reprendre
-- **Thème sombre / clair / automatique**, **sons et vibrations**, **français / anglais**
-- **Connaissances de base** (icône livre ou `K`) : carrés et cubes parfaits, nombres premiers, π (décimales
-  et moyen mnémotechnique), constantes, puissances de 2, factorielles, valeurs trigonométriques exactes,
-  formules d'algèbre et de géométrie, critères de divisibilité, préfixes des unités. Touchez un nombre pour
-  l'utiliser dans le calcul.
-- **Tests à l'écran** : la suite de tests (≈ 280 vérifications) tourne sur l'appareil
-- **Pavé numérique** (même avec Verr. Num désactivé) et clavier complet
-- **Android** : APK, icône adaptative, bouton retour, zones sûres (encoche)
-- Sur grand écran, l'historique s'affiche à côté du clavier
-
-### Lancer le projet
-
-1. Installer [Godot 4.3](https://godotengine.org/download) (ou plus récent, version standard, pas .NET).
-2. Cloner le dépôt ou télécharger le ZIP :
-   ```bash
-   git clone https://github.com/AlexTheDevOnMicrobit/godot-calculator-app.git
-   ```
-3. Dans le gestionnaire de projets Godot : **Importer** → choisir `project.godot`.
-4. Appuyer sur **F5** (▶ Lancer le projet).
-
-### Raccourcis clavier
-
-| Touche | Action |
-|---|---|
-| `0`–`9`, `.` ou `,` | Chiffres, virgule (pavé numérique compris) |
-| `+ - * /` (ou `x`, `:`) | Opérations |
-| `^` `(` `)` `!` `%` | Puissance, parenthèses, factorielle, pourcentage |
-| `F` | Fraction a⁄b |
-| `→` (flèche droite) | Case suivante d'un modèle (fraction, racine, exposant…) |
-| `Entrée` / `=` | Calculer (en mode Convertir : copier le résultat) |
-| `Retour arrière` | Effacer le dernier élément |
-| `Échap` / `Suppr` | Tout effacer (AC) |
-| `S` `C` `T` `L` `G` `R` | sin, cos, tan, ln, log, racine carrée |
-| `P` `E` `A` | π, e, Ans |
-| `Tab` | 2nd |
-| `H` | Historique |
-| `K` / `F8` | Connaissances de base |
-| `Ctrl+1`…`Ctrl+4`, `F7` | Changer de mode |
-| `F2` / `F3` / `F4` / `F6` | DEG/RAD · langue · réglages · thème |
-| `Ctrl+C` / `Ctrl+Maj+C` / `Ctrl+V` | Copier le résultat / copier en LaTeX / coller (texte ou LaTeX) |
-| Mode Programmeur : `a`–`f`, `& \| ~ < >` | Chiffres hexadécimaux, AND, OR, NOT, décalages |
-
-### Tests
-
-```bash
-godot --headless --path . --import
-godot --headless --path . --script res://tests/test_runner.gd   # moteur de calcul, LaTeX, programmeur, unités
-godot --headless --path . --script res://tests/test_ui.gd       # interface, modes, clavier
-```
-
-Sur l'appareil : **Réglages → Tests à l'écran → Lancer les tests**. Les tests tournent aussi sur GitHub Actions.
-
-### Android et exports
-
-- **Installer l'APK** : télécharger `GodotCalculator-…-debug.apk` (artefact `android-apk` du workflow
-  **Build** sur GitHub Actions), puis l'ouvrir sur le téléphone (autoriser les applications inconnues).
-- **Exporter soi-même** : installer les modèles d'export Godot 4.3, le SDK Android et un JDK 17, renseigner
-  leurs chemins dans **Éditeur → Paramètres de l'éditeur → Export → Android**, puis **Projet → Exporter…**
-- Préréglages fournis : Android, Windows, Linux, Web. Le workflow **Build** (lancement manuel ou tag `v*`)
-  produit les 4 versions.
+> ⚠️ **Beta** (`1.0.0-beta.4`) — goal: a stable **v1.0**. Bugs or ideas: [open an issue](../../issues/new/choose).
 
 ---
 
 ## 🇬🇧 English
 
-A project to try out Godot 4 features (UI, themes, translations, custom
-drawing, keyboard input, tweens, saving, Android export…) through a real app:
-a calculator.
+### What's inside
 
-> ⚠️ **Beta version** (`1.0.0-beta.3`) — goal: a stable **v1.0**.
-> Found a bug or have an idea? [Open an issue](../../issues/new/choose).
+- **4 modes** — tap the mode name at the top left: **Basic**, **Scientific**, **Programmer**
+  (HEX / DEC / OCT / BIN, AND OR XOR NOT, shifts) and **Converter** (11 unit categories).
+- **Textbook display** — real fractions, roots with a bar, exponents; templates (`a⁄b`, `√`, `xʸ`, `ⁿ√x`,
+  `log_b`, `nCr`…) are filled box by box with **→**.
+- **Results** — live preview, `⇄` fraction ⇄ decimal, `Ans`, history (clock icon).
+- **Tap the display** to copy the result, copy it **as LaTeX**, or paste (LaTeX too).
+- **f(x)** — every function, constants and the memory (M+ M− MR MC).
+- **Settings** (gear icon) — theme (auto / light / dark), language, angle unit, decimal places,
+  sounds, vibration, plus **Basic knowledge** (squares, primes, π, formulas…), **Help** and **on-screen tests**.
+- **6 languages** — English, Français, Español, Deutsch, Italiano, Português.
+- **Adapts to the screen** — portrait, landscape (display left, keypad right), wide screens (history docked),
+  key labels scale with the key size, safe areas on phones with a notch.
+- Full **keyboard and numeric keypad** support (shortcuts in Settings → Help).
 
-### 4 modes
+### Run it
 
-| Mode | What's inside |
+1. Install [Godot 4.3](https://godotengine.org/download) (standard build).
+2. `git clone https://github.com/AlexTheDevOnMicrobit/godot-calculator-app.git` (or download the ZIP).
+3. Godot project manager → **Import** → `project.godot` → **F5**.
+
+### Get the apps
+
+| Platform | How |
 |---|---|
-| **Basic** | The essentials: `+ − × ÷`, `%`, `±` |
-| **Scientific** | Trig, logs, powers, roots, fractions, memory, `2nd`, `f(x)` (all functions), `S⇔D` |
-| **Programmer** | 64-bit integers, HEX / DEC / OCT / BIN shown together, `AND OR XOR NOT << >> mod` |
-| **Converter** | 11 unit categories: length, mass, temperature, area, volume, speed, time, data, angle, energy, pressure |
+| **Android** | APK from the **Build** workflow (artifact `android-apk`) or a GitHub Release |
+| **Web (PWA)** | **Pages** workflow → open the page, then "Install app" / "Add to home screen" |
+| **Windows / Linux / macOS** | Build workflow artifacts or the GitHub Release (tags `v*`) |
 
-### "Textbook" display
+Builds run on GitHub Actions: **Build** (manual or on a `v*` tag, creates a Release for tags) and
+**Web app (GitHub Pages)** (enable *Settings → Pages → Source: GitHub Actions* once).
 
-- Stacked **fractions**, **radicals** with a bar over the radicand (and the index for ⁿ√x),
-  raised **exponents**, parentheses and absolute value bars that grow with their content.
-- **Smart templates**: `a⁄b`, `ⁿ√x`, `xʸ`, `log_b`, `nCr`… show empty slots and a caret;
-  the **→** key (or the Right arrow) moves to the next slot.
-- **S⇔D**: result as a fraction (`15⁄4`) or a decimal (`3.75`).
-- **LaTeX**: the `TeX` button (or `Ctrl+Shift+C`) copies the calculation as LaTeX
-  (`\frac{1}{2} + \sqrt{9} = 3.5`); **pasting LaTeX** (`Ctrl+V`) computes it.
+**Exporting locally**: install the Godot 4.3 export templates, create an empty `build/.gdignore`, then
+`godot --headless --path . --export-release "<preset>" <path>`. Presets: `Android`, `Web`, `Windows Desktop`,
+`Linux`, `macOS`. Android needs the Android SDK + JDK 17 (Editor Settings → Export → Android). The Windows
+icon is embedded when `rcedit` is configured (Editor Settings → Export → Windows).
 
-### More features
-
-- Functions: `sin cos tan` and inverses, hyperbolic, `ln log log_b`, `eˣ 10ˣ`, `x² x³ xʸ`, `√ ∛ ⁿ√x`,
-  `x!`, `nCr nPr`, `gcd lcm`, `|x|`, `round floor ceil`, `mod`, `%`, `Rand`, `RandInt`, `π e φ`, `Ans`
-- Implicit multiplication (`2π`, `3(4+1)`, `2sin(30)`), degrees / radians, memory **MC / MR / M+ / M−**
-- **Live preview**, thousands separators, **decimal places** setting
-- Readable **history** (`³√27 + 3⁄4 = 3.75`), click a line to reuse it
-- **Dark / light / auto theme**, **sounds and vibration**, **French / English**
-- **Basic knowledge** (book icon or `K`): perfect squares and cubes, prime numbers, π (digits and a
-  mnemonic), constants, powers of 2, factorials, exact trig values, algebra and geometry formulas,
-  divisibility rules, unit prefixes. Tap a number to use it in the calculation.
-- **On-screen tests**: the test suite (≈ 280 checks) runs on the device
-- **Numeric keypad** (even with NumLock off) and full keyboard support
-- **Android**: APK, adaptive icon, back button, safe areas (notches)
-- On wide screens the history is docked next to the keypad
-
-### Running the project
-
-1. Install [Godot 4.3](https://godotengine.org/download) (or newer, standard build, not .NET).
-2. Clone the repository or download the ZIP:
-   ```bash
-   git clone https://github.com/AlexTheDevOnMicrobit/godot-calculator-app.git
-   ```
-3. In the Godot project manager: **Import** → select `project.godot`.
-4. Press **F5** (▶ Run project).
-
-### Keyboard shortcuts
-
-| Key | Action |
-|---|---|
-| `0`–`9`, `.` or `,` | Digits, decimal point (numpad included) |
-| `+ - * /` (or `x`, `:`) | Operators |
-| `^` `(` `)` `!` `%` | Power, parentheses, factorial, percent |
-| `F` | Fraction a⁄b |
-| `→` (Right arrow) | Next slot of a template (fraction, root, exponent…) |
-| `Enter` / `=` | Calculate (Converter mode: copy the result) |
-| `Backspace` | Delete last item |
-| `Esc` / `Delete` | Clear all (AC) |
-| `S` `C` `T` `L` `G` `R` | sin, cos, tan, ln, log, square root |
-| `P` `E` `A` | π, e, Ans |
-| `Tab` | 2nd |
-| `H` | History |
-| `K` / `F8` | Basic knowledge |
-| `Ctrl+1`…`Ctrl+4`, `F7` | Switch mode |
-| `F2` / `F3` / `F4` / `F6` | DEG/RAD · language · settings · theme |
-| `Ctrl+C` / `Ctrl+Shift+C` / `Ctrl+V` | Copy result / copy as LaTeX / paste (text or LaTeX) |
-| Programmer mode: `a`–`f`, `& \| ~ < >` | Hex digits, AND, OR, NOT, shifts |
+**Signed Android release**: add the secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_USER` and
+`ANDROID_KEYSTORE_PASSWORD`; the Build workflow then also produces a signed release APK.
 
 ### Tests
 
 ```bash
 godot --headless --path . --import
-godot --headless --path . --script res://tests/test_runner.gd   # math engine, LaTeX, programmer, units
-godot --headless --path . --script res://tests/test_ui.gd       # UI, modes, keyboard
+godot --headless --path . --script res://tests/test_runner.gd   # engine, LaTeX, units, translations…
+godot --headless --path . --script res://tests/test_ui.gd       # UI, modes, layouts, languages
 ```
 
-On the device: **Settings → On-screen tests → Run tests**. Tests also run on GitHub Actions.
+On a device: **Settings → On-screen tests**.
 
-### Android and exports
+---
 
-- **Install the APK**: download `GodotCalculator-…-debug.apk` (the `android-apk` artifact of the
-  **Build** workflow on GitHub Actions) and open it on the phone (allow unknown apps).
-- **Export it yourself**: install the Godot 4.3 export templates, the Android SDK and a JDK 17, set their
-  paths in **Editor → Editor Settings → Export → Android**, then **Project → Export…**
-- Presets included: Android, Windows, Linux, Web. The **Build** workflow (manual run or `v*` tag)
-  produces all 4 builds.
+## 🇫🇷 Français
+
+### Contenu
+
+- **4 modes** — touchez le nom du mode en haut à gauche : **Simple**, **Scientifique**, **Programmeur**
+  (HEX / DEC / OCT / BIN, AND OR XOR NOT, décalages) et **Convertisseur** (11 catégories d'unités).
+- **Affichage comme dans un manuel** — vraies fractions, racines avec barre, exposants ; les modèles
+  (`a⁄b`, `√`, `xʸ`, `ⁿ√x`, `log_b`, `nCr`…) se remplissent case par case avec **→**.
+- **Résultats** — aperçu en direct, `⇄` fraction ⇄ décimal, `Ans`, historique (icône horloge).
+- **Touchez l'affichage** pour copier le résultat, le copier **en LaTeX** ou coller (LaTeX aussi).
+- **f(x)** — toutes les fonctions, les constantes et la mémoire (M+ M− MR MC).
+- **Réglages** (icône engrenage) — thème (auto / clair / sombre), langue, unité d'angle, décimales,
+  sons, vibration, ainsi que **Connaissances de base** (carrés, nombres premiers, π, formules…), **Aide** et
+  **tests à l'écran**.
+- **6 langues** — English, Français, Español, Deutsch, Italiano, Português.
+- **S'adapte à l'écran** — portrait, paysage (affichage à gauche, clavier à droite), grands écrans
+  (historique à côté), taille du texte des touches adaptée, zones sûres des téléphones à encoche.
+- **Clavier et pavé numérique** complets (raccourcis dans Réglages → Aide).
+
+### Lancer le projet
+
+1. Installer [Godot 4.3](https://godotengine.org/download) (version standard).
+2. `git clone https://github.com/AlexTheDevOnMicrobit/godot-calculator-app.git` (ou télécharger le ZIP).
+3. Gestionnaire de projets Godot → **Importer** → `project.godot` → **F5**.
+
+### Obtenir les applications
+
+| Plateforme | Comment |
+|---|---|
+| **Android** | APK du workflow **Build** (artefact `android-apk`) ou d'une Release GitHub |
+| **Web (PWA)** | Workflow **Pages** → ouvrir la page, puis « Installer l'application » / « Ajouter à l'écran d'accueil » |
+| **Windows / Linux / macOS** | Artefacts du workflow Build ou Release GitHub (tags `v*`) |
+
+Pour exporter soi-même, signer l'APK Android ou lancer les tests : voir la partie anglaise ci-dessus
+(mêmes commandes).
 
 ---
 
 ## 📁 Structure
 
 ```
-godot-calculator-app/
-├── project.godot                  # Project settings (window, theme, locales, Android back button)
-├── export_presets.cfg             # Android / Windows / Linux / Web export presets
-├── scenes/main.tscn               # Main screen (mode bar, display, keypads, side panels)
-├── scripts/
-│   ├── main.gd                    # UI: modes, keypads, keyboard/numpad, panels, themes, animations
-│   ├── keypads.gd                 # Keypad layouts of each mode + f(x) function catalog
-│   ├── evaluator.gd               # Expression parser & math engine, number / fraction formatting
-│   ├── expression_editor.gd       # Smart input: operators, decimals, templates, → slots, ±
-│   ├── math_format.gd             # Expression ⇄ math tree ⇄ LaTeX, one-line history form
-│   ├── math_view.gd               # Draws the math tree (fractions, radicals, exponents, caret)
-│   ├── programmer_evaluator.gd    # 64-bit integer evaluator, bases, bitwise operators
-│   ├── units.gd                   # Converter units (11 categories, FR / EN names)
-│   ├── converter_view.gd          # Converter display
-│   ├── knowledge.gd               # "Basic knowledge" content (tables, formulas, rules)
-│   ├── knowledge_view.gd          # "Basic knowledge" page (built on first use)
-│   ├── settings.gd                # Preferences, memory, history (user://settings.cfg)
-│   ├── feedback.gd                # Sounds & haptics
-│   └── self_test.gd               # Test suite shared by CI and the on-screen tests
-├── assets/                        # fonts (DejaVu, MSDF), icons, sounds, Android icons, themes
-├── translations/translations.csv  # FR / EN strings
-├── tools/                         # Generators: themes, sounds, Android icons
-├── tests/                         # test_runner.gd (unit), test_ui.gd (integration)
-├── docs/screenshots/
-└── .github/                       # CI (tests, builds) + issue templates
+scenes/main.tscn            Main screen (top bar, display, keypads, side sheet)
+scripts/
+  main.gd                   UI: modes, layouts, menus, settings, help, keyboard
+  keypads.gd                Keypad layouts + f(x) catalog
+  evaluator.gd              Math engine, number / fraction formatting
+  expression_editor.gd      Smart input (templates, → slots, ±, operators)
+  math_format.gd            Expression ⇄ math tree ⇄ LaTeX, one-line history form
+  math_view.gd              Draws the math tree (fractions, radicals, caret)
+  programmer_evaluator.gd   64-bit integers, bases, bitwise operators
+  units.gd / converter_view.gd   Converter
+  knowledge.gd / knowledge_view.gd   Basic knowledge page
+  settings.gd · feedback.gd · self_test.gd
+assets/                     Fonts (DejaVu, MSDF), icons, sounds, themes, app icons
+translations/translations.csv   All texts, 6 languages (one column each)
+tools/                      Generators: themes, sounds, icons, Windows .ico
+tests/                      Unit + UI tests
+.github/                    CI, builds, releases, GitHub Pages, issue templates
 ```
 
-### Regenerating assets
+**Adding a language**: add a column to `translations/translations.csv`, list the new
+`.translation` file in Project Settings → Localization, and add the code to `Settings.LANGUAGES`
+(`scripts/settings.gd`). The *Translations* test reports any missing text.
 
-```bash
-python3 tools/generate_themes.py                                  # themes (edit PALETTES)
-python3 tools/generate_sounds.py                                  # sounds
-godot --headless --path . --script res://tools/export_icons.gd    # Android icons
-```
+**Regenerating assets**: `python3 tools/generate_themes.py`, `python3 tools/generate_sounds.py`,
+`godot --headless --path . --script res://tools/export_icons.gd`, then `python3 tools/make_ico.py`.
 
 ## 🗺️ Roadmap → v1.0
 
-- [x] Scientific calculator core, FR / EN, numpad, history, memory (beta.1)
-- [x] Light theme, settings, sounds / haptics, Android export, on-screen tests (beta.2)
-- [x] Basic / Scientific / Programmer / Converter modes (beta.3)
-- [x] Textbook display, smart templates, fractions, LaTeX copy / paste, basic knowledge page (beta.3)
-- [ ] Test the APK on several real phones / tablets
-- [ ] Complex numbers (a + bi), equation solver, graphs (ideas)
-- [ ] Signed release APK / AAB for the Play Store
-- [ ] v1.0 release
+- [x] beta.1 — calculator core, FR / EN, numpad, history, memory
+- [x] beta.2 — themes, settings, sounds / haptics, Android, on-screen tests
+- [x] beta.3 — modes, textbook display, templates, LaTeX, basic knowledge
+- [x] beta.4 — minimal redesign, landscape & screen adaptation, 6 languages, all platforms, performance
+- [ ] Test on real phones / tablets, collect feedback
+- [ ] Complex numbers, equation solver, graphs (ideas)
+- [ ] Store releases (Play Store AAB, signed desktop builds) and v1.0
 
 ## 📄 License
 
-Code: [Apache 2.0](LICENSE). Font: DejaVu Sans — see
-[`assets/fonts/LICENSE-DejaVu.txt`](assets/fonts/LICENSE-DejaVu.txt).
+Code: [Apache 2.0](LICENSE). Font: DejaVu Sans — see [`assets/fonts/LICENSE-DejaVu.txt`](assets/fonts/LICENSE-DejaVu.txt).

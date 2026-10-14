@@ -13,7 +13,6 @@ var category := "length"
 var from_unit := 2
 var to_unit := 3
 var value_text := "1"
-var language := "en"
 var decimal_separator := "."
 var group_separator := ","
 var precision := -1
@@ -23,45 +22,42 @@ var _from_option: OptionButton
 var _to_option: OptionButton
 var _from_value: Label
 var _to_value: Label
-var _from_caption: Label
-var _to_caption: Label
 
 
 func _ready() -> void:
-	add_theme_constant_override("separation", 6)
-	_category_option = _option()
+	add_theme_constant_override("separation", 2)
+	_category_option = _option("OptionButton")
+	_category_option.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_category_option.custom_minimum_size = Vector2(180, 38)
 	_category_option.item_selected.connect(_on_category_selected)
 	add_child(_category_option)
+	_spacer(10)
 
-	_from_caption = _caption("CONVERT_FROM")
-	_from_option = _option()
+	_from_option = _option("FlatOptionButton")
 	_from_option.item_selected.connect(func(index):
 		from_unit = index
 		_refresh_values())
-	_from_value = _value_label("ResultLabel")
-	add_child(_row(_from_caption, _from_option))
+	_from_value = _value_label()
+	add_child(_from_option)
 	add_child(_from_value)
+	_spacer(8)
 
-	var divider := HSeparator.new()
-	divider.modulate.a = 0.4
-	add_child(divider)
-
-	_to_caption = _caption("CONVERT_TO")
-	_to_option = _option()
+	_to_option = _option("FlatOptionButton")
 	_to_option.item_selected.connect(func(index):
 		to_unit = index
 		_refresh_values())
-	_to_value = _value_label("ResultLabel")
-	add_child(_row(_to_caption, _to_option))
+	_to_value = _value_label()
+	_to_value.theme_type_variation = &"ResultLabel"
+	add_child(_to_option)
 	add_child(_to_value)
 	refresh()
 
 
-func _option() -> OptionButton:
+func _option(variation: String) -> OptionButton:
 	var option := OptionButton.new()
 	option.focus_mode = Control.FOCUS_NONE
-	option.theme_type_variation = &"SegmentButton"
-	option.custom_minimum_size = Vector2(0, 38)
+	option.theme_type_variation = variation
+	option.custom_minimum_size = Vector2(0, 34)
 	option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	option.clip_text = true
 	option.fit_to_longest_item = false
@@ -69,29 +65,18 @@ func _option() -> OptionButton:
 	return option
 
 
-func _caption(key: String) -> Label:
+func _spacer(height: float) -> void:
+	var spacer := Control.new()
+	spacer.custom_minimum_size = Vector2(0, height)
+	add_child(spacer)
+
+
+func _value_label() -> Label:
 	var label := Label.new()
-	label.text = key
-	label.theme_type_variation = &"SectionLabel"
-	label.custom_minimum_size = Vector2(44, 0)
-	return label
-
-
-func _row(caption: Label, option: OptionButton) -> HBoxContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	row.add_child(caption)
-	row.add_child(option)
-	return row
-
-
-func _value_label(variation: String) -> Label:
-	var label := Label.new()
-	label.theme_type_variation = variation
+	label.theme_type_variation = &"ValueLabel"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	label.clip_text = true
 	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	label.add_theme_font_size_override("font_size", 34)
 	return label
 
 
@@ -102,12 +87,12 @@ func refresh() -> void:
 	_category_option.clear()
 	var ids := Units.category_ids()
 	for id in ids:
-		_category_option.add_item(Units.category_name(id, language))
+		_category_option.add_item(tr(Units.category_name_key(id)))
 	_category_option.select(ids.find(category))
 	for option in [_from_option, _to_option]:
 		option.clear()
 		for i in Units.unit_count(category):
-			option.add_item(Units.unit_label(category, i, language))
+			option.add_item("%s  ·  %s" % [Units.unit_symbol(category, i), tr(Units.unit_name_key(category, i))])
 	from_unit = clampi(from_unit, 0, Units.unit_count(category) - 1)
 	to_unit = clampi(to_unit, 0, Units.unit_count(category) - 1)
 	_from_option.select(from_unit)

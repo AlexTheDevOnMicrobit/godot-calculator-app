@@ -5,6 +5,7 @@ enum ThemeMode { AUTO, DARK, LIGHT }
 
 const DEFAULT_PATH := "user://settings.cfg"
 const MODES := ["simple", "scientific", "programmer", "converter"]
+const LANGUAGES := ["en", "fr", "es", "de", "it", "pt"]
 ## Precision setting: -1 = automatic, otherwise number of decimals.
 const PRECISIONS := [-1, 2, 4, 6, 8]
 
@@ -24,14 +25,14 @@ var converter := {} # ConverterView state
 
 
 func load_settings() -> void:
-	var os_language := "fr" if OS.get_locale_language() == "fr" else "en"
+	var os_language := OS.get_locale_language() if OS.get_locale_language() in LANGUAGES else "en"
 	var config := ConfigFile.new()
 	if config.load(path) != OK:
 		language = os_language
 		return
 	language = config.get_value("app", "language", os_language)
-	if language not in ["en", "fr"]:
-		language = "en"
+	if language not in LANGUAGES:
+		language = os_language
 	mode = config.get_value("app", "mode", "scientific")
 	if mode not in MODES:
 		mode = "scientific"

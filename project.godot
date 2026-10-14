@@ -11,11 +11,19 @@ config_version=5
 [application]
 
 config/name="Godot Calculator"
+config/name_localized={
+"de": "Rechner",
+"en": "Calculator",
+"es": "Calculadora",
+"fr": "Calculatrice",
+"it": "Calcolatrice",
+"pt": "Calculadora"
+}
 config/description="Scientific calculator built with Godot 4 (FR / EN)."
-config/version="1.0.0-beta.3"
+config/version="1.0.0-beta.4"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-boot_splash/bg_color=Color(0.0431, 0.0549, 0.0784, 1)
+boot_splash/bg_color=Color(0.0627, 0.0706, 0.0863, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"
 config/quit_on_go_back=false
@@ -27,7 +35,7 @@ window/size/viewport_width=420
 window/size/viewport_height=780
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/handheld/orientation=1
+window/handheld/orientation=6
 
 [gui]
 
@@ -41,12 +49,16 @@ pointing/emulate_touch_from_mouse=false
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://translations/translations.en.translation", "res://translations/translations.fr.translation")
+locale/translations=PackedStringArray("res://translations/translations.en.translation", "res://translations/translations.fr.translation", "res://translations/translations.es.translation", "res://translations/translations.de.translation", "res://translations/translations.it.translation", "res://translations/translations.pt.translation")
 locale/fallback="en"
+
+[physics]
+
+common/physics_ticks_per_second=30
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.0431, 0.0549, 0.0784, 1)
+environment/defaults/default_clear_color=Color(0.0627, 0.0706, 0.0863, 1)
 textures/vram_compression/import_etc2_astc=true

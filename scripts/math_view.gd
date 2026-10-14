@@ -60,10 +60,12 @@ var _caret_on := true
 var _blink: Timer
 var _font: Font
 var _root: Dictionary = {}
+var _base_min_height := 0.0
 
 
 func _ready() -> void:
 	clip_contents = true
+	_base_min_height = custom_minimum_size.y
 	_blink = Timer.new()
 	_blink.wait_time = 0.53
 	_blink.timeout.connect(func():
@@ -93,7 +95,7 @@ func content_width() -> float:
 
 
 func _ensure_layout() -> void:
-	var key := "%s|%s|%d|%s" % [text, show_caret, int(size.x), decimal_separator]
+	var key := "%s|%s|%d|%s|%d" % [text, show_caret, int(size.x), decimal_separator, font_size_max]
 	if key == _layout_key and not _layout.is_empty():
 		return
 	_layout_key = key
@@ -107,8 +109,9 @@ func _ensure_layout() -> void:
 	while _layout["w"] > size.x and font_size > font_size_min:
 		font_size -= 2
 		_layout = _layout_row(tree, font_size)
-	var needed: float = _layout["asc"] + _layout["desc"] + 4.0
-	if needed > custom_minimum_size.y:
+	# Grow for tall content (stacked fractions) and shrink back afterwards.
+	var needed: float = maxf(_base_min_height, _layout["asc"] + _layout["desc"] + 4.0)
+	if not is_equal_approx(needed, custom_minimum_size.y):
 		custom_minimum_size.y = needed
 
 

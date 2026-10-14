@@ -1,122 +1,271 @@
-keys,en,fr
-APP_TITLE,Scientific Calculator,Calculatrice scientifique
-APP_TITLE_SHORT,Calculator,Calculatrice
-HISTORY,History,Historique
-HISTORY_EMPTY,No calculations yet,Aucun calcul pour l'instant
-CLEAR_HISTORY,Clear history,Effacer l'historique
-ANGLE_DEG,DEG,DEG
-ANGLE_RAD,RAD,RAD
-MEMORY_INDICATOR,M,M
-COPIED,Result copied,Résultat copié
-PASTED,Pasted,Collé
-ERR_SYNTAX,Syntax error,Erreur de syntaxe
-ERR_DIV_ZERO,Division by zero,Division par zéro
-ERR_DOMAIN,Math error,Erreur mathématique
-ERR_OVERFLOW,Overflow,Dépassement de capacité
-TIP_SECOND,"Second functions (inverse trig, eˣ, 10ˣ…)","Fonctions secondes (trigo inverse, eˣ, 10ˣ…)"
-TIP_PI,Pi (P),Pi (P)
-TIP_E,Euler's number e,Nombre d'Euler e
-TIP_LPAREN,Open parenthesis,Parenthèse ouvrante
-TIP_RPAREN,Close parenthesis,Parenthèse fermante
-TIP_SIN,Sine (S),Sinus (S)
-TIP_COS,Cosine (C),Cosinus (C)
-TIP_TAN,Tangent (T),Tangente (T)
-TIP_ASIN,Arcsine,Arc sinus
-TIP_ACOS,Arccosine,Arc cosinus
-TIP_ATAN,Arctangent,Arc tangente
-TIP_LN,Natural logarithm (L),Logarithme népérien (L)
-TIP_LOG,Base-10 logarithm (G),Logarithme décimal (G)
-TIP_EXP,Exponential eˣ,Exponentielle eˣ
-TIP_POW10,Power of ten 10ˣ,Puissance de dix 10ˣ
-TIP_SQUARE,Square,Carré
-TIP_CUBE,Cube,Cube
-TIP_POWER,Power (^),Puissance (^)
-TIP_MOD,Modulo,Modulo
-TIP_SQRT,Square root (R),Racine carrée (R)
-TIP_CBRT,Cube root,Racine cubique
-TIP_FACT,Factorial (!),Factorielle (!)
-TIP_ABS,Absolute value,Valeur absolue
-TIP_INV,Inverse 1/x,Inverse 1/x
-TIP_RAND,Random number between 0 and 1,Nombre aléatoire entre 0 et 1
-TIP_MC,Memory clear,Effacer la mémoire
-TIP_MR,Memory recall,Rappel mémoire
-TIP_MPLUS,Add to memory,Ajouter à la mémoire
-TIP_MMINUS,Subtract from memory,Soustraire de la mémoire
-TIP_PERCENT,Percent (%),Pourcentage (%)
-TIP_BACKSPACE,Delete last character (Backspace),Effacer le dernier caractère (Retour arrière)
-TIP_CLEAR,Clear all (Esc / Del),Tout effacer (Échap / Suppr)
-TIP_EXPONENT,Scientific notation ×10ⁿ,Notation scientifique ×10ⁿ
-TIP_ANS,Last answer,Dernier résultat
-TIP_EQUALS,Calculate (Enter),Calculer (Entrée)
-TIP_DECIMAL,Decimal point,Virgule décimale
-TIP_ADD,Add (+),Addition (+)
-TIP_SUB,Subtract (-),Soustraction (-)
-TIP_MUL,Multiply (*),Multiplication (*)
-TIP_DIV,Divide (/),Division (/)
-HISTORY_TOOLTIP,History (H),Historique (H)
-ANGLE_TOOLTIP,Angle unit: degrees / radians (F2),Unité d'angle : degrés / radians (F2)
-SETTINGS,Settings,Réglages
-SETTINGS_TOOLTIP,Settings (F4),Réglages (F4)
-CLOSE,Close,Fermer
-THEME,Theme,Thème
-THEME_AUTO,Auto,Auto
-THEME_DARK,Dark,Sombre
-THEME_LIGHT,Light,Clair
-LANGUAGE,Language,Langue
-LANG_EN,English,English
-LANG_FR,Français,Français
-ANGLE_UNIT,Angle unit,Unité d'angle
-DEGREES,Degrees,Degrés
-RADIANS,Radians,Radians
-SOUND,Sounds,Sons
-VIBRATION,Vibration,Vibration
-VIBRATION_MOBILE_ONLY,Vibration (mobile only),Vibration (mobile uniquement)
-ON,On,Activé
-OFF,Off,Désactivé
-SELF_TEST,On-screen tests,Tests à l'écran
-SELF_TEST_HINT,Checks the math engine and the input rules on this device.,Vérifie le moteur de calcul et les règles de saisie sur cet appareil.
-SELF_TEST_RUN,Run tests,Lancer les tests
-SELF_TEST_RESULT,%d / %d tests passed,%d / %d tests réussis
-SELF_TEST_FAILURES,Failures,Échecs
-DEVICE,Device,Appareil
-TEST_SOUND,Test sound,Tester le son
-TEST_VIBRATION,Test vibration,Tester la vibration
-ABOUT,About,À propos
-ABOUT_TEXT,Version %s · made with Godot %s,Version %s · créée avec Godot %s
-THEME_TOOLTIP,Switch theme (F6),Changer de thème (F6)
-MODE_SIMPLE,Basic,Simple
-MODE_SCIENTIFIC,Scientific,Scientifique
-MODE_PROGRAMMER,Programmer,Programmeur
-MODE_CONVERTER,Converter,Convertir
-FUNCTIONS,Functions,Fonctions
-FX_TRIG,Trigonometry,Trigonométrie
-FX_POWERS,Powers & roots,Puissances & racines
-FX_LOG,Logarithms,Logarithmes
-FX_COMBI,Combinatorics & integers,Dénombrement & entiers
-FX_NUMBERS,Numbers,Nombres
-FX_RANDOM,Random,Hasard
-FX_CONSTANTS,Constants,Constantes
-PRECISION,Decimals,Décimales
-PREC_AUTO,Auto,Auto
-LATEX_TOOLTIP,Copy as LaTeX (Ctrl+Shift+C),Copier en LaTeX (Ctrl+Maj+C)
-LATEX_COPIED,LaTeX copied,LaTeX copié
-CONVERT_FROM,From,De
-CONVERT_TO,To,Vers
-TIP_NEGATE,Change sign (±),Changer de signe (±)
-TIP_NEXT,Next slot (→): next argument or leave the fraction / root / exponent,Case suivante (→) : argument suivant ou sortie de la fraction / racine / puissance
-TIP_FRAC,Fraction a⁄b (F),Fraction a⁄b (F)
-TIP_NROOT,n-th root ⁿ√x,Racine n-ième ⁿ√x
-TIP_SD,Result as fraction ⇔ decimal,Résultat en fraction ⇔ décimal
-TIP_FX,All functions,Toutes les fonctions
-TIP_AND,Bitwise AND (&),ET bit à bit (&)
-TIP_OR,Bitwise OR (|),OU bit à bit (|)
-TIP_XOR,Bitwise XOR,OU exclusif bit à bit
-TIP_NOT,Bitwise NOT (~),NON bit à bit (~)
-TIP_SHL,Shift left (<),Décalage à gauche (<)
-TIP_SHR,Shift right (>),Décalage à droite (>)
-TIP_BASE,Next base: HEX → DEC → OCT → BIN,Base suivante : HEX → DEC → OCT → BIN
-TIP_SWAP,Swap units,Inverser les unités
-TIP_COPY,Copy the result (Enter),Copier le résultat (Entrée)
-KNOWLEDGE,Basic knowledge,Connaissances de base
-KNOWLEDGE_TOOLTIP,"Basic knowledge: squares, primes, π, formulas… (K)","Connaissances de base : carrés, nombres premiers, π, formules… (K)"
-INSERTED,Inserted,Inséré
+keys,en,fr,es,de,it,pt
+APP_TITLE,Calculator,Calculatrice,Calculadora,Rechner,Calcolatrice,Calculadora
+MODE_SIMPLE,Basic,Simple,Básica,Einfach,Base,Básica
+MODE_SCIENTIFIC,Scientific,Scientifique,Científica,Wissenschaftlich,Scientifica,Científica
+MODE_PROGRAMMER,Programmer,Programmeur,Programador,Programmierer,Programmatore,Programador
+MODE_CONVERTER,Converter,Convertisseur,Conversor,Umrechner,Convertitore,Conversor
+MODE_TOOLTIP,"Change mode (F7, Ctrl+1…4)","Changer de mode (F7, Ctrl+1…4)","Cambiar de modo (F7, Ctrl+1…4)","Modus wechseln (F7, Strg+1…4)","Cambia modalità (F7, Ctrl+1…4)","Mudar de modo (F7, Ctrl+1…4)"
+HISTORY,History,Historique,Historial,Verlauf,Cronologia,Histórico
+HISTORY_TOOLTIP,History (H),Historique (H),Historial (H),Verlauf (H),Cronologia (H),Histórico (H)
+HISTORY_EMPTY,No calculations yet,Aucun calcul pour l'instant,Todavía no hay cálculos,Noch keine Berechnungen,Nessun calcolo per ora,Ainda não há cálculos
+CLEAR_HISTORY,Clear history,Effacer l'historique,Borrar el historial,Verlauf löschen,Cancella la cronologia,Limpar o histórico
+MENU_TOOLTIP,Settings (F4),Réglages (F4),Ajustes (F4),Einstellungen (F4),Impostazioni (F4),Definições (F4)
+SETTINGS,Settings,Réglages,Ajustes,Einstellungen,Impostazioni,Definições
+FUNCTIONS,Functions,Fonctions,Funciones,Funktionen,Funzioni,Funções
+KNOWLEDGE,Basic knowledge,Connaissances de base,Conocimientos básicos,Grundwissen,Nozioni di base,Conhecimentos básicos
+HELP,Help,Aide,Ayuda,Hilfe,Aiuto,Ajuda
+SELF_TEST,On-screen tests,Tests à l'écran,Pruebas en pantalla,Tests auf dem Gerät,Test sullo schermo,Testes no ecrã
+CLOSE,Close,Fermer,Cerrar,Schließen,Chiudi,Fechar
+BACK,Back,Retour,Atrás,Zurück,Indietro,Voltar
+COPY,Copy result,Copier le résultat,Copiar el resultado,Ergebnis kopieren,Copia il risultato,Copiar o resultado
+COPY_LATEX,Copy as LaTeX,Copier en LaTeX,Copiar como LaTeX,Als LaTeX kopieren,Copia come LaTeX,Copiar como LaTeX
+PASTE,Paste,Coller,Pegar,Einfügen,Incolla,Colar
+COPIED,Copied,Copié,Copiado,Kopiert,Copiato,Copiado
+LATEX_COPIED,LaTeX copied,LaTeX copié,LaTeX copiado,LaTeX kopiert,LaTeX copiato,LaTeX copiado
+PASTED,Pasted,Collé,Pegado,Eingefügt,Incollato,Colado
+INSERTED,Inserted,Inséré,Insertado,Eingefügt,Inserito,Inserido
+ANGLE_TOOLTIP,Angle unit: tap to switch (F2),Unité d'angle : touchez pour changer (F2),Unidad de ángulo: toca para cambiar (F2),Winkeleinheit: zum Wechseln tippen (F2),Unità angolare: tocca per cambiare (F2),Unidade de ângulo: toque para mudar (F2)
+DISPLAY_TOOLTIP,Tap to copy or paste,Touchez pour copier ou coller,Toca para copiar o pegar,Tippen zum Kopieren oder Einfügen,Tocca per copiare o incollare,Toque para copiar ou colar
+ERR_SYNTAX,Syntax error,Erreur de syntaxe,Error de sintaxis,Syntaxfehler,Errore di sintassi,Erro de sintaxe
+ERR_DIV_ZERO,Division by zero,Division par zéro,División por cero,Division durch null,Divisione per zero,Divisão por zero
+ERR_DOMAIN,Math error,Erreur mathématique,Error matemático,Mathematischer Fehler,Errore matematico,Erro matemático
+ERR_OVERFLOW,Overflow,Dépassement de capacité,Desbordamiento,Überlauf,Overflow,Excesso de capacidade
+SECTION_APPEARANCE,Appearance,Apparence,Apariencia,Darstellung,Aspetto,Aparência
+THEME,Theme,Thème,Tema,Design,Tema,Tema
+THEME_AUTO,Auto,Auto,Auto,Auto,Auto,Auto
+THEME_LIGHT,Light,Clair,Claro,Hell,Chiaro,Claro
+THEME_DARK,Dark,Sombre,Oscuro,Dunkel,Scuro,Escuro
+LANGUAGE,Language,Langue,Idioma,Sprache,Lingua,Idioma
+SECTION_CALCULATION,Calculation,Calcul,Cálculo,Berechnung,Calcolo,Cálculo
+ANGLE_UNIT,Angle unit,Unité d'angle,Unidad de ángulo,Winkeleinheit,Unità angolare,Unidade de ângulo
+DEGREES,Degrees,Degrés,Grados,Grad,Gradi,Graus
+RADIANS,Radians,Radians,Radianes,Bogenmaß,Radianti,Radianos
+PRECISION,Decimal places,Décimales,Decimales,Nachkommastellen,Decimali,Casas decimais
+PREC_AUTO,Auto,Auto,Auto,Auto,Auto,Auto
+SECTION_FEEDBACK,Sound & touch,Son et toucher,Sonido y tacto,Ton & Haptik,Suono e tatto,Som e toque
+SOUND,Key sounds,Sons des touches,Sonidos de las teclas,Tastentöne,Suoni dei tasti,Sons das teclas
+VIBRATION,Vibration,Vibration,Vibración,Vibration,Vibrazione,Vibração
+VIBRATION_MOBILE_ONLY,Vibration (mobile),Vibration (mobile),Vibración (móvil),Vibration (Mobilgerät),Vibrazione (mobile),Vibração (telemóvel)
+SECTION_MORE,More,Plus,Más,Mehr,Altro,Mais
+ABOUT_TEXT,Version %s · made with Godot %s,Version %s · créée avec Godot %s,Versión %s · hecha con Godot %s,Version %s · erstellt mit Godot %s,Versione %s · creata con Godot %s,Versão %s · feita com Godot %s
+SELF_TEST_HINT,"Checks the math engine, the input rules and the translations on this device.","Vérifie le moteur de calcul, les règles de saisie et les traductions sur cet appareil.","Comprueba el motor de cálculo, las reglas de entrada y las traducciones en este dispositivo.","Prüft Rechenkern, Eingaberegeln und Übersetzungen auf diesem Gerät.","Verifica il motore di calcolo, le regole di inserimento e le traduzioni su questo dispositivo.","Verifica o motor de cálculo, as regras de introdução e as traduções neste dispositivo."
+SELF_TEST_RUN,Run tests,Lancer les tests,Ejecutar pruebas,Tests starten,Avvia i test,Executar testes
+SELF_TEST_RESULT,%d / %d tests passed,%d / %d tests réussis,%d / %d pruebas superadas,%d / %d Tests bestanden,%d / %d test superati,%d / %d testes aprovados
+SELF_TEST_FAILURES,Failures,Échecs,Fallos,Fehler,Errori,Falhas
+DEVICE,Device,Appareil,Dispositivo,Gerät,Dispositivo,Dispositivo
+TEST_SOUND,Sound,Son,Sonido,Ton,Suono,Som
+TEST_VIBRATION,Vibration,Vibration,Vibración,Vibration,Vibrazione,Vibração
+FX_TRIG,Trigonometry,Trigonométrie,Trigonometría,Trigonometrie,Trigonometria,Trigonometria
+FX_POWERS,Powers & roots,Puissances et racines,Potencias y raíces,Potenzen & Wurzeln,Potenze e radici,Potências e raízes
+FX_LOG,Logarithms,Logarithmes,Logaritmos,Logarithmen,Logaritmi,Logaritmos
+FX_COMBI,Combinatorics & integers,Dénombrement et entiers,Combinatoria y enteros,Kombinatorik & ganze Zahlen,Combinatoria e interi,Combinatória e inteiros
+FX_NUMBERS,Numbers,Nombres,Números,Zahlen,Numeri,Números
+FX_RANDOM,Random,Hasard,Azar,Zufall,Casuale,Aleatório
+FX_CONSTANTS,Constants,Constantes,Constantes,Konstanten,Costanti,Constantes
+FX_MEMORY,Memory,Mémoire,Memoria,Speicher,Memoria,Memória
+TIP_SECOND,Second functions (Tab),Fonctions secondes (Tab),Segundas funciones (Tab),Zweitfunktionen (Tab),Funzioni seconde (Tab),Segundas funções (Tab)
+TIP_PI,Pi (P),Pi (P),Pi (P),Pi (P),Pi greco (P),Pi (P)
+TIP_E,Euler's number e (E),Nombre d'Euler e (E),Número de Euler e (E),Eulersche Zahl e (E),Numero di Nepero e (E),Número de Euler e (E)
+TIP_LPAREN,Open parenthesis,Parenthèse ouvrante,Abrir paréntesis,Klammer auf,Parentesi aperta,Abrir parêntese
+TIP_RPAREN,Close parenthesis,Parenthèse fermante,Cerrar paréntesis,Klammer zu,Parentesi chiusa,Fechar parêntese
+TIP_SIN,Sine (S),Sinus (S),Seno (S),Sinus (S),Seno (S),Seno (S)
+TIP_COS,Cosine (C),Cosinus (C),Coseno (C),Kosinus (C),Coseno (C),Cosseno (C)
+TIP_TAN,Tangent (T),Tangente (T),Tangente (T),Tangens (T),Tangente (T),Tangente (T)
+TIP_ASIN,Arcsine,Arc sinus,Arcoseno,Arkussinus,Arcoseno,Arco-seno
+TIP_ACOS,Arccosine,Arc cosinus,Arcocoseno,Arkuskosinus,Arcocoseno,Arco-cosseno
+TIP_ATAN,Arctangent,Arc tangente,Arcotangente,Arkustangens,Arcotangente,Arco-tangente
+TIP_LN,Natural logarithm (L),Logarithme népérien (L),Logaritmo natural (L),Natürlicher Logarithmus (L),Logaritmo naturale (L),Logaritmo natural (L)
+TIP_LOG,Base-10 logarithm (G),Logarithme décimal (G),Logaritmo decimal (G),Zehnerlogarithmus (G),Logaritmo decimale (G),Logaritmo decimal (G)
+TIP_EXP,Exponential eˣ,Exponentielle eˣ,Exponencial eˣ,Exponentialfunktion eˣ,Esponenziale eˣ,Exponencial eˣ
+TIP_POW10,Power of ten 10ˣ,Puissance de dix 10ˣ,Potencia de diez 10ˣ,Zehnerpotenz 10ˣ,Potenza di dieci 10ˣ,Potência de dez 10ˣ
+TIP_SQUARE,Square,Carré,Cuadrado,Quadrat,Quadrato,Quadrado
+TIP_CUBE,Cube,Cube,Cubo,Kubik,Cubo,Cubo
+TIP_POWER,Power (^),Puissance (^),Potencia (^),Potenz (^),Potenza (^),Potência (^)
+TIP_MOD,Modulo,Modulo,Módulo,Modulo,Modulo,Módulo
+TIP_SQRT,Square root (R),Racine carrée (R),Raíz cuadrada (R),Quadratwurzel (R),Radice quadrata (R),Raiz quadrada (R)
+TIP_CBRT,Cube root,Racine cubique,Raíz cúbica,Kubikwurzel,Radice cubica,Raiz cúbica
+TIP_NROOT,n-th root ⁿ√x,Racine n-ième ⁿ√x,Raíz n-ésima ⁿ√x,n-te Wurzel ⁿ√x,Radice n-esima ⁿ√x,Raiz de índice n ⁿ√x
+TIP_FACT,Factorial (!),Factorielle (!),Factorial (!),Fakultät (!),Fattoriale (!),Fatorial (!)
+TIP_ABS,Absolute value,Valeur absolue,Valor absoluto,Betrag,Valore assoluto,Valor absoluto
+TIP_INV,Inverse 1/x,Inverse 1/x,Inverso 1/x,Kehrwert 1/x,Inverso 1/x,Inverso 1/x
+TIP_RAND,Random number between 0 and 1,Nombre aléatoire entre 0 et 1,Número aleatorio entre 0 y 1,Zufallszahl zwischen 0 und 1,Numero casuale tra 0 e 1,Número aleatório entre 0 e 1
+TIP_MC,Memory clear,Effacer la mémoire,Borrar memoria,Speicher löschen,Cancella memoria,Limpar memória
+TIP_MR,Memory recall,Rappel mémoire,Recuperar memoria,Speicher abrufen,Richiama memoria,Recuperar memória
+TIP_MPLUS,Add to memory,Ajouter à la mémoire,Sumar a la memoria,Zum Speicher addieren,Aggiungi alla memoria,Somar à memória
+TIP_MMINUS,Subtract from memory,Soustraire de la mémoire,Restar de la memoria,Vom Speicher abziehen,Sottrai dalla memoria,Subtrair da memória
+TIP_PERCENT,Percent (%),Pourcentage (%),Porcentaje (%),Prozent (%),Percentuale (%),Percentagem (%)
+TIP_BACKSPACE,Delete (Backspace),Effacer (Retour arrière),Borrar (Retroceso),Löschen (Rücktaste),Cancella (Backspace),Apagar (Retrocesso)
+TIP_CLEAR,Clear all (Esc),Tout effacer (Échap),Borrar todo (Esc),Alles löschen (Esc),Cancella tutto (Esc),Limpar tudo (Esc)
+TIP_EXPONENT,Scientific notation ×10ⁿ,Notation scientifique ×10ⁿ,Notación científica ×10ⁿ,Wissenschaftliche Notation ×10ⁿ,Notazione scientifica ×10ⁿ,Notação científica ×10ⁿ
+TIP_ANS,Last answer (A),Dernier résultat (A),Último resultado (A),Letztes Ergebnis (A),Ultimo risultato (A),Último resultado (A)
+TIP_EQUALS,Calculate (Enter),Calculer (Entrée),Calcular (Intro),Berechnen (Eingabe),Calcola (Invio),Calcular (Enter)
+TIP_DECIMAL,Decimal point,Virgule,Coma decimal,Komma,Virgola,Vírgula decimal
+TIP_ADD,Add,Addition,Sumar,Addieren,Addizione,Somar
+TIP_SUB,Subtract,Soustraction,Restar,Subtrahieren,Sottrazione,Subtrair
+TIP_MUL,Multiply,Multiplication,Multiplicar,Multiplizieren,Moltiplicazione,Multiplicar
+TIP_DIV,Divide,Division,Dividir,Dividieren,Divisione,Dividir
+TIP_NEGATE,Change sign,Changer de signe,Cambiar el signo,Vorzeichen wechseln,Cambia segno,Mudar o sinal
+TIP_NEXT,Next box (→),Case suivante (→),Casilla siguiente (→),Nächstes Feld (→),Casella successiva (→),Caixa seguinte (→)
+TIP_FRAC,Fraction (F),Fraction (F),Fracción (F),Bruch (F),Frazione (F),Fração (F)
+TIP_SD,Fraction ⇄ decimal,Fraction ⇄ décimal,Fracción ⇄ decimal,Bruch ⇄ Dezimalzahl,Frazione ⇄ decimale,Fração ⇄ decimal
+TIP_FX,All functions and memory,Toutes les fonctions et la mémoire,Todas las funciones y la memoria,Alle Funktionen und Speicher,Tutte le funzioni e la memoria,Todas as funções e a memória
+TIP_AND,Bitwise AND (&),ET bit à bit (&),AND bit a bit (&),Bitweises UND (&),AND bit a bit (&),AND bit a bit (&)
+TIP_OR,Bitwise OR (|),OU bit à bit (|),OR bit a bit (|),Bitweises ODER (|),OR bit a bit (|),OR bit a bit (|)
+TIP_XOR,Bitwise XOR,OU exclusif bit à bit,XOR bit a bit,Bitweises XOR,XOR bit a bit,XOR bit a bit
+TIP_NOT,Bitwise NOT (~),NON bit à bit (~),NOT bit a bit (~),Bitweises NICHT (~),NOT bit a bit (~),NOT bit a bit (~)
+TIP_SHL,Shift left (<),Décalage à gauche (<),Desplazar a la izquierda (<),Linksverschiebung (<),Scorrimento a sinistra (<),Deslocar à esquerda (<)
+TIP_SHR,Shift right (>),Décalage à droite (>),Desplazar a la derecha (>),Rechtsverschiebung (>),Scorrimento a destra (>),Deslocar à direita (>)
+TIP_BASE,Next base,Base suivante,Base siguiente,Nächste Basis,Base successiva,Base seguinte
+TIP_SWAP,Swap units,Inverser les unités,Intercambiar unidades,Einheiten tauschen,Inverti le unità,Trocar unidades
+TIP_COPY,Copy the result (Enter),Copier le résultat (Entrée),Copiar el resultado (Intro),Ergebnis kopieren (Eingabe),Copia il risultato (Invio),Copiar o resultado (Enter)
+HELP_MODES_T,Modes,Modes,Modos,Modi,Modalità,Modos
+HELP_MODES,"Tap the mode name at the top left to switch between Basic, Scientific, Programmer and Converter.","Touchez le nom du mode en haut à gauche pour passer de Simple à Scientifique, Programmeur ou Convertisseur.","Toca el nombre del modo arriba a la izquierda para cambiar entre Básica, Científica, Programador y Conversor.","Tippe oben links auf den Modusnamen, um zwischen Einfach, Wissenschaftlich, Programmierer und Umrechner zu wechseln.","Tocca il nome della modalità in alto a sinistra per passare tra Base, Scientifica, Programmatore e Convertitore.","Toque no nome do modo no canto superior esquerdo para alternar entre Básica, Científica, Programador e Conversor."
+HELP_TEMPLATES_T,"Fractions, roots and powers","Fractions, racines et puissances","Fracciones, raíces y potencias","Brüche, Wurzeln und Potenzen","Frazioni, radici e potenze","Frações, raízes e potências"
+HELP_TEMPLATES,"a⁄b, √, xʸ and the f(x) functions show empty boxes. Type a value, then → to go to the next box or to leave it.","a⁄b, √, xʸ et les fonctions f(x) affichent des cases vides. Tapez une valeur, puis → pour passer à la case suivante ou en sortir.","a⁄b, √, xʸ y las funciones f(x) muestran casillas vacías. Escribe un valor y pulsa → para ir a la siguiente casilla o salir.","a⁄b, √, xʸ und die f(x)-Funktionen zeigen leere Felder. Gib einen Wert ein und drücke →, um zum nächsten Feld zu springen oder es zu verlassen.","a⁄b, √, xʸ e le funzioni f(x) mostrano caselle vuote. Digita un valore, poi → per passare alla casella successiva o uscirne.","a⁄b, √, xʸ e as funções f(x) mostram caixas vazias. Escreva um valor e depois → para passar à caixa seguinte ou sair dela."
+HELP_SECOND_T,Second functions,Fonctions secondes,Segundas funciones,Zweitfunktionen,Funzioni seconde,Segundas funções
+HELP_SECOND,"2nd switches the keys to their other function: sin⁻¹, eˣ, ⁿ√x, |x|, %, x!, EXP…","2nd affiche l'autre fonction des touches : sin⁻¹, eˣ, ⁿ√x, |x|, %, x!, EXP…","2nd cambia las teclas a su otra función: sin⁻¹, eˣ, ⁿ√x, |x|, %, x!, EXP…","2nd schaltet die Tasten auf ihre Zweitfunktion um: sin⁻¹, eˣ, ⁿ√x, |x|, %, x!, EXP…","2nd passa i tasti alla loro seconda funzione: sin⁻¹, eˣ, ⁿ√x, |x|, %, x!, EXP…","2nd muda as teclas para a outra função: sin⁻¹, eˣ, ⁿ√x, |x|, %, x!, EXP…"
+HELP_DISPLAY_T,Display and results,Affichage et résultats,Pantalla y resultados,Anzeige und Ergebnisse,Display e risultati,Ecrã e resultados
+HELP_DISPLAY,"Tap DEG / RAD to change the angle unit. Tap the result to copy it, copy it as LaTeX or paste a calculation (LaTeX too). ⇄ shows a fraction or a decimal; Ans reuses the last result.","Touchez DEG / RAD pour changer l'unité d'angle. Touchez le résultat pour le copier, le copier en LaTeX ou coller un calcul (LaTeX aussi). ⇄ affiche une fraction ou un décimal ; Ans reprend le dernier résultat.","Toca DEG / RAD para cambiar la unidad de ángulo. Toca el resultado para copiarlo, copiarlo como LaTeX o pegar un cálculo (también LaTeX). ⇄ muestra fracción o decimal; Ans reutiliza el último resultado.","Tippe auf DEG / RAD, um die Winkeleinheit zu ändern. Tippe auf das Ergebnis, um es zu kopieren, als LaTeX zu kopieren oder eine Rechnung einzufügen (auch LaTeX). ⇄ zeigt Bruch oder Dezimalzahl; Ans nutzt das letzte Ergebnis.","Tocca DEG / RAD per cambiare l'unità angolare. Tocca il risultato per copiarlo, copiarlo come LaTeX o incollare un calcolo (anche LaTeX). ⇄ mostra frazione o decimale; Ans riusa l'ultimo risultato.","Toque em DEG / RAD para mudar a unidade de ângulo. Toque no resultado para o copiar, copiar como LaTeX ou colar um cálculo (também LaTeX). ⇄ mostra fração ou decimal; Ans reutiliza o último resultado."
+HELP_TOOLS_T,History and functions,Historique et fonctions,Historial y funciones,Verlauf und Funktionen,Cronologia e funzioni,Histórico e funções
+HELP_TOOLS,"The clock icon shows previous calculations: tap one to reuse it. f(x) lists every function, the constants and the memory (M+, M−, MR, MC).","L'icône horloge affiche les calculs précédents : touchez-en un pour le reprendre. f(x) liste toutes les fonctions, les constantes et la mémoire (M+, M−, MR, MC).","El icono del reloj muestra los cálculos anteriores: toca uno para reutilizarlo. f(x) muestra todas las funciones, las constantes y la memoria (M+, M−, MR, MC).","Das Uhr-Symbol zeigt frühere Rechnungen: Tippe auf eine, um sie wiederzuverwenden. f(x) listet alle Funktionen, Konstanten und den Speicher (M+, M−, MR, MC).","L'icona dell'orologio mostra i calcoli precedenti: toccane uno per riusarlo. f(x) elenca tutte le funzioni, le costanti e la memoria (M+, M−, MR, MC).","O ícone do relógio mostra os cálculos anteriores: toque num para o reutilizar. f(x) lista todas as funções, as constantes e a memória (M+, M−, MR, MC)."
+HELP_KEYBOARD_T,Keyboard shortcuts,Raccourcis clavier,Atajos de teclado,Tastenkürzel,Scorciatoie da tastiera,Atalhos de teclado
+SC_DIGITS,Digits and operators (numeric keypad too),Chiffres et opérations (pavé numérique aussi),Dígitos y operadores (también teclado numérico),Ziffern und Operatoren (auch Ziffernblock),Cifre e operatori (anche tastierino numerico),Algarismos e operadores (também teclado numérico)
+SC_ENTER,Calculate,Calculer,Calcular,Berechnen,Calcola,Calcular
+SC_EDIT,Delete · clear all,Effacer · tout effacer,Borrar · borrar todo,Löschen · alles löschen,Cancella · cancella tutto,Apagar · limpar tudo
+SC_NEXT,"Next box of a fraction, root or power","Case suivante d'une fraction, racine ou puissance","Siguiente casilla de una fracción, raíz o potencia","Nächstes Feld eines Bruchs, einer Wurzel oder Potenz","Casella successiva di frazione, radice o potenza","Caixa seguinte de uma fração, raiz ou potência"
+SC_FUNCTIONS,"sin, cos, tan, ln, log, √, fraction","sin, cos, tan, ln, log, √, fraction","sin, cos, tan, ln, log, √, fracción","sin, cos, tan, ln, log, √, Bruch","sin, cos, tan, ln, log, √, frazione","sin, cos, tan, ln, log, √, fração"
+SC_PANELS,History · basic knowledge · settings,Historique · connaissances de base · réglages,Historial · conocimientos básicos · ajustes,Verlauf · Grundwissen · Einstellungen,Cronologia · nozioni di base · impostazioni,Histórico · conhecimentos básicos · definições
+SC_MODES,Switch mode,Changer de mode,Cambiar de modo,Modus wechseln,Cambia modalità,Mudar de modo
+SC_COPY,Copy result · copy as LaTeX · paste,Copier · copier en LaTeX · coller,Copiar · copiar como LaTeX · pegar,Kopieren · als LaTeX kopieren · einfügen,Copia · copia come LaTeX · incolla,Copiar · copiar como LaTeX · colar
+SC_ANGLE,Degrees / radians,Degrés / radians,Grados / radianes,Grad / Bogenmaß,Gradi / radianti,Graus / radianos
+KB_SQUARES,Perfect squares,Carrés parfaits,Cuadrados perfectos,Quadratzahlen,Quadrati perfetti,Quadrados perfeitos
+KB_CUBES,Perfect cubes,Cubes parfaits,Cubos perfectos,Kubikzahlen,Cubi perfetti,Cubos perfeitos
+KB_PRIMES,Prime numbers under 200,Nombres premiers inférieurs à 200,Números primos menores que 200,Primzahlen unter 200,Numeri primi minori di 200,Números primos menores que 200
+KB_PI,Pi (π),Pi (π),Pi (π),Pi (π),Pi greco (π),Pi (π)
+KB_CONSTANTS,Useful constants,Constantes utiles,Constantes útiles,Nützliche Konstanten,Costanti utili,Constantes úteis
+KB_POWERS2,Powers of 2,Puissances de 2,Potencias de 2,Zweierpotenzen,Potenze di 2,Potências de 2
+KB_FACTORIALS,Factorials,Factorielles,Factoriales,Fakultäten,Fattoriali,Fatoriais
+KB_TRIG,Trigonometric values,Valeurs trigonométriques,Valores trigonométricos,Trigonometrische Werte,Valori trigonometrici,Valores trigonométricos
+KB_ALGEBRA,Algebra,Algèbre,Álgebra,Algebra,Algebra,Álgebra
+KB_GEOMETRY,Geometry,Géométrie,Geometría,Geometrie,Geometria,Geometria
+KB_DIVISIBILITY,Divisibility rules,Critères de divisibilité,Criterios de divisibilidad,Teilbarkeitsregeln,Criteri di divisibilità,Critérios de divisibilidade
+KB_PREFIXES,Unit prefixes,Préfixes des unités,Prefijos de unidades,Einheitenvorsätze,Prefissi delle unità,Prefixos das unidades
+KB_NOTE_SQUARES,n² = n × n. Tap a value to use it.,n² = n × n. Touchez une valeur pour l'utiliser.,n² = n × n. Toca un valor para usarlo.,"n² = n × n. Tippe auf einen Wert, um ihn zu verwenden.",n² = n × n. Tocca un valore per usarlo.,n² = n × n. Toque num valor para o usar.
+KB_NOTE_PRIMES,A prime number has exactly two divisors: 1 and itself.,Un nombre premier a exactement deux diviseurs : 1 et lui-même.,Un número primo tiene exactamente dos divisores: 1 y él mismo.,Eine Primzahl hat genau zwei Teiler: 1 und sich selbst.,Un numero primo ha esattamente due divisori: 1 e se stesso.,Um número primo tem exatamente dois divisores: 1 e ele próprio.
+KB_NOTE_PI,Ratio of a circle's circumference to its diameter. Mnemonic (letters per word = digits):,Rapport entre le périmètre d'un cercle et son diamètre. Moyen mnémotechnique (lettres par mot = chiffres) :,Razón entre la longitud de una circunferencia y su diámetro. Regla mnemotécnica (letras por palabra = cifras):,Verhältnis von Kreisumfang zu Durchmesser. Merksatz (Buchstaben pro Wort = Ziffern):,Rapporto tra circonferenza e diametro. Frase mnemonica (lettere per parola = cifre):,Razão entre o perímetro de uma circunferência e o seu diâmetro. Mnemónica (letras por palavra = algarismos):
+KB_PI_MNEMONIC,"How I want a drink, alcoholic of course, after the heavy lectures involving quantum mechanics.","Que j'aime à faire apprendre un nombre utile aux sages ! Immortel Archimède, artiste ingénieur…","Soy y seré a todos definible, mi nombre tengo que daros, cociente diametral siempre inmedible soy de los redondos aros.","Wie, o dies π macht ernstlich so vielen viele Müh! Lernt immerhin, Jünglinge, leichte Verselein…",Ave o Roma o madre gagliarda di latine virtù che tanto luminoso splendore prodiga spargesti con la tua saggezza.,Sou o medo e temor constante do menino vadio…
+KB_NOTE_FACTORIALS,"n! = 1 × 2 × … × n, and 0! = 1.","n! = 1 × 2 × … × n, et 0! = 1.","n! = 1 × 2 × … × n, y 0! = 1.","n! = 1 × 2 × … × n, und 0! = 1.","n! = 1 × 2 × … × n, e 0! = 1.","n! = 1 × 2 × … × n, e 0! = 1."
+KB_C_PI,Pi,Pi,Pi,Kreiszahl Pi,Pi greco,Pi
+KB_C_E,Euler's number,Nombre d'Euler,Número de Euler,Eulersche Zahl,Numero di Nepero,Número de Euler
+KB_C_PHI,Golden ratio,Nombre d'or,Número áureo,Goldener Schnitt,Sezione aurea,Número de ouro
+KB_C_SQRT2,Square root of 2,Racine de 2,Raíz de 2,Wurzel aus 2,Radice di 2,Raiz de 2
+KB_C_SQRT3,Square root of 3,Racine de 3,Raíz de 3,Wurzel aus 3,Radice di 3,Raiz de 3
+KB_C_LN2,Natural log of 2,Logarithme népérien de 2,Logaritmo natural de 2,Natürlicher Logarithmus von 2,Logaritmo naturale di 2,Logaritmo natural de 2
+KB_F_SUM2,Square of a sum,Carré d'une somme,Cuadrado de una suma,Quadrat einer Summe,Quadrato di una somma,Quadrado de uma soma
+KB_F_DIFF2,Square of a difference,Carré d'une différence,Cuadrado de una diferencia,Quadrat einer Differenz,Quadrato di una differenza,Quadrado de uma diferença
+KB_F_SQUARES,Difference of squares,Différence de deux carrés,Diferencia de cuadrados,Differenz zweier Quadrate,Differenza di quadrati,Diferença de quadrados
+KB_F_DELTA,Discriminant of ax² + bx + c,Discriminant de ax² + bx + c,Discriminante de ax² + bx + c,Diskriminante von ax² + bx + c,Discriminante di ax² + bx + c,Discriminante de ax² + bx + c
+KB_F_ROOTS,Roots of ax² + bx + c = 0,Solutions de ax² + bx + c = 0,Soluciones de ax² + bx + c = 0,Lösungen von ax² + bx + c = 0,Soluzioni di ax² + bx + c = 0,Soluções de ax² + bx + c = 0
+KB_F_POWERS,Product of powers,Produit de puissances,Producto de potencias,Produkt von Potenzen,Prodotto di potenze,Produto de potências
+KB_F_PYTHAGOREAN_ID,Pythagorean identity,Identité de Pythagore,Identidad pitagórica,Trigonometrischer Pythagoras,Identità pitagorica,Identidade pitagórica
+KB_F_PYTHAGORAS,Pythagoras (right triangle),Pythagore (triangle rectangle),Pitágoras (triángulo rectángulo),Satz des Pythagoras (rechtwinkliges Dreieck),Pitagora (triangolo rettangolo),Pitágoras (triângulo retângulo)
+KB_F_DISC,Area of a disc,Aire d'un disque,Área de un círculo,Kreisfläche,Area del cerchio,Área de um círculo
+KB_F_CIRCLE,Circumference of a circle,Périmètre d'un cercle,Longitud de la circunferencia,Kreisumfang,Circonferenza,Perímetro de uma circunferência
+KB_F_TRIANGLE,Area of a triangle,Aire d'un triangle,Área de un triángulo,Dreiecksfläche,Area del triangolo,Área de um triângulo
+KB_F_RECTANGLE,Area of a rectangle,Aire d'un rectangle,Área de un rectángulo,Rechtecksfläche,Area del rettangolo,Área de um retângulo
+KB_F_SPHERE,Volume of a sphere,Volume d'une boule,Volumen de una esfera,Kugelvolumen,Volume della sfera,Volume de uma esfera
+KB_F_CYLINDER,Volume of a cylinder,Volume d'un cylindre,Volumen de un cilindro,Zylindervolumen,Volume del cilindro,Volume de um cilindro
+KB_DIV_FORMAT,Divisible by %s if %s.,Divisible par %s si %s.,Divisible por %s si %s.,"Teilbar durch %s, wenn %s.",Divisibile per %s se %s.,Divisível por %s se %s.
+KB_DIV_2,"the last digit is even (0, 2, 4, 6, 8)","le dernier chiffre est pair (0, 2, 4, 6, 8)","la última cifra es par (0, 2, 4, 6, 8)","die letzte Ziffer gerade ist (0, 2, 4, 6, 8)","l'ultima cifra è pari (0, 2, 4, 6, 8)","o último algarismo é par (0, 2, 4, 6, 8)"
+KB_DIV_3,the sum of the digits is divisible by 3,la somme des chiffres est divisible par 3,la suma de las cifras es divisible por 3,die Quersumme durch 3 teilbar ist,la somma delle cifre è divisibile per 3,a soma dos algarismos é divisível por 3
+KB_DIV_4,the last two digits form a multiple of 4,les deux derniers chiffres forment un multiple de 4,las dos últimas cifras forman un múltiplo de 4,die letzten zwei Ziffern eine durch 4 teilbare Zahl bilden,le ultime due cifre formano un multiplo di 4,os dois últimos algarismos formam um múltiplo de 4
+KB_DIV_5,the last digit is 0 or 5,le dernier chiffre est 0 ou 5,la última cifra es 0 o 5,die letzte Ziffer 0 oder 5 ist,l'ultima cifra è 0 o 5,o último algarismo é 0 ou 5
+KB_DIV_9,the sum of the digits is divisible by 9,la somme des chiffres est divisible par 9,la suma de las cifras es divisible por 9,die Quersumme durch 9 teilbar ist,la somma delle cifre è divisibile per 9,a soma dos algarismos é divisível por 9
+KB_DIV_10,the last digit is 0,le dernier chiffre est 0,la última cifra es 0,die letzte Ziffer 0 ist,l'ultima cifra è 0,o último algarismo é 0
+KB_DIV_11,the alternating sum of the digits is divisible by 11,la somme alternée des chiffres est divisible par 11,la suma alterna de las cifras es divisible por 11,die alternierende Quersumme durch 11 teilbar ist,la somma alternata delle cifre è divisibile per 11,a soma alternada dos algarismos é divisível por 11
+CAT_LENGTH,Length,Longueur,Longitud,Länge,Lunghezza,Comprimento
+CAT_MASS,Mass,Masse,Masa,Masse,Massa,Massa
+CAT_TEMPERATURE,Temperature,Température,Temperatura,Temperatur,Temperatura,Temperatura
+CAT_AREA,Area,Surface,Superficie,Fläche,Superficie,Área
+CAT_VOLUME,Volume,Volume,Volumen,Volumen,Volume,Volume
+CAT_SPEED,Speed,Vitesse,Velocidad,Geschwindigkeit,Velocità,Velocidade
+CAT_TIME,Time,Temps,Tiempo,Zeit,Tempo,Tempo
+CAT_DATA,Data,Données,Datos,Daten,Dati,Dados
+CAT_ANGLE,Angle,Angle,Ángulo,Winkel,Angolo,Ângulo
+CAT_ENERGY,Energy,Énergie,Energía,Energie,Energia,Energia
+CAT_PRESSURE,Pressure,Pression,Presión,Druck,Pressione,Pressão
+U_MM,Millimeter,Millimètre,Milímetro,Millimeter,Millimetro,Milímetro
+U_CM,Centimeter,Centimètre,Centímetro,Zentimeter,Centimetro,Centímetro
+U_M,Meter,Mètre,Metro,Meter,Metro,Metro
+U_KM,Kilometer,Kilomètre,Kilómetro,Kilometer,Chilometro,Quilómetro
+U_IN,Inch,Pouce,Pulgada,Zoll,Pollice,Polegada
+U_FT,Foot,Pied,Pie,Fuß,Piede,Pé
+U_YD,Yard,Yard,Yarda,Yard,Iarda,Jarda
+U_MI,Mile,Mile,Milla,Meile,Miglio,Milha
+U_NMI,Nautical mile,Mille marin,Milla náutica,Seemeile,Miglio nautico,Milha náutica
+U_MG,Milligram,Milligramme,Miligramo,Milligramm,Milligrammo,Miligrama
+U_G,Gram,Gramme,Gramo,Gramm,Grammo,Grama
+U_KG,Kilogram,Kilogramme,Kilogramo,Kilogramm,Chilogrammo,Quilograma
+U_T,Tonne,Tonne,Tonelada,Tonne,Tonnellata,Tonelada
+U_OZ,Ounce,Once,Onza,Unze,Oncia,Onça
+U_LB,Pound,Livre,Libra,Pfund,Libbra,Libra
+U_ST,Stone,Stone,Stone,Stone,Stone,Stone
+U_C,Celsius,Celsius,Celsius,Celsius,Celsius,Celsius
+U_F,Fahrenheit,Fahrenheit,Fahrenheit,Fahrenheit,Fahrenheit,Fahrenheit
+U_K,Kelvin,Kelvin,Kelvin,Kelvin,Kelvin,Kelvin
+U_MM2,Square millimeter,Millimètre carré,Milímetro cuadrado,Quadratmillimeter,Millimetro quadrato,Milímetro quadrado
+U_CM2,Square centimeter,Centimètre carré,Centímetro cuadrado,Quadratzentimeter,Centimetro quadrato,Centímetro quadrado
+U_M2,Square meter,Mètre carré,Metro cuadrado,Quadratmeter,Metro quadrato,Metro quadrado
+U_A,Are,Are,Área,Ar,Ara,Are
+U_HA,Hectare,Hectare,Hectárea,Hektar,Ettaro,Hectare
+U_KM2,Square kilometer,Kilomètre carré,Kilómetro cuadrado,Quadratkilometer,Chilometro quadrato,Quilómetro quadrado
+U_IN2,Square inch,Pouce carré,Pulgada cuadrada,Quadratzoll,Pollice quadrato,Polegada quadrada
+U_FT2,Square foot,Pied carré,Pie cuadrado,Quadratfuß,Piede quadrato,Pé quadrado
+U_AC,Acre,Acre,Acre,Acre,Acro,Acre
+U_ML,Milliliter,Millilitre,Mililitro,Milliliter,Millilitro,Mililitro
+U_CL,Centiliter,Centilitre,Centilitro,Zentiliter,Centilitro,Centilitro
+U_L,Liter,Litre,Litro,Liter,Litro,Litro
+U_M3,Cubic meter,Mètre cube,Metro cúbico,Kubikmeter,Metro cubo,Metro cúbico
+U_TSP,Teaspoon (US),Cuillère à café (US),Cucharadita (EE. UU.),Teelöffel (US),Cucchiaino (USA),Colher de chá (EUA)
+U_TBSP,Tablespoon (US),Cuillère à soupe (US),Cucharada (EE. UU.),Esslöffel (US),Cucchiaio (USA),Colher de sopa (EUA)
+U_CUP,Cup (US),Tasse (US),Taza (EE. UU.),Tasse (US),Tazza (USA),Chávena (EUA)
+U_FLOZ,Fluid ounce (US),Once liquide (US),Onza líquida (EE. UU.),Flüssigunze (US),Oncia liquida (USA),Onça líquida (EUA)
+U_GAL,Gallon (US),Gallon (US),Galón (EE. UU.),Gallone (US),Gallone (USA),Galão (EUA)
+U_GALUK,Gallon (UK),Gallon (UK),Galón (RU),Gallone (UK),Gallone (UK),Galão (RU)
+U_MPS,Meter per second,Mètre par seconde,Metro por segundo,Meter pro Sekunde,Metro al secondo,Metro por segundo
+U_KMH,Kilometer per hour,Kilomètre par heure,Kilómetro por hora,Kilometer pro Stunde,Chilometro orario,Quilómetro por hora
+U_MPH,Mile per hour,Mile par heure,Milla por hora,Meile pro Stunde,Miglio orario,Milha por hora
+U_KN,Knot,Nœud,Nudo,Knoten,Nodo,Nó
+U_FPS,Foot per second,Pied par seconde,Pie por segundo,Fuß pro Sekunde,Piede al secondo,Pé por segundo
+U_MSEC,Millisecond,Milliseconde,Milisegundo,Millisekunde,Millisecondo,Milissegundo
+U_S,Second,Seconde,Segundo,Sekunde,Secondo,Segundo
+U_MIN,Minute,Minute,Minuto,Minute,Minuto,Minuto
+U_H,Hour,Heure,Hora,Stunde,Ora,Hora
+U_D,Day,Jour,Día,Tag,Giorno,Dia
+U_WK,Week,Semaine,Semana,Woche,Settimana,Semana
+U_YR,Year (365.25 d),"Année (365,25 j)","Año (365,25 d)","Jahr (365,25 d)","Anno (365,25 g)","Ano (365,25 d)"
+U_BIT,Bit,Bit,Bit,Bit,Bit,Bit
+U_BYTE,Byte,Octet,Byte,Byte,Byte,Byte
+U_KB,Kilobyte,Kilooctet,Kilobyte,Kilobyte,Kilobyte,Kilobyte
+U_MB,Megabyte,Mégaoctet,Megabyte,Megabyte,Megabyte,Megabyte
+U_GB,Gigabyte,Gigaoctet,Gigabyte,Gigabyte,Gigabyte,Gigabyte
+U_TB,Terabyte,Téraoctet,Terabyte,Terabyte,Terabyte,Terabyte
+U_KIB,Kibibyte,Kibioctet,Kibibyte,Kibibyte,Kibibyte,Kibibyte
+U_MIB,Mebibyte,Mébioctet,Mebibyte,Mebibyte,Mebibyte,Mebibyte
+U_GIB,Gibibyte,Gibioctet,Gibibyte,Gibibyte,Gibibyte,Gibibyte
+U_DEG,Degree,Degré,Grado,Grad,Grado,Grau
+U_RAD,Radian,Radian,Radián,Radiant,Radiante,Radiano
+U_GRAD,Gradian,Grade,Gradián,Gon,Gradiente,Grado
+U_TURN,Turn,Tour,Vuelta,Umdrehung,Giro,Volta
+U_J,Joule,Joule,Julio,Joule,Joule,Joule
+U_KJ,Kilojoule,Kilojoule,Kilojulio,Kilojoule,Kilojoule,Quilojoule
+U_CAL,Calorie,Calorie,Caloría,Kalorie,Caloria,Caloria
+U_KCAL,Kilocalorie,Kilocalorie,Kilocaloría,Kilokalorie,Chilocaloria,Quilocaloria
+U_WH,Watt-hour,Wattheure,Vatio hora,Wattstunde,Wattora,Watt-hora
+U_KWH,Kilowatt-hour,Kilowattheure,Kilovatio hora,Kilowattstunde,Chilowattora,Quilowatt-hora
+U_PA,Pascal,Pascal,Pascal,Pascal,Pascal,Pascal
+U_KPA,Kilopascal,Kilopascal,Kilopascal,Kilopascal,Chilopascal,Quilopascal
+U_BAR,Bar,Bar,Bar,Bar,Bar,Bar
+U_ATM,Atmosphere,Atmosphère,Atmósfera,Atmosphäre,Atmosfera,Atmosfera
+U_PSI,Pound per sq. inch,Livre par pouce carré,Libra por pulgada cuadrada,Pfund pro Quadratzoll,Libbra per pollice quadrato,Libra por polegada quadrada
+U_MMHG,Millimeter of mercury,Millimètre de mercure,Milímetro de mercurio,Millimeter Quecksilbersäule,Millimetro di mercurio,Milímetro de mercúrio

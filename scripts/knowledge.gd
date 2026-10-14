@@ -1,7 +1,7 @@
 extends RefCounted
 ## Content of the "Basic knowledge" page: number tables (generated), constants,
 ## formulas (written in the calculator's expression syntax and drawn by
-## math_view.gd) and short rules, in English and French.
+## math_view.gd) and short rules. Texts are translation keys (tr()).
 
 const PI_DIGITS := "3.14159265358979323846264338327950288419716939937510"
 const E_DIGITS := "2.71828182845904523536028747135266249775724709369995"
@@ -9,46 +9,33 @@ const E_DIGITS := "2.71828182845904523536028747135266249775724709369995"
 ## Section ids in display order.
 const SECTIONS := [
 	"squares", "cubes", "primes", "pi", "constants", "powers2", "factorials",
-	"trig", "identities", "geometry", "divisibility", "prefixes",
+	"trig", "algebra", "geometry", "divisibility", "prefixes",
 ]
 
+## Section id -> title translation key.
 const TITLES := {
-	"squares": ["Perfect squares", "Carrés parfaits"],
-	"cubes": ["Perfect cubes", "Cubes parfaits"],
-	"primes": ["Prime numbers (under 200)", "Nombres premiers (moins de 200)"],
-	"pi": ["Pi (π)", "Pi (π)"],
-	"constants": ["Useful constants", "Constantes utiles"],
-	"powers2": ["Powers of 2", "Puissances de 2"],
-	"factorials": ["Factorials", "Factorielles"],
-	"trig": ["Trigonometric values", "Valeurs trigonométriques"],
-	"identities": ["Algebra", "Algèbre"],
-	"geometry": ["Geometry", "Géométrie"],
-	"divisibility": ["Divisibility rules", "Critères de divisibilité"],
-	"prefixes": ["Unit prefixes", "Préfixes des unités"],
+	"squares": "KB_SQUARES", "cubes": "KB_CUBES", "primes": "KB_PRIMES", "pi": "KB_PI",
+	"constants": "KB_CONSTANTS", "powers2": "KB_POWERS2", "factorials": "KB_FACTORIALS",
+	"trig": "KB_TRIG", "algebra": "KB_ALGEBRA", "geometry": "KB_GEOMETRY",
+	"divisibility": "KB_DIVISIBILITY", "prefixes": "KB_PREFIXES",
 }
 
+## Section id -> note translation key.
 const NOTES := {
-	"squares": ["n² = n × n. Tap a value to use it.", "n² = n × n. Touchez une valeur pour l'utiliser."],
-	"primes": ["A prime number has exactly two divisors: 1 and itself.",
-		"Un nombre premier a exactement deux diviseurs : 1 et lui-même."],
-	"pi": ["Ratio of a circle's circumference to its diameter. Mnemonic (letters per word = digits):",
-		"Rapport entre le périmètre d'un cercle et son diamètre. Moyen mnémotechnique (lettres par mot = chiffres) :"],
-	"factorials": ["n! = 1 × 2 × … × n, and 0! = 1.", "n! = 1 × 2 × … × n, et 0! = 1."],
+	"squares": "KB_NOTE_SQUARES", "primes": "KB_NOTE_PRIMES", "pi": "KB_NOTE_PI",
+	"factorials": "KB_NOTE_FACTORIALS",
 }
 
-const PI_MNEMONIC := [
-	"How I want a drink, alcoholic of course, after the heavy lectures involving quantum mechanics.",
-	"Que j'aime à faire apprendre un nombre utile aux sages ! Immortel Archimède, artiste ingénieur…",
-]
+const PI_MNEMONIC := "KB_PI_MNEMONIC"
 
-## [symbol, value inserted, English name, French name]
+## [symbol, value inserted, name translation key]
 const CONSTANTS := [
-	["π", "π", "Pi", "Pi"],
-	["e", "e", "Euler's number", "Nombre d'Euler"],
-	["φ", "φ", "Golden ratio", "Nombre d'or"],
-	["√2", "√(2)", "Square root of 2", "Racine de 2"],
-	["√3", "√(3)", "Square root of 3", "Racine de 3"],
-	["ln 2", "ln(2)", "Natural log of 2", "Logarithme népérien de 2"],
+	["π", "π", "KB_C_PI"],
+	["e", "e", "KB_C_E"],
+	["φ", "φ", "KB_C_PHI"],
+	["√2", "√(2)", "KB_C_SQRT2"],
+	["√3", "√(3)", "KB_C_SQRT3"],
+	["ln 2", "ln(2)", "KB_C_LN2"],
 ]
 
 ## Angle (degrees), sin, cos, tan — exact values.
@@ -60,47 +47,39 @@ const TRIG := [
 	["90°", "1", "0", "—"],
 ]
 
-## Formulas: [expression, English caption, French caption]
-const IDENTITIES := [
-	["(a+b)^2=a^2+2ab+b^2", "Square of a sum", "Carré d'une somme"],
-	["(a−b)^2=a^2−2ab+b^2", "Square of a difference", "Carré d'une différence"],
-	["(a+b)(a−b)=a^2−b^2", "Difference of squares", "Différence de deux carrés"],
-	["Δ=b^2−4ac", "Discriminant of ax² + bx + c", "Discriminant de ax² + bx + c"],
-	["x=frac(−b±√(Δ);2a)", "Roots of ax² + bx + c = 0", "Solutions de ax² + bx + c = 0"],
-	["a^(m)×a^(n)=a^(m+n)", "Product of powers", "Produit de puissances"],
-	["sin^2(x)+cos^2(x)=1", "Pythagorean identity", "Identité de Pythagore"],
+## Formulas: [expression, caption translation key]
+const ALGEBRA := [
+	["(a+b)^2=a^2+2ab+b^2", "KB_F_SUM2"],
+	["(a−b)^2=a^2−2ab+b^2", "KB_F_DIFF2"],
+	["(a+b)(a−b)=a^2−b^2", "KB_F_SQUARES"],
+	["Δ=b^2−4ac", "KB_F_DELTA"],
+	["x=frac(−b±√(Δ);2a)", "KB_F_ROOTS"],
+	["a^(m)×a^(n)=a^(m+n)", "KB_F_POWERS"],
+	["sin^2(x)+cos^2(x)=1", "KB_F_PYTHAGOREAN_ID"],
 ]
 
 const GEOMETRY := [
-	["a^2+b^2=c^2", "Pythagoras (right triangle)", "Pythagore (triangle rectangle)"],
-	["A=πr^2", "Area of a disc", "Aire d'un disque"],
-	["P=2πr", "Circumference of a circle", "Périmètre d'un cercle"],
-	["A=frac(b×h;2)", "Area of a triangle", "Aire d'un triangle"],
-	["A=L×l", "Area of a rectangle", "Aire d'un rectangle"],
-	["V=frac(4;3)πr^3", "Volume of a sphere", "Volume d'une boule"],
-	["V=πr^2h", "Volume of a cylinder", "Volume d'un cylindre"],
+	["a^2+b^2=c^2", "KB_F_PYTHAGORAS"],
+	["A=πr^2", "KB_F_DISC"],
+	["P=2πr", "KB_F_CIRCLE"],
+	["A=frac(b×h;2)", "KB_F_TRIANGLE"],
+	["A=L×l", "KB_F_RECTANGLE"],
+	["V=frac(4;3)πr^3", "KB_F_SPHERE"],
+	["V=πr^2h", "KB_F_CYLINDER"],
 ]
 
+## [divisor, rule translation key] — shown with KB_DIV_FORMAT.
 const DIVISIBILITY := [
-	["2", "the last digit is even (0, 2, 4, 6, 8)", "le dernier chiffre est pair (0, 2, 4, 6, 8)"],
-	["3", "the sum of the digits is divisible by 3", "la somme des chiffres est divisible par 3"],
-	["4", "the last two digits form a multiple of 4", "les deux derniers chiffres forment un multiple de 4"],
-	["5", "the last digit is 0 or 5", "le dernier chiffre est 0 ou 5"],
-	["9", "the sum of the digits is divisible by 9", "la somme des chiffres est divisible par 9"],
-	["10", "the last digit is 0", "le dernier chiffre est 0"],
-	["11", "the alternating sum of the digits is divisible by 11", "la somme alternée des chiffres est divisible par 11"],
+	["2", "KB_DIV_2"], ["3", "KB_DIV_3"], ["4", "KB_DIV_4"], ["5", "KB_DIV_5"],
+	["9", "KB_DIV_9"], ["10", "KB_DIV_10"], ["11", "KB_DIV_11"],
 ]
 
-## [symbol, name, power of ten]
+## [symbol, name, power of ten] (SI names are the same in every language).
 const PREFIXES := [
-	["T", "tera", 12], ["G", "giga", 9], ["M", "mega / méga", 6], ["k", "kilo", 3],
-	["h", "hecto", 2], ["da", "deca / déca", 1], ["d", "deci / déci", -1], ["c", "centi", -2],
+	["T", "tera", 12], ["G", "giga", 9], ["M", "mega", 6], ["k", "kilo", 3],
+	["h", "hecto", 2], ["da", "deca", 1], ["d", "deci", -1], ["c", "centi", -2],
 	["m", "milli", -3], ["µ", "micro", -6], ["n", "nano", -9], ["p", "pico", -12],
 ]
-
-
-static func text(pair: Array, language: String) -> String:
-	return pair[1] if language == "fr" and pair.size() > 1 else pair[0]
 
 
 ## Prime numbers below [param limit] (sieve of Eratosthenes).

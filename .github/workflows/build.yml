@@ -1,7 +1,7 @@
 name: Build
 
-# Exports the app for Android (debug APK), Windows, Linux and Web and
-# uploads the builds as workflow artifacts. Runs on version tags and manually.
+# Exports the app for every platform. On a "v*" tag, the builds are attached
+# to a GitHub Release. Can also be started manually from the Actions tab.
 on:
   workflow_dispatch:
   push:
@@ -9,6 +9,11 @@ on:
 
 env:
   GODOT_VERSION: "4.3"
+  # Optional: add these repository secrets to also build a signed release APK
+  # (keystore encoded with `base64 -w0 release.keystore`).
+  ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  ANDROID_KEYSTORE_USER: ${{ secrets.ANDROID_KEYSTORE_USER }}
+  ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
 
 jobs:
   export:
@@ -23,7 +28,7 @@ jobs:
           path: |
             ~/godot
             ~/.local/share/godot/export_templates
-          key: godot-${{ env.GODOT_VERSION }}-templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v2
 
       - name: Download Godot and export templates
         if: steps.cache.outputs.cache-hit != 'true'
@@ -33,17 +38,17 @@ jobs:
           curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
           unzip -q godot.zip && mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot && rm godot.zip
           curl -sSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
-          unzip -q -j templates.tpz "templates/android_*" "templates/linux_*x86_64" "templates/windows_*x86_64.exe" "templates/web_nothreads_*" "templates/version.txt" \
+          unzip -q -j templates.tpz "templates/android_*" "templates/linux_*x86_64" "templates/windows_*x86_64.exe" \
+            "templates/web_nothreads_*" "templates/macos.zip" "templates/version.txt" \
             -d ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
           rm templates.tpz
 
-      - name: Configure Android SDK, Java and debug keystore
+      - name: Configure Android SDK and Java
         run: |
           ~/godot/godot --headless --path . --import || true
           SETTINGS=~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           sed -i "s|export/android/android_sdk_path = .*|export/android/android_sdk_path = \"${ANDROID_SDK_ROOT}\"|" "$SETTINGS"
           sed -i "s|export/android/java_sdk_path = .*|export/android/java_sdk_path = \"${JAVA_HOME_17_X64}\"|" "$SETTINGS"
-          grep "export/android" "$SETTINGS"
 
       - name: Run tests
         run: |
@@ -53,13 +58,29 @@ jobs:
       - name: Export
         run: |
           VERSION=$(grep '^config/version=' project.godot | cut -d'"' -f2)
-          mkdir -p build/android build/windows build/linux build/web
-          ~/godot/godot --headless --path . --export-debug "Android" "build/android/GodotCalculator-${VERSION}-debug.apk"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          mkdir -p build/android build/windows build/linux build/web build/macos
+          touch build/.gdignore
+          ~/godot/godot --headless --path . --export-debug "Android" "build/android/GodotCalculator-${VERSION}-android.apk"
           ~/godot/godot --headless --path . --export-release "Windows Desktop" build/windows/GodotCalculator.exe
           ~/godot/godot --headless --path . --export-release "Linux" build/linux/GodotCalculator.x86_64
           ~/godot/godot --headless --path . --export-release "Web" build/web/index.html
+          ~/godot/godot --headless --path . --export-release "macOS" "build/macos/GodotCalculator-${VERSION}-macos.zip"
           rm -f build/android/*.idsig
-          ls -la build/*
+          (cd build/windows && zip -q "../GodotCalculator-${VERSION}-windows.zip" GodotCalculator.exe)
+          (cd build/linux && zip -q "../GodotCalculator-${VERSION}-linux.zip" GodotCalculator.x86_64)
+          (cd build/web && zip -q -r "../GodotCalculator-${VERSION}-web.zip" .)
+          ls -la build build/*
+
+      - name: Signed Android release (when the keystore secrets exist)
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$RUNNER_TEMP/release.keystore"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_USER="$ANDROID_KEYSTORE_USER"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="$ANDROID_KEYSTORE_PASSWORD"
+          ~/godot/godot --headless --path . --export-release "Android" "build/android/GodotCalculator-${VERSION}-android-release.apk"
+          rm -f build/android/*.idsig "$RUNNER_TEMP/release.keystore"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -77,3 +98,17 @@ jobs:
         with:
           name: web
           path: build/web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: build/macos
+
+      - name: GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(github.ref_name, 'beta') }}
+          files: |
+            build/android/*.apk
+            build/macos/*.zip
+            build/*.zip

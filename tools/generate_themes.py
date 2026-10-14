@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Generates assets/theme/dark_theme.tres and light_theme.tres.
 
-Both themes define the same theme types, only the palette changes, so the app
-can switch between them at runtime. Edit the PALETTES below, then run from
-the project root:  python3 tools/generate_themes.py
+Minimal, flat design: no borders or shadows, one accent color, quiet function
+keys, digits slightly raised from the background. Both themes define the same
+theme types; only the palette changes, so the app can switch at runtime.
+
+Edit PALETTES, then run from the project root:  python3 tools/generate_themes.py
 """
 from pathlib import Path
 
@@ -11,44 +13,32 @@ OUT = Path(__file__).resolve().parent.parent / "assets" / "theme"
 
 PALETTES = {
     "dark": {
-        "bg_top": "#151a24", "bg_bottom": "#0b0e14",
-        "text": "#eef1f6", "muted": "#8b96aa", "accent": "#ffc46b", "on_accent": "#1a1206",
-        "display": "#080a0f", "display_border": "#222a38",
-        "card": "#141924", "card_border": "#232b3a",
-        "digit": ("#1f2532", "#283042", "#171c27", "#eef1f6"),
-        "function": ("#161b25", "#1e2532", "#11151d", "#a9b4c8"),
-        "operator": ("#243152", "#2d3d66", "#1c2742", "#9cc0ff"),
-        "memory": ("#161b25", "#1e2532", "#11151d", "#7fd6c2"),
-        "clear": ("#3a1d25", "#4a2530", "#2e171d", "#ff8a96"),
-        "equals": ("#ff9f43", "#ffb066", "#e8892c", "#1a1206"),
-        "toggle": ("#161b25", "#1e2532", "#11151d", "#ffc46b"),
-        "segment": ("#1f2532", "#283042", "#171c27", "#c9d1df"),
-        "icon": ("#00000000", "#ffffff14", "#ffffff22", "#c9d1df"),
-        "shadow": "#00000066",
-        "preview": "#6f7a8e", "error": "#ff6b78", "success": "#5fd38d",
-        "selection": "#ffc46b33",
+        "bg": "#101216",
+        "text": "#eef0f4", "muted": "#7f8796", "accent": "#ffb35c", "on_accent": "#1b1206",
+        "surface": "#1b1e24", "surface_hover": "#23272f", "surface_pressed": "#15171c",
+        "quiet": "#15181d", "quiet_hover": "#1d2027", "quiet_text": "#a7afbd",
+        "operator": "#2a2219", "operator_hover": "#342a1e", "operator_text": "#ffb35c",
+        "danger_text": "#ff8a94",
+        "equals": "#ffb35c", "equals_hover": "#ffc27a", "equals_pressed": "#e89d45",
+        "selected": "#ffb35c26", "hover": "#ffffff0d", "line": "#262a32",
+        "panel": "#14171c", "popup": "#1d2027", "chip": "#1f2229", "chip_hover": "#272b33",
+        "preview": "#6f7889", "error": "#ff7b86", "success": "#62d394",
     },
     "light": {
-        "bg_top": "#f4f6fa", "bg_bottom": "#e2e7ef",
-        "text": "#1d2330", "muted": "#677288", "accent": "#b86e00", "on_accent": "#1a1206",
-        "display": "#ffffff", "display_border": "#d5dbe6",
-        "card": "#ffffff", "card_border": "#d5dbe6",
-        "digit": ("#ffffff", "#f5f7fb", "#e7ebf2", "#1d2330"),
-        "function": ("#e6eaf2", "#dce2ec", "#d0d7e3", "#3e4a60"),
-        "operator": ("#dce7ff", "#cddcff", "#bccffa", "#2457d6"),
-        "memory": ("#e6eaf2", "#dce2ec", "#d0d7e3", "#0f7a64"),
-        "clear": ("#ffe3e6", "#ffd4d9", "#ffc4cb", "#c62839"),
-        "equals": ("#ff8c1a", "#ff9d3d", "#ea7a0a", "#ffffff"),
-        "toggle": ("#e6eaf2", "#dce2ec", "#d0d7e3", "#b86e00"),
-        "segment": ("#e6eaf2", "#dce2ec", "#d0d7e3", "#3e4a60"),
-        "icon": ("#00000000", "#0000000f", "#0000001c", "#3e4a60"),
-        "shadow": "#1d233022",
-        "preview": "#8a94a6", "error": "#d93040", "success": "#1f9d55",
-        "selection": "#ffb34040",
+        "bg": "#f5f6f8",
+        "text": "#14171c", "muted": "#6a7385", "accent": "#e07a00", "on_accent": "#ffffff",
+        "surface": "#ffffff", "surface_hover": "#f7f8fa", "surface_pressed": "#eceef2",
+        "quiet": "#eceef2", "quiet_hover": "#e4e7ec", "quiet_text": "#4a5366",
+        "operator": "#fdebd6", "operator_hover": "#fbe0c0", "operator_text": "#c86a00",
+        "danger_text": "#d23544",
+        "equals": "#f08a12", "equals_hover": "#f59a32", "equals_pressed": "#d97a05",
+        "selected": "#e07a0024", "hover": "#0000000a", "line": "#e2e5ea",
+        "panel": "#ffffff", "popup": "#ffffff", "chip": "#eef0f3", "chip_hover": "#e4e7ec",
+        "preview": "#8c94a4", "error": "#d23544", "success": "#1f9d55",
     },
 }
 
-TOGGLE_PRESSED = {"dark": ("#ffc46b", "#1a1206"), "light": ("#ffb340", "#1a1206")}
+RADIUS = 18
 
 
 def color(hexs):
@@ -61,11 +51,11 @@ def color(hexs):
 class ThemeWriter:
     def __init__(self):
         self.subs = []
-        self.props = []
+        self.props = {}
+        self.ext = {}
         self.count = 0
 
-    def box(self, bg, radius=14, border=None, border_width=1, shadow=None, shadow_size=0,
-            margins=(6, 6, 6, 6), shadow_offset=(0, 2)):
+    def box(self, bg, radius=RADIUS, margins=(6, 4, 6, 4), border=None):
         self.count += 1
         name = f"StyleBoxFlat_{self.count}"
         lines = [f'[sub_resource type="StyleBoxFlat" id="{name}"]']
@@ -74,132 +64,148 @@ class ThemeWriter:
         lines.append(f"bg_color = {color(bg)}")
         if border:
             for side in ("left", "top", "right", "bottom"):
-                lines.append(f"border_width_{side} = {border_width}")
+                lines.append(f"border_width_{side} = 1")
             lines.append(f"border_color = {color(border)}")
         for corner in ("top_left", "top_right", "bottom_right", "bottom_left"):
             lines.append(f"corner_radius_{corner} = {radius}")
         lines.append("corner_detail = 8")
-        if shadow and shadow_size:
-            lines.append(f"shadow_color = {color(shadow)}")
-            lines.append(f"shadow_size = {shadow_size}")
-            lines.append(f"shadow_offset = Vector2({shadow_offset[0]}, {shadow_offset[1]})")
         lines.append("anti_aliasing = true")
         self.subs.append("\n".join(lines) + "\n")
         return f'SubResource("{name}")'
 
-    def gradient_box(self, top, bottom):
-        self.count += 1
-        g, t, s = (f"Gradient_{self.count}", f"GradientTexture2D_{self.count}", f"StyleBoxTexture_{self.count}")
-        self.subs.append(f'[sub_resource type="Gradient" id="{g}"]\n'
-                         f'colors = PackedColorArray({color(top)[6:-1]}, {color(bottom)[6:-1]})\n')
-        self.subs.append(f'[sub_resource type="GradientTexture2D" id="{t}"]\n'
-                         f'gradient = SubResource("{g}")\nwidth = 16\nheight = 256\n'
-                         f'fill_from = Vector2(0, 0)\nfill_to = Vector2(0, 1)\n')
-        self.subs.append(f'[sub_resource type="StyleBoxTexture" id="{s}"]\ntexture = SubResource("{t}")\n')
-        return f'SubResource("{s}")'
-
-    def empty(self):
+    def empty(self, margins=(0, 0, 0, 0)):
         self.count += 1
         name = f"StyleBoxEmpty_{self.count}"
-        self.subs.append(f'[sub_resource type="StyleBoxEmpty" id="{name}"]\n')
+        lines = [f'[sub_resource type="StyleBoxEmpty" id="{name}"]']
+        for side, m in zip(("left", "top", "right", "bottom"), margins):
+            if m:
+                lines.append(f"content_margin_{side} = {float(m)}")
+        self.subs.append("\n".join(lines) + "\n")
         return f'SubResource("{name}")'
 
+    def texture(self, path):
+        if path not in self.ext:
+            self.ext[path] = f"{len(self.ext) + 3}_tex"
+        return f'ExtResource("{self.ext[path]}")'
+
     def set(self, key, value):
-        self.props.append(f"{key} = {value}")
+        self.props[key] = value
 
 
-def button_type(w, p, name, colors, font_size, base="Button", radius=16, shadow=True, toggle=None):
-    normal, hover, pressed, text = colors
-    sh = p["shadow"] if shadow else None
+def button(w, p, name, bg, hover, pressed, text, size, base="Button", radius=RADIUS,
+           toggle=None, margins=(6, 4, 6, 4)):
     if base:
         w.set(f"{name}/base_type", f'&"{base}"')
-    w.set(f"{name}/font_sizes/font_size", font_size)
-    for state in ("font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"):
+    w.set(f"{name}/font_sizes/font_size", size)
+    for state in ("font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
+                  "font_hover_pressed_color", "icon_normal_color", "icon_hover_color",
+                  "icon_pressed_color", "icon_focus_color", "icon_hover_pressed_color"):
         w.set(f"{name}/colors/{state}", color(text))
-    w.set(f"{name}/colors/font_disabled_color", color(p["muted"]))
-    for state in ("icon_normal_color", "icon_hover_color", "icon_pressed_color", "icon_focus_color", "icon_hover_pressed_color"):
-        w.set(f"{name}/colors/{state}", color(text))
-    w.set(f"{name}/styles/normal", w.box(normal, radius, shadow=sh, shadow_size=3))
-    w.set(f"{name}/styles/hover", w.box(hover, radius, shadow=sh, shadow_size=4))
-    w.set(f"{name}/styles/pressed", w.box(pressed, radius, margins=(6, 8, 6, 4)))
-    w.set(f"{name}/styles/disabled", w.box(normal, radius))
+    w.set(f"{name}/colors/font_disabled_color", color(p["muted"] + "66"))
+    w.set(f"{name}/colors/icon_disabled_color", color(p["muted"] + "66"))
+    make = (lambda c: w.box(c, radius, margins)) if bg else (lambda c: w.empty(margins))
+    w.set(f"{name}/styles/normal", make(bg) if bg else w.empty(margins))
+    w.set(f"{name}/styles/hover", w.box(hover, radius, margins))
+    w.set(f"{name}/styles/pressed", w.box(pressed, radius, margins))
+    w.set(f"{name}/styles/disabled", make(bg) if bg else w.empty(margins))
     w.set(f"{name}/styles/focus", w.empty())
     if toggle:
-        bg, fg = toggle
-        w.set(f"{name}/styles/pressed", w.box(bg, radius, shadow=sh, shadow_size=3))
-        w.set(f"{name}/styles/hover_pressed", w.box(bg, radius, shadow=sh, shadow_size=4))
+        tbg, tfg = toggle
+        w.set(f"{name}/styles/pressed", w.box(tbg, radius, margins))
+        w.set(f"{name}/styles/hover_pressed", w.box(tbg, radius, margins))
         for state in ("font_pressed_color", "font_hover_pressed_color", "icon_pressed_color", "icon_hover_pressed_color"):
-            w.set(f"{name}/colors/{state}", color(fg))
+            w.set(f"{name}/colors/{state}", color(tfg))
 
 
 def build(kind):
     p = PALETTES[kind]
     w = ThemeWriter()
     w.set("default_font", 'ExtResource("1_regular")')
-    w.set("default_font_size", 20)
+    w.set("default_font_size", 18)
 
-    button_type(w, p, "Button", p["function"], 18, base=None)
-    button_type(w, p, "DigitButton", p["digit"], 26)
-    button_type(w, p, "OperatorButton", p["operator"], 28)
-    button_type(w, p, "FunctionButton", p["function"], 19)
-    button_type(w, p, "MemoryButton", p["memory"], 17)
-    button_type(w, p, "ClearButton", p["clear"], 21)
-    button_type(w, p, "EqualsButton", p["equals"], 30)
-    button_type(w, p, "ToggleButton", p["toggle"], 18, toggle=TOGGLE_PRESSED[kind])
-    button_type(w, p, "SegmentButton", p["segment"], 16, radius=10, shadow=False, toggle=TOGGLE_PRESSED[kind])
-    button_type(w, p, "ChipButton", p["toggle"], 15, radius=10, shadow=False)
-    # Flat icon button (top bar)
-    normal, hover, pressed, fg = p["icon"]
-    button_type(w, p, "IconButton", (normal, hover, pressed, fg), 22, radius=12, shadow=False,
-                toggle=(p["selection"], p["accent"]))
-    w.set("IconButton/constants/icon_max_width", 22)
+    # Keypad
+    button(w, p, "Button", p["quiet"], p["quiet_hover"], p["surface_pressed"], p["text"], 17, base=None)
+    button(w, p, "DigitButton", p["surface"], p["surface_hover"], p["surface_pressed"], p["text"], 26)
+    button(w, p, "FunctionButton", p["quiet"], p["quiet_hover"], p["surface_pressed"], p["quiet_text"], 19)
+    button(w, p, "OperatorButton", p["operator"], p["operator_hover"], p["surface_pressed"], p["operator_text"], 28)
+    button(w, p, "ClearButton", p["quiet"], p["quiet_hover"], p["surface_pressed"], p["danger_text"], 20)
+    button(w, p, "EqualsButton", p["equals"], p["equals_hover"], p["equals_pressed"], p["on_accent"], 30)
+    button(w, p, "ToggleButton", p["quiet"], p["quiet_hover"], p["surface_pressed"], p["accent"], 18,
+           toggle=(p["accent"], p["on_accent"]))
 
-    # Programmer base rows: flat, left aligned, current base highlighted
-    button_type(w, p, "BaseRowButton", (p["display"], p["selection"], p["selection"], p["muted"]), 14,
-                radius=8, shadow=False, toggle=(p["selection"], p["accent"]))
-    w.set("BaseRowButton/fonts/font", 'ExtResource("1_regular")')
+    # Flat controls
+    button(w, p, "IconButton", None, p["hover"], p["selected"], p["muted"], 18, radius=12,
+           toggle=(p["selected"], p["accent"]), margins=(8, 8, 8, 8))
+    button(w, p, "ModeButton", None, p["hover"], p["selected"], p["text"], 19, radius=12, margins=(10, 6, 10, 6))
+    w.set("ModeButton/fonts/font", 'ExtResource("2_bold")')
+    w.set("ModeButton/colors/icon_normal_color", color(p["muted"]))
+    w.set("ModeButton/colors/icon_hover_color", color(p["muted"]))
+    w.set("ModeButton/constants/h_separation", 6)
+    button(w, p, "StatusButton", None, p["hover"], p["selected"], p["accent"], 13, radius=8, margins=(6, 2, 6, 2))
+    button(w, p, "SegmentButton", p["chip"], p["chip_hover"], p["surface_pressed"], p["quiet_text"], 15, radius=12,
+           toggle=(p["accent"], p["on_accent"]))
+    button(w, p, "ChipButton", p["chip"], p["chip_hover"], p["surface_pressed"], p["text"], 14, radius=12)
+    button(w, p, "ListButton", None, p["hover"], p["selected"], p["text"], 16, radius=12, margins=(4, 10, 4, 10))
+    w.set("ListButton/colors/icon_normal_color", color(p["muted"]))
+    w.set("ListButton/colors/icon_hover_color", color(p["muted"]))
+    button(w, p, "BaseRowButton", None, p["hover"], p["selected"], p["muted"], 14, radius=8,
+           toggle=(p["selected"], p["accent"]), margins=(8, 2, 8, 2))
 
-    # OptionButton (converter units) and its popup menu
-    button_type(w, p, "OptionButton", p["segment"], 15, base=None, radius=10, shadow=False)
-    w.set("OptionButton/colors/font_color", color(p["text"]))
+    # OptionButton (language, converter units) and its popup menu
+    button(w, p, "OptionButton", p["chip"], p["chip_hover"], p["surface_pressed"], p["text"], 15, base=None, radius=12,
+           margins=(12, 6, 12, 6))
     w.set("OptionButton/constants/arrow_margin", 10)
-    w.set("PopupMenu/styles/panel", w.box(p["card"], 10, border=p["card_border"], margins=(6, 6, 6, 6),
-                                          shadow=p["shadow"], shadow_size=6))
-    w.set("PopupMenu/styles/hover", w.box(p["selection"], 8))
+    w.set("FlatOptionButton/base_type", '&"OptionButton"')
+    w.set("FlatOptionButton/styles/normal", w.empty((0, 4, 0, 4)))
+    w.set("FlatOptionButton/styles/hover", w.box(p["hover"], 10, (0, 4, 0, 4)))
+    w.set("FlatOptionButton/styles/pressed", w.box(p["selected"], 10, (0, 4, 0, 4)))
+    w.set("FlatOptionButton/colors/font_color", color(p["muted"]))
+    w.set("FlatOptionButton/font_sizes/font_size", 15)
+    w.set("PopupMenu/styles/panel", w.box(p["popup"], 14, (8, 8, 8, 8), border=p["line"]))
+    w.set("PopupMenu/styles/hover", w.box(p["selected"], 10))
     w.set("PopupMenu/colors/font_color", color(p["text"]))
     w.set("PopupMenu/colors/font_hover_color", color(p["text"]))
-    w.set("PopupMenu/colors/font_accelerator_color", color(p["muted"]))
-    w.set("PopupMenu/font_sizes/font_size", 16)
-    w.set("PopupMenu/constants/v_separation", 10)
-    w.set("HSeparator/styles/separator", w.box(p["card_border"], 1, margins=(0, 0, 0, 0)))
-    w.set("HSeparator/constants/separation", 6)
+    w.set("PopupMenu/colors/font_disabled_color", color(p["muted"]))
+    w.set("PopupMenu/font_sizes/font_size", 17)
+    w.set("PopupMenu/constants/v_separation", 14)
+    w.set("PopupMenu/constants/h_separation", 12)
+    w.set("PopupMenu/icons/radio_checked", w.texture(f"res://assets/icons/check_{kind}.svg"))
+    w.set("PopupMenu/icons/radio_unchecked", w.texture("res://assets/icons/blank.svg"))
+
+    # Switches (settings)
+    w.set("CheckButton/icons/checked", w.texture(f"res://assets/icons/toggle_on_{kind}.svg"))
+    w.set("CheckButton/icons/unchecked", w.texture(f"res://assets/icons/toggle_off_{kind}.svg"))
+    w.set("CheckButton/icons/checked_mirrored", w.texture(f"res://assets/icons/toggle_on_{kind}.svg"))
+    w.set("CheckButton/icons/unchecked_mirrored", w.texture(f"res://assets/icons/toggle_off_{kind}.svg"))
+    for state in ("normal", "hover", "pressed", "hover_pressed", "focus", "disabled"):
+        w.set(f"CheckButton/styles/{state}", w.empty((0, 8, 0, 8)))
+    for state in ("font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"):
+        w.set(f"CheckButton/colors/{state}", color(p["text"]))
+    w.set("CheckButton/font_sizes/font_size", 16)
 
     # Panels
     w.set("PanelContainer/styles/panel", w.empty())
     w.set("BackgroundPanel/base_type", '&"PanelContainer"')
-    w.set("BackgroundPanel/styles/panel", w.gradient_box(p["bg_top"], p["bg_bottom"]))
-    w.set("DisplayPanel/base_type", '&"PanelContainer"')
-    w.set("DisplayPanel/styles/panel", w.box(p["display"], 20, border=p["display_border"],
-                                             shadow=p["shadow"], shadow_size=6, shadow_offset=(0, 3)))
-    w.set("CardPanel/base_type", '&"PanelContainer"')
-    w.set("CardPanel/styles/panel", w.box(p["card"], 18, border=p["card_border"],
-                                          shadow=p["shadow"], shadow_size=4))
+    w.set("BackgroundPanel/styles/panel", w.box(p["bg"], 0, (0, 0, 0, 0)))
+    w.set("SheetPanel/base_type", '&"PanelContainer"')
+    w.set("SheetPanel/styles/panel", w.box(p["panel"], 22, (0, 0, 0, 0)))
+    w.set("HSeparator/styles/separator", w.box(p["line"], 0, (0, 0, 0, 0)))
+    w.set("HSeparator/constants/separation", 1)
 
     # Labels
     w.set("Label/colors/font_color", color(p["text"]))
-    for name, col, size in (("TitleLabel", p["text"], 17), ("ExpressionLabel", p["muted"], 22),
-                            ("ResultLabel", p["text"], 48), ("StatusLabel", p["accent"], 13),
-                            ("SectionLabel", p["muted"], 14), ("MutedLabel", p["muted"], 15),
-                            ("HeaderLabel", p["text"], 20), ("KeyHintLabel", p["accent"], 10)):
+    for name, col, size in (("ResultLabel", p["text"], 52), ("StatusLabel", p["accent"], 13),
+                            ("SectionLabel", p["muted"], 13), ("MutedLabel", p["muted"], 15),
+                            ("HeaderLabel", p["text"], 22), ("TitleLabel", p["text"], 17),
+                            ("ValueLabel", p["text"], 34)):
         w.set(f"{name}/base_type", '&"Label"')
         w.set(f"{name}/colors/font_color", color(col))
         w.set(f"{name}/font_sizes/font_size", size)
-    w.set("ResultLabel/fonts/font", 'ExtResource("2_bold")')
-    w.set("HeaderLabel/fonts/font", 'ExtResource("2_bold")')
-    w.set("TitleLabel/fonts/font", 'ExtResource("2_bold")')
+    for name in ("ResultLabel", "HeaderLabel", "TitleLabel", "ValueLabel"):
+        w.set(f"{name}/fonts/font", 'ExtResource("2_bold")' if name != "ResultLabel" else 'ExtResource("1_regular")')
 
     # Custom app colors (read with get_theme_color(name, "App"))
-    for name in ("preview", "error", "success", "accent", "muted", "text", "bg_bottom"):
+    for name in ("preview", "error", "success", "accent", "muted", "text", "bg"):
         w.set(f"App/colors/{name}", color(p[name]))
 
     # ItemList (history)
@@ -207,49 +213,45 @@ def build(kind):
     w.set("ItemList/colors/font_color", color(p["text"]))
     w.set("ItemList/colors/font_hovered_color", color(p["text"]))
     w.set("ItemList/colors/font_selected_color", color(p["text"]))
-    w.set("ItemList/colors/guide_color", color(p["card_border"]))
-    w.set("ItemList/constants/v_separation", 14)
+    w.set("ItemList/colors/guide_color", color(p["line"]))
+    w.set("ItemList/constants/v_separation", 18)
     w.set("ItemList/constants/line_separation", 4)
     w.set("ItemList/styles/panel", w.empty())
     w.set("ItemList/styles/focus", w.empty())
-    w.set("ItemList/styles/hovered", w.box(p["selection"], 10))
-    w.set("ItemList/styles/selected", w.box(p["selection"], 10))
-    w.set("ItemList/styles/selected_focus", w.box(p["selection"], 10))
+    w.set("ItemList/styles/hovered", w.box(p["hover"], 10))
+    w.set("ItemList/styles/selected", w.box(p["selected"], 10))
+    w.set("ItemList/styles/selected_focus", w.box(p["selected"], 10))
     w.set("ItemList/styles/cursor", w.empty())
     w.set("ItemList/styles/cursor_unfocused", w.empty())
 
-    # RichTextLabel (self-test report)
+    # RichTextLabel (tests, help)
     w.set("RichTextLabel/colors/default_color", color(p["text"]))
     w.set("RichTextLabel/font_sizes/normal_font_size", 15)
-    w.set("RichTextLabel/font_sizes/bold_font_size", 15)
+    w.set("RichTextLabel/font_sizes/bold_font_size", 16)
     w.set("RichTextLabel/fonts/bold_font", 'ExtResource("2_bold")')
+    w.set("RichTextLabel/constants/line_separation", 4)
     w.set("RichTextLabel/styles/normal", w.empty())
 
-    # Scrollbars
+    # Scrollbars: thin, only the grabber
     for bar in ("VScrollBar", "HScrollBar"):
-        w.set(f"{bar}/styles/scroll", w.box(p["bg_bottom"] + "00", 4, margins=(2, 2, 2, 2)))
-        w.set(f"{bar}/styles/grabber", w.box(p["card_border"], 4, margins=(3, 3, 3, 3)))
-        w.set(f"{bar}/styles/grabber_highlight", w.box(p["muted"], 4, margins=(3, 3, 3, 3)))
-        w.set(f"{bar}/styles/grabber_pressed", w.box(p["accent"], 4, margins=(3, 3, 3, 3)))
+        w.set(f"{bar}/styles/scroll", w.empty((2, 2, 2, 2)))
+        w.set(f"{bar}/styles/grabber", w.box(p["line"], 3, (2, 2, 2, 2)))
+        w.set(f"{bar}/styles/grabber_highlight", w.box(p["muted"], 3, (2, 2, 2, 2)))
+        w.set(f"{bar}/styles/grabber_pressed", w.box(p["accent"], 3, (2, 2, 2, 2)))
 
     # Tooltips
-    w.set("TooltipPanel/styles/panel", w.box(p["card"], 8, border=p["card_border"], margins=(10, 6, 10, 6)))
+    w.set("TooltipPanel/styles/panel", w.box(p["popup"], 8, (10, 6, 10, 6), border=p["line"]))
     w.set("TooltipLabel/colors/font_color", color(p["text"]))
     w.set("TooltipLabel/font_sizes/font_size", 14)
 
-    header = [f'[gd_resource type="Theme" load_steps={len(w.subs) + 3} format=3]', "",
-              '[ext_resource type="FontFile" path="res://assets/fonts/DejaVuSans.ttf" id="1_regular"]',
-              '[ext_resource type="FontFile" path="res://assets/fonts/DejaVuSans-Bold.ttf" id="2_bold"]', ""]
-    # Later assignments override earlier ones (toggle pressed styles)
-    final = {}
-    for prop in w.props:
-        key, value = prop.split(" = ", 1)
-        final[key] = value
-    used = "\n".join(final.values())
-    subs = [s for s in w.subs if '"' + s.split('id="')[1].split('"')[0] + '"' in used or "Gradient" in s]
-    header[0] = f'[gd_resource type="Theme" load_steps={len(subs) + 3} format=3]'
-    body = [f"{k} = {v}" for k, v in final.items()]
-    text = "\n".join(header) + "\n".join(s + "\n" for s in subs) + "[resource]\n" + "\n".join(body) + "\n"
+    used = "\n".join(str(v) for v in w.props.values())
+    subs = [s for s in w.subs if '"' + s.split('id="')[1].split('"')[0] + '"' in used]
+    ext = ['[ext_resource type="FontFile" path="res://assets/fonts/DejaVuSans.ttf" id="1_regular"]',
+           '[ext_resource type="FontFile" path="res://assets/fonts/DejaVuSans-Bold.ttf" id="2_bold"]']
+    ext += [f'[ext_resource type="Texture2D" path="{path}" id="{rid}"]' for path, rid in w.ext.items()]
+    text = f'[gd_resource type="Theme" load_steps={len(subs) + len(ext) + 1} format=3]\n\n'
+    text += "\n".join(ext) + "\n\n" + "\n".join(subs) + "\n[resource]\n"
+    text += "\n".join(f"{k} = {v}" for k, v in w.props.items()) + "\n"
     (OUT / f"{kind}_theme.tres").write_text(text)
     print("wrote", OUT / f"{kind}_theme.tres", len(subs), "sub-resources")
 

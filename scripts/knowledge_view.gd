@@ -8,9 +8,10 @@ signal value_chosen(insert: String)
 const Knowledge := preload("res://scripts/knowledge.gd")
 const MathView := preload("res://scripts/math_view.gd")
 
-var language := "en"
+var language := "en" # locale the page is built for
 var decimal_separator := "."
 var group_separator := ","
+var list_separator := ", "
 var math_color := Color.WHITE
 var muted_color := Color(1, 1, 1, 0.5)
 var accent_color := Color.ORANGE
@@ -30,9 +31,9 @@ func ensure_built() -> void:
 	_math_views.clear()
 	add_theme_constant_override("separation", 8)
 	for section in Knowledge.SECTIONS:
-		_add_title(Knowledge.text(Knowledge.TITLES[section], language))
+		_add_title(tr(Knowledge.TITLES[section]))
 		if Knowledge.NOTES.has(section):
-			_add_note(Knowledge.text(Knowledge.NOTES[section], language))
+			_add_note(tr(Knowledge.NOTES[section]))
 		call("_build_" + section)
 
 
@@ -63,7 +64,7 @@ func _add_title(value: String) -> void:
 	label.text = value
 	label.theme_type_variation = &"HeaderLabel"
 	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	label.add_theme_font_size_override("font_size", 17)
+	label.add_theme_font_size_override("font_size", 16)
 	if get_child_count() > 0:
 		var spacer := Control.new()
 		spacer.custom_minimum_size = Vector2(0, 6)
@@ -95,7 +96,7 @@ func _chip(parent: Control, label: String, insert: String) -> Button:
 	var button := Button.new()
 	button.text = label
 	button.focus_mode = Control.FOCUS_NONE
-	button.theme_type_variation = &"SegmentButton"
+	button.theme_type_variation = &"ChipButton"
 	button.custom_minimum_size = Vector2(0, 34)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -114,7 +115,7 @@ func _math(parent: Control, expression: String, font_size: int, alignment := 0) 
 	view.custom_minimum_size = Vector2(0, font_size * 1.6)
 	view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	view.decimal_separator = decimal_separator
-	view.list_separator = "; " if language == "fr" else ", "
+	view.list_separator = list_separator
 	view.color = math_color
 	view.muted_color = muted_color
 	view.accent_color = accent_color
@@ -131,7 +132,7 @@ func _formula_list(entries: Array) -> void:
 		box.add_theme_constant_override("separation", 0)
 		add_child(box)
 		var caption := Label.new()
-		caption.text = entry[2] if language == "fr" else entry[1]
+		caption.text = tr(entry[1])
 		caption.theme_type_variation = &"SectionLabel"
 		caption.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		box.add_child(caption)
@@ -167,7 +168,7 @@ func _build_pi() -> void:
 	var label := _add_note(digits)
 	label.theme_type_variation = &"Label"
 	label.add_theme_font_size_override("font_size", 16)
-	_add_note("« " + Knowledge.text(Knowledge.PI_MNEMONIC, language) + " »")
+	_add_note("« " + tr(Knowledge.PI_MNEMONIC) + " »")
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 6)
 	add_child(row)
@@ -183,9 +184,8 @@ func _build_constants() -> void:
 	for constant in Knowledge.CONSTANTS:
 		var value: float = evaluator.evaluate(constant[1])["value"]
 		var shown := String.num(value, 10).replace(".", decimal_separator)
-		var name: String = constant[3] if language == "fr" else constant[2]
 		var chip := _chip(grid, "%s ≈ %s" % [constant[0], shown], constant[1])
-		chip.tooltip_text = name
+		chip.tooltip_text = tr(constant[2])
 	_add_note("e = " + Knowledge.E_DIGITS.replace(".", decimal_separator))
 
 
@@ -225,8 +225,8 @@ func _build_trig() -> void:
 			view.custom_minimum_size = Vector2(0, 46)
 
 
-func _build_identities() -> void:
-	_formula_list(Knowledge.IDENTITIES)
+func _build_algebra() -> void:
+	_formula_list(Knowledge.ALGEBRA)
 
 
 func _build_geometry() -> void:
@@ -236,8 +236,7 @@ func _build_geometry() -> void:
 func _build_divisibility() -> void:
 	for rule in Knowledge.DIVISIBILITY:
 		var label := Label.new()
-		var by := "Divisible par %s si " if language == "fr" else "Divisible by %s if "
-		label.text = (by % rule[0]) + (rule[2] if language == "fr" else rule[1]) + "."
+		label.text = tr("KB_DIV_FORMAT") % [rule[0], tr(rule[1])]
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		label.add_theme_font_size_override("font_size", 15)

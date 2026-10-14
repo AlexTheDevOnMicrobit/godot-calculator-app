@@ -8,6 +8,7 @@ const MathFormat := preload("res://scripts/math_format.gd")
 const ProgrammerEvaluator := preload("res://scripts/programmer_evaluator.gd")
 const Units := preload("res://scripts/units.gd")
 const Knowledge := preload("res://scripts/knowledge.gd")
+const Keypads := preload("res://scripts/keypads.gd")
 
 var passed := 0
 var failed := 0
@@ -32,6 +33,7 @@ func run() -> RefCounted:
 	_section("Programmer", _test_programmer)
 	_section("Converter", _test_converter)
 	_section("Knowledge", _test_knowledge)
+	_section("Translations", _test_translations)
 	return self
 
 
@@ -366,9 +368,71 @@ func _test_knowledge() -> void:
 		_check(is_equal_approx(ev.evaluate(row[1])["value"], ev.evaluate("sin(" + angle + ")")["value"]), "sin(%s°) = %s" % [angle, row[1]])
 		_check(is_equal_approx(ev.evaluate(row[2])["value"], ev.evaluate("cos(" + angle + ")")["value"]), "cos(%s°) = %s" % [angle, row[2]])
 	# Formulas parse into a math tree without stray symbols
-	for entry in Knowledge.IDENTITIES + Knowledge.GEOMETRY:
+	for entry in Knowledge.ALGEBRA + Knowledge.GEOMETRY:
 		var tree := mf.parse(entry[0])
 		_check(tree["items"].size() > 2, "formula %s parses" % entry[0])
+
+
+## Every translation key used by the app exists, non-empty, in every language.
+func _test_translations() -> void:
+	var keys := _used_translation_keys()
+	var locales := TranslationServer.get_loaded_locales()
+	for language in ["en", "fr", "es", "de", "it", "pt"]:
+		_check(language in locales, "language %s loaded" % language)
+		var translation := TranslationServer.get_translation_object(language)
+		if translation == null or translation.locale != language:
+			continue
+		var missing: PackedStringArray = []
+		for key in keys:
+			if String(translation.get_message(key)) == "":
+				missing.append(key)
+		_check(missing.is_empty(), "%s: all %d keys translated (missing: %s)" % [language, keys.size(), ", ".join(missing)])
+	# Formats with placeholders keep the same number of %s / %d in every language.
+	for key in ["ABOUT_TEXT", "SELF_TEST_RESULT", "KB_DIV_FORMAT"]:
+		var expected := String(TranslationServer.get_translation_object("en").get_message(key)).count("%")
+		for language in ["fr", "es", "de", "it", "pt"]:
+			var translation := TranslationServer.get_translation_object(language)
+			if translation and translation.locale == language:
+				_check(String(translation.get_message(key)).count("%") == expected, "%s placeholders in %s" % [key, language])
+
+
+## Keys referenced by the data scripts (units, knowledge, keypads, help...).
+func _used_translation_keys() -> PackedStringArray:
+	var keys: PackedStringArray = []
+	for category in Units.category_ids():
+		keys.append(Units.category_name_key(category))
+		for i in Units.unit_count(category):
+			keys.append(Units.unit_name_key(category, i))
+	keys.append_array(Knowledge.TITLES.values())
+	keys.append_array(Knowledge.NOTES.values())
+	keys.append(Knowledge.PI_MNEMONIC)
+	keys.append("KB_DIV_FORMAT")
+	for entry in Knowledge.CONSTANTS:
+		keys.append(entry[2])
+	for entry in Knowledge.ALGEBRA + Knowledge.GEOMETRY + Knowledge.DIVISIBILITY:
+		keys.append(entry[1])
+	for mode in Keypads.MODES:
+		for key in Keypads.layout(mode)["keys"]:
+			for field in ["tip", "tip2"]:
+				if key.has(field):
+					keys.append(key[field])
+	for category in Keypads.FUNCTION_CATALOG:
+		keys.append(category[0])
+	for topic in ["MODES", "TEMPLATES", "SECOND", "DISPLAY", "TOOLS"]:
+		keys.append("HELP_%s_T" % topic)
+		keys.append("HELP_" + topic)
+	keys.append_array(PackedStringArray([
+		"APP_TITLE", "MODE_SIMPLE", "MODE_SCIENTIFIC", "MODE_PROGRAMMER", "MODE_CONVERTER", "MODE_TOOLTIP",
+		"HISTORY", "HISTORY_TOOLTIP", "HISTORY_EMPTY", "CLEAR_HISTORY", "MENU_TOOLTIP", "SETTINGS", "FUNCTIONS",
+		"KNOWLEDGE", "HELP", "SELF_TEST", "CLOSE", "BACK", "COPY", "COPY_LATEX", "PASTE", "COPIED", "LATEX_COPIED",
+		"PASTED", "INSERTED", "ANGLE_TOOLTIP", "DISPLAY_TOOLTIP", "ERR_SYNTAX", "ERR_DIV_ZERO", "ERR_DOMAIN",
+		"ERR_OVERFLOW", "SECTION_APPEARANCE", "THEME_AUTO", "THEME_LIGHT", "THEME_DARK", "LANGUAGE",
+		"SECTION_CALCULATION", "DEGREES", "RADIANS", "PRECISION", "PREC_AUTO", "SECTION_FEEDBACK", "SOUND",
+		"VIBRATION", "VIBRATION_MOBILE_ONLY", "SECTION_MORE", "ABOUT_TEXT", "SELF_TEST_HINT", "SELF_TEST_RUN",
+		"SELF_TEST_RESULT", "SELF_TEST_FAILURES", "DEVICE", "TEST_SOUND", "TEST_VIBRATION", "HELP_KEYBOARD_T",
+		"SC_DIGITS", "SC_ENTER", "SC_EDIT", "SC_NEXT", "SC_FUNCTIONS", "SC_PANELS", "SC_MODES", "SC_COPY", "SC_ANGLE",
+	]))
+	return keys
 
 
 # --- Helpers ---------------------------------------------------------------
