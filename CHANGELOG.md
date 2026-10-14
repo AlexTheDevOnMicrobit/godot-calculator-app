@@ -28,7 +28,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/), versions: [SemVer](http
   and exported to LaTeX.
 - Keyboard: Ctrl+1…6 select the modes; `i`, `x`, arrows and Enter work in
   the new modes. Help pages for graphs, statistics and complex numbers.
-- Tests: 397 engine checks (complex, calculus, probability, statistics) and
+- Tests: 399 engine checks (complex, calculus, probability, statistics) and
   105 UI checks.
 
 ### Changed

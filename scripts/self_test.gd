@@ -169,6 +169,8 @@ func _test_input_rules() -> void:
 	_typed(["1", "0", "0"], "100")
 	_typed(["×"], "Ans×")
 	_typed(["!"], "Ans!")
+	_typed(["x", "2"], "x×2")
+	_typed(["2", "i", "3"], "2i×3")
 	_typed(["2", "E", "−", "3"], "2E−3")
 	_typed(["E"], "")
 	_typed(["2", "E", "+"], "2E")

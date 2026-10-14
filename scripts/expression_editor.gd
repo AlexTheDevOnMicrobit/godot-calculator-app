@@ -256,6 +256,8 @@ func _insert_digit(digit: String) -> bool:
 	var number := _trailing_number()
 	if number == "0":
 		text = text.left(text.length() - 1) # "05" -> "5"
+	elif number == "" and not programmer and (text.ends_with("x") or text.ends_with("i")):
+		text += "×" # x then 2: x×2, not "x2"
 	text += digit
 	return true
 
