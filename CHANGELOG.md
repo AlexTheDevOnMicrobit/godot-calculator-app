@@ -3,6 +3,49 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/), versions: [SemVer](https://semver.org/).
 
+## [1.0.0-beta.3] - 2026-10-14
+
+### Added
+- **Four modes** with their own keypad: **Basic**, **Scientific**, **Programmer**
+  (64-bit integers, HEX / DEC / OCT / BIN side by side, AND / OR / XOR / NOT,
+  shifts, mod) and **Converter** (11 unit categories, FR / EN unit names).
+  Switch with the mode bar, `Ctrl+1…4` or `F7`; the mode is remembered.
+- **Textbook display** (`math_view.gd`): stacked fractions, radicals with a bar
+  over the radicand and an index for ⁿ√x, raised exponents, delimiters that grow
+  with their content, placeholders for empty slots and a blinking caret.
+- **Smart templates**: `a⁄b`, `ⁿ√x`, `xʸ`, `log_b`, `nCr`… are filled slot by
+  slot with the new **→** key (or the Right arrow).
+- **LaTeX**: copy the calculation as LaTeX (`TeX` button, `Ctrl+Shift+C`) and
+  paste LaTeX (`\frac`, `\sqrt[n]`, `^{}`, `\binom`, `\log_b`, `\left|...\right|`…)
+  to compute it.
+- **S⇔D**: show the result as a fraction or a decimal.
+- New functions: `frac`, `root` (ⁿ√x), `logb`, `nCr`, `nPr`, `gcd`, `lcm`, `round`,
+  `floor`, `ceil`, `asinh`, `acosh`, `atanh`, `randint`, golden ratio `φ`.
+- **f(x) panel** listing every function by category.
+- **±** key, `%` and `EXP` as 2nd functions; 2nd functions shown as small hints on the keys.
+- **Decimal places** setting (Auto, 2, 4, 6, 8).
+- Readable history (`³√27 + 3⁄4 = 3.75`, `log₂(8)`, `2³`).
+- On-screen tests: 232 checks (new sections: functions, fractions, LaTeX,
+  programmer, converter) with timing and memory usage.
+
+### Fixed
+- Letters glued to a function were rejected (`esin(90)`, `2πe`): identifiers are
+  now split into known words.
+- `2` then `a⁄b` read like the mixed number 2½ but computed 2 × ½: a `×` is now
+  inserted so the display matches the result.
+- Pressing `=` with an unfinished template now closes it before evaluating.
+- The README screenshots were imported as game resources (`docs/.gdignore`).
+
+### Optimized
+- Fonts rendered with **MSDF**: one glyph atlas for every size (the result and
+  the math view auto-fit their font size), crisp text when keys are animated.
+- Keypads are built once per mode and only shown / hidden when switching.
+- Settings are saved with a short debounce (and on pause / close) instead of on
+  every key press.
+- History updates incrementally instead of rebuilding the list.
+- Live preview cached; result auto-fit uses a binary search on the font size.
+- Builds exclude `docs/`, `tools/`, tests and source SVGs.
+
 ## [1.0.0-beta.2] - 2026-10-14
 
 ### Added

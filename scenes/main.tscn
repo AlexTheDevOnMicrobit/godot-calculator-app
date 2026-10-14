@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Theme" path="res://assets/theme/dark_theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" path="res://assets/icons/history.svg" id="3_history"]
 [ext_resource type="Texture2D" path="res://assets/icons/settings.svg" id="4_settings"]
 [ext_resource type="Texture2D" path="res://assets/icons/close.svg" id="5_close"]
+[ext_resource type="Script" path="res://scripts/math_view.gd" id="6_math"]
+[ext_resource type="Script" path="res://scripts/converter_view.gd" id="7_converter"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -40,7 +42,7 @@ theme_override_constants/margin_bottom = 14
 
 [node name="Calculator" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="TopBar" type="HBoxContainer" parent="Margin/Calculator"]
 layout_mode = 2
@@ -83,7 +85,6 @@ tooltip_text = "HISTORY_TOOLTIP"
 toggle_mode = true
 icon = ExtResource("3_history")
 icon_alignment = 1
-expand_icon = false
 
 [node name="SettingsButton" type="Button" parent="Margin/Calculator/TopBar"]
 unique_name_in_owner = true
@@ -95,7 +96,11 @@ tooltip_text = "SETTINGS_TOOLTIP"
 toggle_mode = true
 icon = ExtResource("4_settings")
 icon_alignment = 1
-expand_icon = false
+
+[node name="ModeBar" type="HBoxContainer" parent="Margin/Calculator"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="Display" type="PanelContainer" parent="Margin/Calculator"]
 unique_name_in_owner = true
@@ -105,7 +110,7 @@ theme_type_variation = &"DisplayPanel"
 [node name="Margin" type="MarginContainer" parent="Margin/Calculator/Display"]
 layout_mode = 2
 theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 10
 
@@ -122,18 +127,28 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"StatusLabel"
 text = "DEG"
+vertical_alignment = 1
 
 [node name="SecondLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox/Status"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"StatusLabel"
 text = "2nd"
+vertical_alignment = 1
 
 [node name="MemoryLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox/Status"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"StatusLabel"
 text = "M"
+vertical_alignment = 1
+
+[node name="BaseLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox/Status"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StatusLabel"
+text = "DEC"
+vertical_alignment = 1
 
 [node name="MessageLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox/Status"]
 unique_name_in_owner = true
@@ -141,26 +156,70 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"StatusLabel"
 horizontal_alignment = 2
+vertical_alignment = 1
+text_overrun_behavior = 3
 
-[node name="ExpressionLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox"]
+[node name="LatexButton" type="Button" parent="Margin/Calculator/Display/Margin/VBox/Status"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(46, 26)
 layout_mode = 2
-theme_type_variation = &"ExpressionLabel"
-horizontal_alignment = 2
-autowrap_mode = 1
-max_lines_visible = 3
-auto_translate_mode = 2
+focus_mode = 0
+theme_type_variation = &"ChipButton"
+tooltip_text = "LATEX_TOOLTIP"
+text = "TeX"
+
+[node name="ExpressionView" type="Control" parent="Margin/Calculator/Display/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+script = ExtResource("6_math")
+font_size_max = 24
+font_size_min = 13
 
 [node name="ResultLabel" type="Label" parent="Margin/Calculator/Display/Margin/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 66)
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 theme_type_variation = &"ResultLabel"
 text = "0"
 horizontal_alignment = 2
 vertical_alignment = 1
 clip_text = true
+auto_translate_mode = 2
+
+[node name="ResultMath" type="Control" parent="Margin/Calculator/Display/Margin/VBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+script = ExtResource("6_math")
+font_size_max = 40
+font_size_min = 18
+bold = true
+
+[node name="BaseRows" type="VBoxContainer" parent="Margin/Calculator/Display/Margin/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ConverterPanel" type="PanelContainer" parent="Margin/Calculator"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"DisplayPanel"
+
+[node name="Margin" type="MarginContainer" parent="Margin/Calculator/ConverterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="ConverterView" type="VBoxContainer" parent="Margin/Calculator/ConverterPanel/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("7_converter")
 
 [node name="Body" type="HBoxContainer" parent="Margin/Calculator"]
 unique_name_in_owner = true
@@ -168,15 +227,12 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="Keypad" type="GridContainer" parent="Margin/Calculator/Body"]
+[node name="Keypads" type="MarginContainer" parent="Margin/Calculator/Body"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.5
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 5
 
 [node name="SidePanel" type="PanelContainer" parent="Margin/Calculator/Body"]
 unique_name_in_owner = true
@@ -232,7 +288,6 @@ layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 0
 auto_translate_mode = 2
-auto_height = false
 text_overrun_behavior = 3
 
 [node name="HistoryEmpty" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView"]
@@ -242,6 +297,39 @@ size_flags_vertical = 6
 theme_type_variation = &"MutedLabel"
 text = "HISTORY_EMPTY"
 horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="FunctionsView" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/FunctionsView"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/FunctionsView/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+text = "FUNCTIONS"
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/FunctionsView"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="FunctionsList" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/FunctionsView/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
 [node name="SettingsView" type="VBoxContainer" parent="Margin/Calculator/Body/SidePanel/Margin/Pages"]
 unique_name_in_owner = true
@@ -354,6 +442,15 @@ selection_enabled = false
 auto_translate_mode = 2
 
 [node name="CloseButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/HistoryView/Header"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+tooltip_text = "CLOSE"
+focus_mode = 0
+theme_type_variation = &"IconButton"
+icon = ExtResource("5_close")
+icon_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Margin/Calculator/Body/SidePanel/Margin/Pages/FunctionsView/Header"]
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 tooltip_text = "CLOSE"

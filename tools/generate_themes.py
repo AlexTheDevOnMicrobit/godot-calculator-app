@@ -154,6 +154,26 @@ def build(kind):
                 toggle=(p["selection"], p["accent"]))
     w.set("IconButton/constants/icon_max_width", 22)
 
+    # Programmer base rows: flat, left aligned, current base highlighted
+    button_type(w, p, "BaseRowButton", (p["display"], p["selection"], p["selection"], p["muted"]), 14,
+                radius=8, shadow=False, toggle=(p["selection"], p["accent"]))
+    w.set("BaseRowButton/fonts/font", 'ExtResource("1_regular")')
+
+    # OptionButton (converter units) and its popup menu
+    button_type(w, p, "OptionButton", p["segment"], 15, base=None, radius=10, shadow=False)
+    w.set("OptionButton/colors/font_color", color(p["text"]))
+    w.set("OptionButton/constants/arrow_margin", 10)
+    w.set("PopupMenu/styles/panel", w.box(p["card"], 10, border=p["card_border"], margins=(6, 6, 6, 6),
+                                          shadow=p["shadow"], shadow_size=6))
+    w.set("PopupMenu/styles/hover", w.box(p["selection"], 8))
+    w.set("PopupMenu/colors/font_color", color(p["text"]))
+    w.set("PopupMenu/colors/font_hover_color", color(p["text"]))
+    w.set("PopupMenu/colors/font_accelerator_color", color(p["muted"]))
+    w.set("PopupMenu/font_sizes/font_size", 16)
+    w.set("PopupMenu/constants/v_separation", 10)
+    w.set("HSeparator/styles/separator", w.box(p["card_border"], 1, margins=(0, 0, 0, 0)))
+    w.set("HSeparator/constants/separation", 6)
+
     # Panels
     w.set("PanelContainer/styles/panel", w.empty())
     w.set("BackgroundPanel/base_type", '&"PanelContainer"')
@@ -170,7 +190,7 @@ def build(kind):
     for name, col, size in (("TitleLabel", p["text"], 17), ("ExpressionLabel", p["muted"], 22),
                             ("ResultLabel", p["text"], 48), ("StatusLabel", p["accent"], 13),
                             ("SectionLabel", p["muted"], 14), ("MutedLabel", p["muted"], 15),
-                            ("HeaderLabel", p["text"], 20)):
+                            ("HeaderLabel", p["text"], 20), ("KeyHintLabel", p["accent"], 10)):
         w.set(f"{name}/base_type", '&"Label"')
         w.set(f"{name}/colors/font_color", color(col))
         w.set(f"{name}/font_sizes/font_size", size)

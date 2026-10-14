@@ -34,5 +34,10 @@ func play(kind: Kind) -> void:
 		Input.vibrate_handheld(VIBRATION_MS[kind])
 
 
+## Plays a sound even when sounds are turned off (sound test).
+func preview(kind: Kind) -> void:
+	_players[kind].play()
+
+
 static func can_vibrate() -> bool:
 	return OS.has_feature("mobile")

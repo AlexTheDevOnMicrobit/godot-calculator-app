@@ -1,10 +1,13 @@
 extends Control
-## Main calculator screen: builds the keypad, handles mouse/touch, keyboard
-## and numeric keypad input, history, memory, settings, themes, feedback
-## (sounds / vibration) and the on-screen tests panel.
+## Main screen. Hosts four modes (Simple, Scientific, Programmer, Converter),
+## the textbook-style math display, history / functions / settings / tests
+## panels, themes, sounds, keyboard and numeric keypad input.
 
 const Evaluator := preload("res://scripts/evaluator.gd")
 const ExpressionEditor := preload("res://scripts/expression_editor.gd")
+const ProgrammerEvaluator := preload("res://scripts/programmer_evaluator.gd")
+const MathFormat := preload("res://scripts/math_format.gd")
+const Keypads := preload("res://scripts/keypads.gd")
 const Settings := preload("res://scripts/settings.gd")
 const Feedback := preload("res://scripts/feedback.gd")
 const SelfTest := preload("res://scripts/self_test.gd")
@@ -18,70 +21,25 @@ const RESULT_FONT_MIN := 18
 ## Above this width, the side panel (history / settings) is docked next to the keypad.
 const WIDE_LAYOUT_WIDTH := 720.0
 const BASE_MARGIN := 14
+const SAVE_DELAY := 0.4
 
-## Keypad definition (5 columns). Each key:
-##   id: action id, label/insert: primary function, label2/insert2: "2nd" function,
-##   style: theme type variation, tip/tip2: tooltip translation keys.
-const KEYS := [
-	{ "id": "second", "label": "2nd", "style": "ToggleButton", "tip": "TIP_SECOND" },
-	{ "id": "pi", "label": "π", "insert": "π", "style": "FunctionButton", "tip": "TIP_PI" },
-	{ "id": "e", "label": "e", "insert": "e", "style": "FunctionButton", "tip": "TIP_E" },
-	{ "id": "lparen", "label": "(", "insert": "(", "style": "FunctionButton", "tip": "TIP_LPAREN" },
-	{ "id": "rparen", "label": ")", "insert": ")", "style": "FunctionButton", "tip": "TIP_RPAREN" },
+const MODE_KEYS := {
+	"simple": "MODE_SIMPLE", "scientific": "MODE_SCIENTIFIC",
+	"programmer": "MODE_PROGRAMMER", "converter": "MODE_CONVERTER",
+}
+const BASE_NAMES := { 16: "HEX", 10: "DEC", 8: "OCT", 2: "BIN" }
+const BASE_ORDER := [16, 10, 8, 2]
 
-	{ "id": "sin", "label": "sin", "insert": "sin(", "label2": "sin⁻¹", "insert2": "asin(", "style": "FunctionButton", "tip": "TIP_SIN", "tip2": "TIP_ASIN" },
-	{ "id": "cos", "label": "cos", "insert": "cos(", "label2": "cos⁻¹", "insert2": "acos(", "style": "FunctionButton", "tip": "TIP_COS", "tip2": "TIP_ACOS" },
-	{ "id": "tan", "label": "tan", "insert": "tan(", "label2": "tan⁻¹", "insert2": "atan(", "style": "FunctionButton", "tip": "TIP_TAN", "tip2": "TIP_ATAN" },
-	{ "id": "ln", "label": "ln", "insert": "ln(", "label2": "eˣ", "insert2": "e^(", "style": "FunctionButton", "tip": "TIP_LN", "tip2": "TIP_EXP" },
-	{ "id": "log", "label": "log", "insert": "log(", "label2": "10ˣ", "insert2": "10^(", "style": "FunctionButton", "tip": "TIP_LOG", "tip2": "TIP_POW10" },
-
-	{ "id": "square", "label": "x²", "insert": "^2", "label2": "x³", "insert2": "^3", "style": "FunctionButton", "tip": "TIP_SQUARE", "tip2": "TIP_CUBE" },
-	{ "id": "power", "label": "xʸ", "insert": "^", "label2": "mod", "insert2": "mod", "style": "FunctionButton", "tip": "TIP_POWER", "tip2": "TIP_MOD" },
-	{ "id": "sqrt", "label": "√", "insert": "√(", "label2": "∛", "insert2": "∛(", "style": "FunctionButton", "tip": "TIP_SQRT", "tip2": "TIP_CBRT" },
-	{ "id": "fact", "label": "x!", "insert": "!", "label2": "|x|", "insert2": "abs(", "style": "FunctionButton", "tip": "TIP_FACT", "tip2": "TIP_ABS" },
-	{ "id": "inv", "label": "1/x", "insert": "^(−1)", "label2": "Rand", "insert2": "rand", "style": "FunctionButton", "tip": "TIP_INV", "tip2": "TIP_RAND" },
-
-	{ "id": "mc", "label": "MC", "style": "MemoryButton", "tip": "TIP_MC" },
-	{ "id": "mr", "label": "MR", "style": "MemoryButton", "tip": "TIP_MR" },
-	{ "id": "mplus", "label": "M+", "style": "MemoryButton", "tip": "TIP_MPLUS" },
-	{ "id": "mminus", "label": "M−", "style": "MemoryButton", "tip": "TIP_MMINUS" },
-	{ "id": "percent", "label": "%", "insert": "%", "style": "FunctionButton", "tip": "TIP_PERCENT" },
-
-	{ "id": "7", "label": "7", "insert": "7", "style": "DigitButton" },
-	{ "id": "8", "label": "8", "insert": "8", "style": "DigitButton" },
-	{ "id": "9", "label": "9", "insert": "9", "style": "DigitButton" },
-	{ "id": "back", "label": "", "icon": "res://assets/icons/backspace.svg", "style": "ClearButton", "tip": "TIP_BACKSPACE" },
-	{ "id": "clear", "label": "AC", "style": "ClearButton", "tip": "TIP_CLEAR" },
-
-	{ "id": "4", "label": "4", "insert": "4", "style": "DigitButton" },
-	{ "id": "5", "label": "5", "insert": "5", "style": "DigitButton" },
-	{ "id": "6", "label": "6", "insert": "6", "style": "DigitButton" },
-	{ "id": "mul", "label": "×", "insert": "×", "style": "OperatorButton", "tip": "TIP_MUL" },
-	{ "id": "div", "label": "÷", "insert": "÷", "style": "OperatorButton", "tip": "TIP_DIV" },
-
-	{ "id": "1", "label": "1", "insert": "1", "style": "DigitButton" },
-	{ "id": "2", "label": "2", "insert": "2", "style": "DigitButton" },
-	{ "id": "3", "label": "3", "insert": "3", "style": "DigitButton" },
-	{ "id": "add", "label": "+", "insert": "+", "style": "OperatorButton", "tip": "TIP_ADD" },
-	{ "id": "sub", "label": "−", "insert": "−", "style": "OperatorButton", "tip": "TIP_SUB" },
-
-	{ "id": "0", "label": "0", "insert": "0", "style": "DigitButton" },
-	{ "id": "dot", "label": ".", "insert": ".", "style": "DigitButton", "tip": "TIP_DECIMAL" },
-	{ "id": "exp", "label": "EXP", "insert": "E", "style": "FunctionButton", "tip": "TIP_EXPONENT" },
-	{ "id": "ans", "label": "Ans", "insert": "Ans", "style": "FunctionButton", "tip": "TIP_ANS" },
-	{ "id": "equals", "label": "=", "style": "EqualsButton", "tip": "TIP_EQUALS" },
-]
-
-## Keyboard shortcuts on characters (unicode) -> key id.
-const CHAR_SHORTCUTS := {
-	"0": "0", "1": "1", "2": "2", "3": "3", "4": "4",
-	"5": "5", "6": "6", "7": "7", "8": "8", "9": "9",
-	".": "dot", ",": "dot",
-	"+": "add", "-": "sub", "*": "mul", "x": "mul", "/": "div", ":": "div",
-	"^": "power", "(": "lparen", ")": "rparen", "!": "fact", "%": "percent",
-	"=": "equals",
-	"s": "sin", "c": "cos", "t": "tan", "l": "ln", "g": "log", "r": "sqrt",
-	"p": "pi", "e": "e", "a": "ans", "h": "history",
+## Keyboard characters -> action. "key:" triggers a keypad key, otherwise the
+## text is inserted (so shortcuts work in every mode, even without the key).
+const CHAR_ACTIONS := {
+	".": "key:dot", ",": "key:dot",
+	"+": "+", "-": "−", "*": "×", "x": "×", "/": "÷", ":": "÷",
+	"^": "^(", "(": "(", ")": ")", "!": "!", "%": "%", ";": ";",
+	"=": "key:equals",
+	"s": "sin(", "c": "cos(", "t": "tan(", "l": "ln(", "g": "log(", "r": "√(",
+	"p": "π", "e": "e", "a": "Ans", "h": "history", "f": "frac(",
+	"&": "&", "|": "|", "~": "~", "<": "<<", ">": ">>",
 }
 
 ## Numeric keypad keycodes -> key id (works with or without unicode).
@@ -92,11 +50,12 @@ const KEYPAD_SHORTCUTS := {
 	KEY_KP_MULTIPLY: "mul", KEY_KP_DIVIDE: "div", KEY_KP_ENTER: "equals",
 }
 
-## Settings panel rows: setting name -> [label key, option keys...]
+## Settings panel rows: [setting name, label key, option keys]
 const SETTING_ROWS := [
 	["theme", "THEME", ["THEME_AUTO", "THEME_DARK", "THEME_LIGHT"]],
 	["language", "LANGUAGE", ["LANG_EN", "LANG_FR"]],
 	["angle", "ANGLE_UNIT", ["DEGREES", "RADIANS"]],
+	["precision", "PRECISION", ["PREC_AUTO", "2", "4", "6", "8"]],
 	["sound", "SOUND", ["ON", "OFF"]],
 	["vibration", "VIBRATION", ["ON", "OFF"]],
 ]
@@ -104,18 +63,29 @@ const LANGUAGES := ["en", "fr"]
 
 var evaluator := Evaluator.new()
 var editor := ExpressionEditor.new()
+var programmer := ProgrammerEvaluator.new()
+var programmer_editor := ExpressionEditor.new()
+var math_format := MathFormat.new()
 var settings := Settings.new()
 var feedback: Feedback
+var mode := "scientific"
 var error_key := "" # translation key of the error currently displayed
 var second_active := false
-var side_page := "" # "", "history", "settings" or "tests"
+var show_fraction := false # S⇔D: show the result as a fraction
+var side_page := "" # "", "history", "functions", "settings" or "tests"
 
-var _buttons := {} # id -> Button
-var _key_defs := {} # id -> Dictionary
+var _keypads := {} # mode -> GridContainer
+var _buttons := {} # mode -> { id -> Button }
+var _key_defs := {} # mode -> { id -> Dictionary }
+var _mode_buttons := {} # mode -> Button
+var _base_buttons := {} # base -> Button
 var _setting_buttons := {} # setting name -> Array[Button]
+var _preview_cache := { "text": null, "result": {} }
 var _message_tween: Tween
 var _shake_tween: Tween
+var _save_timer: Timer
 var _wide := false
+var _last_copied := "" # what the last copy put in the clipboard (for tests)
 
 @onready var margin: MarginContainer = %Margin
 @onready var title_label: Label = %Title
@@ -123,21 +93,30 @@ var _wide := false
 @onready var theme_button: Button = %ThemeButton
 @onready var history_button: Button = %HistoryButton
 @onready var settings_button: Button = %SettingsButton
+@onready var mode_bar: HBoxContainer = %ModeBar
 @onready var display: PanelContainer = %Display
 @onready var angle_label: Label = %AngleLabel
 @onready var second_label: Label = %SecondLabel
 @onready var memory_label: Label = %MemoryLabel
+@onready var base_label: Label = %BaseLabel
 @onready var message_label: Label = %MessageLabel
-@onready var expression_label: Label = %ExpressionLabel
+@onready var latex_button: Button = %LatexButton
+@onready var expression_view: Control = %ExpressionView
 @onready var result_label: Label = %ResultLabel
-@onready var keypad: GridContainer = %Keypad
+@onready var result_math: Control = %ResultMath
+@onready var base_rows: VBoxContainer = %BaseRows
+@onready var converter_panel: PanelContainer = %ConverterPanel
+@onready var converter_view: VBoxContainer = %ConverterView
+@onready var keypads: MarginContainer = %Keypads
 @onready var side_panel: PanelContainer = %SidePanel
 @onready var history_view: VBoxContainer = %HistoryView
+@onready var functions_view: VBoxContainer = %FunctionsView
 @onready var settings_view: VBoxContainer = %SettingsView
 @onready var tests_view: VBoxContainer = %TestsView
 @onready var history_list: ItemList = %HistoryList
 @onready var history_empty: Label = %HistoryEmpty
 @onready var clear_history_button: Button = %ClearHistoryButton
+@onready var functions_list: VBoxContainer = %FunctionsList
 @onready var settings_list: VBoxContainer = %SettingsList
 @onready var tests_summary: Label = %TestsSummary
 @onready var tests_report: RichTextLabel = %TestsReport
@@ -146,36 +125,53 @@ var _wide := false
 func _ready() -> void:
 	randomize()
 	settings.load_settings()
+	mode = settings.mode
 	evaluator.angle_mode = settings.angle_mode as Evaluator.AngleMode
 	evaluator.last_answer = settings.last_answer
+	programmer.base = settings.programmer_base
+	programmer_editor.programmer = true
 
 	feedback = Feedback.new()
 	feedback.name = "Feedback"
 	add_child(feedback)
+	_save_timer = Timer.new()
+	_save_timer.one_shot = true
+	_save_timer.wait_time = SAVE_DELAY
+	_save_timer.timeout.connect(_flush_save)
+	add_child(_save_timer)
 
-	_build_keypad()
+	for keypad_mode in Keypads.MODES:
+		_build_keypad(keypad_mode)
+	_build_mode_bar()
+	_build_base_rows()
+	_build_functions_panel()
 	_build_settings_panel()
 
 	angle_button.pressed.connect(_toggle_angle_mode)
 	theme_button.pressed.connect(_toggle_theme)
 	history_button.pressed.connect(_toggle_page.bind("history"))
 	settings_button.pressed.connect(_toggle_page.bind("settings"))
+	latex_button.pressed.connect(_copy_latex)
 	history_list.item_clicked.connect(_on_history_item_clicked)
 	clear_history_button.pressed.connect(_clear_history)
 	%RunTestsButton.pressed.connect(_run_self_test)
-	%TestSoundButton.pressed.connect(func(): feedback._players[Feedback.Kind.RESULT].play())
+	%TestSoundButton.pressed.connect(func(): feedback.preview(Feedback.Kind.RESULT))
 	%TestVibrationButton.pressed.connect(func(): Input.vibrate_handheld(300))
 	%TestVibrationButton.disabled = not Feedback.can_vibrate()
-	for view in [history_view, settings_view, tests_view]:
+	for view in [history_view, functions_view, settings_view, tests_view]:
 		view.get_node("Header/CloseButton").pressed.connect(_close_page)
+	converter_view.changed.connect(_on_converter_changed)
 	result_label.resized.connect(_fit_result_font)
 	get_viewport().size_changed.connect(_on_viewport_resized)
 
 	DisplayServer.window_set_min_size(Vector2i(340, 600))
 	TranslationServer.set_locale(settings.language)
+	_apply_language_formats()
+	converter_view.set_state(settings.converter)
 	_apply_theme()
 	_apply_feedback_settings()
 	_on_viewport_resized()
+	_set_mode(mode, false)
 	_refresh_all()
 
 
@@ -184,10 +180,9 @@ func _notification(what: int) -> void:
 		NOTIFICATION_TRANSLATION_CHANGED:
 			if is_node_ready():
 				_refresh_all()
-		NOTIFICATION_WM_CLOSE_REQUEST:
-			_save()
-		NOTIFICATION_APPLICATION_PAUSED:
-			_save()
+		NOTIFICATION_WM_CLOSE_REQUEST, NOTIFICATION_APPLICATION_PAUSED:
+			if is_node_ready():
+				_flush_save()
 		NOTIFICATION_APPLICATION_FOCUS_IN:
 			# The system theme may have changed while the app was in background.
 			if is_node_ready() and settings.theme_mode == Settings.ThemeMode.AUTO:
@@ -197,14 +192,82 @@ func _notification(what: int) -> void:
 			if side_page != "":
 				_close_page()
 			else:
-				_save()
+				_flush_save()
 				get_tree().quit()
 
 
-# --- Keypad ----------------------------------------------------------------
+# --- Modes -----------------------------------------------------------------
 
-func _build_keypad() -> void:
-	for def in KEYS:
+func _build_mode_bar() -> void:
+	var group := ButtonGroup.new()
+	for keypad_mode in Keypads.MODES:
+		var button := Button.new()
+		button.name = "Mode_" + keypad_mode
+		button.text = MODE_KEYS[keypad_mode]
+		button.tooltip_text = MODE_KEYS[keypad_mode]
+		button.toggle_mode = true
+		button.button_group = group
+		button.focus_mode = Control.FOCUS_NONE
+		button.theme_type_variation = &"SegmentButton"
+		button.custom_minimum_size = Vector2(0, 34)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.add_theme_font_size_override("font_size", 13)
+		button.pressed.connect(func():
+			feedback.play(Feedback.Kind.KEY)
+			_set_mode(keypad_mode))
+		mode_bar.add_child(button)
+		_mode_buttons[keypad_mode] = button
+
+
+func _set_mode(new_mode: String, animate := true) -> void:
+	if second_active:
+		_set_second(false)
+	mode = new_mode
+	settings.mode = new_mode
+	for keypad_mode in _keypads:
+		_keypads[keypad_mode].visible = keypad_mode == new_mode
+	for keypad_mode in _mode_buttons:
+		_mode_buttons[keypad_mode].set_pressed_no_signal(keypad_mode == new_mode)
+	var calculator := new_mode in ["simple", "scientific"]
+	display.visible = new_mode != "converter"
+	converter_panel.visible = new_mode == "converter"
+	base_rows.visible = new_mode == "programmer"
+	angle_button.visible = new_mode == "scientific"
+	angle_label.visible = new_mode == "scientific"
+	base_label.visible = new_mode == "programmer"
+	latex_button.visible = calculator
+	if side_page == "functions" and new_mode != "scientific":
+		_close_page()
+	error_key = ""
+	_save()
+	_refresh_display()
+	if animate:
+		var keypad: Control = _keypads[new_mode]
+		keypad.modulate.a = 0.0
+		create_tween().tween_property(keypad, "modulate:a", 1.0, 0.15)
+
+
+func _cycle_mode() -> void:
+	var index := Keypads.MODES.find(mode)
+	_set_mode(Keypads.MODES[(index + 1) % Keypads.MODES.size()])
+
+
+# --- Keypads ---------------------------------------------------------------
+
+func _build_keypad(keypad_mode: String) -> void:
+	var layout := Keypads.layout(keypad_mode)
+	var grid := GridContainer.new()
+	grid.name = "Keypad_" + keypad_mode
+	grid.columns = layout["columns"]
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	grid.visible = false
+	keypads.add_child(grid)
+	_keypads[keypad_mode] = grid
+	_buttons[keypad_mode] = {}
+	_key_defs[keypad_mode] = {}
+	for def in layout["keys"]:
 		var button := Button.new()
 		button.name = "Key_" + def["id"]
 		button.text = def["label"]
@@ -212,30 +275,58 @@ func _build_keypad() -> void:
 		button.focus_mode = Control.FOCUS_NONE
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size = Vector2(52, 46)
+		button.custom_minimum_size = Vector2(48, 42)
 		button.tooltip_text = def.get("tip", "")
 		button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_ALWAYS
 		if def.has("icon"):
 			button.icon = load(def["icon"])
 			button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		if def["id"] == "second":
-			button.toggle_mode = true
+		button.toggle_mode = def["id"] == "second"
+		if def.has("label2"):
+			var hint := Label.new()
+			hint.name = "Hint"
+			hint.text = def["label2"]
+			hint.theme_type_variation = &"KeyHintLabel"
+			hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			hint.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+			hint.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+			hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			hint.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+			hint.offset_right = -6
+			hint.offset_top = 2
+			button.add_child(hint)
 		button.pressed.connect(_on_key_pressed.bind(def["id"]))
 		button.button_down.connect(_animate_press.bind(button, true))
 		button.button_up.connect(_animate_press.bind(button, false))
 		button.resized.connect(func(): button.pivot_offset = button.size / 2.0)
-		keypad.add_child(button)
-		_buttons[def["id"]] = button
-		_key_defs[def["id"]] = def
+		grid.add_child(button)
+		_buttons[keypad_mode][def["id"]] = button
+		_key_defs[keypad_mode][def["id"]] = def
 
 
 func _on_key_pressed(id: String) -> void:
-	var def: Dictionary = _key_defs[id]
+	match mode:
+		"converter":
+			if id == "copy":
+				_copy_result()
+				return
+			feedback.play(Feedback.Kind.KEY if converter_view.press(id) else Feedback.Kind.ERROR)
+		"programmer":
+			_programmer_key(id)
+		_:
+			_calculator_key(id)
+
+
+func _calculator_key(id: String) -> void:
+	var def: Dictionary = _key_defs[mode].get(id, {})
 	if id != "second":
 		error_key = ""
 	var accepted := true
+	var use_second := second_active and def.has("insert2")
 	match id:
 		"second":
+			if not _buttons[mode].has("second"):
+				return
 			_set_second(not second_active)
 			feedback.play(Feedback.Kind.KEY)
 			return
@@ -243,8 +334,24 @@ func _on_key_pressed(id: String) -> void:
 			accepted = _evaluate()
 		"clear":
 			editor.clear()
+			show_fraction = false
 		"back":
 			accepted = editor.backspace()
+			show_fraction = false
+		"next":
+			accepted = editor.next_slot()
+		"fx":
+			_set_second(false)
+			_toggle_page("functions")
+			feedback.play(Feedback.Kind.KEY)
+			return
+		"sd":
+			if use_second:
+				accepted = editor.insert(def["insert2"])
+			else:
+				accepted = _toggle_fraction()
+		"neg":
+			accepted = editor.insert("%") if use_second else editor.negate()
 		"mc":
 			settings.memory = 0.0
 			_save()
@@ -258,8 +365,11 @@ func _on_key_pressed(id: String) -> void:
 				_save()
 				_show_message("M = " + _format(settings.memory))
 		_:
-			var text: String = def.get("insert2", def["insert"]) if second_active else def["insert"]
-			accepted = editor.insert(text)
+			if def.is_empty():
+				return
+			accepted = editor.insert(def["insert2"] if use_second else def["insert"])
+			if accepted:
+				show_fraction = false
 	if id != "equals":
 		feedback.play(Feedback.Kind.KEY if accepted else Feedback.Kind.ERROR)
 	if second_active:
@@ -267,18 +377,35 @@ func _on_key_pressed(id: String) -> void:
 	_refresh_display()
 
 
+## Inserts text typed on the keyboard or chosen in the f(x) panel.
+func _insert_text(text: String) -> void:
+	error_key = ""
+	var target := programmer_editor if mode == "programmer" else editor
+	var accepted := target.insert(text)
+	if accepted:
+		show_fraction = false
+	feedback.play(Feedback.Kind.KEY if accepted else Feedback.Kind.ERROR)
+	_refresh_display()
+
+
 func _set_second(active: bool) -> void:
 	second_active = active
-	_buttons["second"].set_pressed_no_signal(active)
-	for id in _key_defs:
-		var def: Dictionary = _key_defs[id]
+	if not _buttons.has(mode) or not _buttons[mode].has("second"):
+		second_active = false
+		second_label.visible = false
+		return
+	_buttons[mode]["second"].set_pressed_no_signal(active)
+	for id in _key_defs[mode]:
+		var def: Dictionary = _key_defs[mode][id]
 		if def.has("label2"):
-			_buttons[id].text = def["label2"] if active else def["label"]
-			_buttons[id].tooltip_text = def.get("tip2", def.get("tip", "")) if active else def.get("tip", "")
+			var button: Button = _buttons[mode][id]
+			button.text = def["label2"] if active else def["label"]
+			button.get_node("Hint").text = def["label"] if active else def["label2"]
+			button.tooltip_text = def.get("tip2", def.get("tip", "")) if active else def.get("tip", "")
 	second_label.visible = active
 
 
-# --- Evaluation ------------------------------------------------------------
+# --- Calculator evaluation -------------------------------------------------
 
 func _evaluate() -> bool:
 	if editor.is_empty() or editor.just_evaluated:
@@ -287,6 +414,7 @@ func _evaluate() -> bool:
 	if not result["ok"]:
 		_show_error(result["error"])
 		return false
+	editor.text += ")".repeat(maxi(editor.open_parens(), 0)) # close what was left open
 	evaluator.last_answer = result["value"]
 	settings.last_answer = result["value"]
 	# A plain number ("12") is not worth an history entry.
@@ -294,10 +422,22 @@ func _evaluate() -> bool:
 		settings.history.push_front({ "expr": editor.text, "value": result["value"] })
 		if settings.history.size() > MAX_HISTORY:
 			settings.history.resize(MAX_HISTORY)
+		_add_history_item(settings.history[0])
 	editor.just_evaluated = true
+	show_fraction = false
 	feedback.play(Feedback.Kind.RESULT)
 	_save()
-	_refresh_history()
+	return true
+
+
+## S⇔D: switches the result between decimal and fraction form.
+func _toggle_fraction() -> bool:
+	if not editor.just_evaluated:
+		if editor.is_empty() or not _evaluate():
+			return false
+	if Evaluator.to_fraction(evaluator.last_answer).is_empty():
+		return false
+	show_fraction = not show_fraction
 	return true
 
 
@@ -317,6 +457,115 @@ func _number_for_insert(value: float) -> String:
 	return "(" + text + ")" if value < 0.0 or text.contains("E") else text
 
 
+## Live preview, cached: the display refreshes more often than the text changes.
+func _preview(text: String) -> Dictionary:
+	if _preview_cache["text"] != text:
+		_preview_cache = { "text": text, "result": evaluator.evaluate(text) }
+	return _preview_cache["result"]
+
+
+# --- Programmer mode -------------------------------------------------------
+
+func _build_base_rows() -> void:
+	var group := ButtonGroup.new()
+	for base in BASE_ORDER:
+		var button := Button.new()
+		button.name = "Base_" + BASE_NAMES[base]
+		button.toggle_mode = true
+		button.button_group = group
+		button.focus_mode = Control.FOCUS_NONE
+		button.theme_type_variation = &"BaseRowButton"
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		button.custom_minimum_size = Vector2(0, 26)
+		button.pressed.connect(func():
+			feedback.play(Feedback.Kind.KEY)
+			_set_base(base))
+		base_rows.add_child(button)
+		_base_buttons[base] = button
+
+
+func _programmer_key(id: String) -> void:
+	error_key = ""
+	var accepted := true
+	match id:
+		"equals":
+			accepted = _evaluate_programmer()
+		"clear":
+			programmer_editor.clear()
+		"back":
+			accepted = programmer_editor.backspace()
+		"neg":
+			accepted = programmer_editor.negate()
+		"base":
+			_set_base(BASE_ORDER[(BASE_ORDER.find(programmer.base) + 1) % BASE_ORDER.size()])
+		_:
+			var def: Dictionary = _key_defs["programmer"].get(id, {})
+			if def.is_empty():
+				return
+			var insert: String = def["insert"]
+			if insert.length() == 1 and ProgrammerEvaluator.DIGITS.find(insert) >= programmer.base:
+				accepted = false # digit not valid in this base
+			else:
+				accepted = programmer_editor.insert(insert)
+	if id != "equals":
+		feedback.play(Feedback.Kind.KEY if accepted else Feedback.Kind.ERROR)
+	_refresh_display()
+
+
+func _evaluate_programmer() -> bool:
+	if programmer_editor.is_empty() or programmer_editor.just_evaluated:
+		return false
+	var result := programmer.evaluate(programmer_editor.text)
+	if not result["ok"]:
+		_show_error(result["error"])
+		return false
+	programmer_editor.text += ")".repeat(maxi(programmer_editor.open_parens(), 0))
+	programmer.last_answer = result["value"]
+	programmer_editor.just_evaluated = true
+	feedback.play(Feedback.Kind.RESULT)
+	return true
+
+
+## Current programmer value (result, or live value of the expression), null if invalid.
+func _programmer_value() -> Variant:
+	if programmer_editor.just_evaluated:
+		return programmer.last_answer
+	if programmer_editor.is_empty():
+		return 0
+	var result := programmer.evaluate(programmer_editor.text)
+	return result["value"] if result["ok"] else null
+
+
+func _set_base(base: int) -> void:
+	var value = _programmer_value()
+	var had_input := not programmer_editor.is_empty()
+	programmer.base = base
+	settings.programmer_base = base
+	if value == null or not had_input:
+		programmer_editor.clear()
+	else:
+		# Keep the current value, written in the new base.
+		programmer.last_answer = value
+		programmer_editor.text = ProgrammerEvaluator.format_int(value, base, false)
+		if value < 0 and base == 10:
+			programmer_editor.text = "−" + programmer_editor.text.substr(1)
+		programmer_editor.just_evaluated = false
+	_update_digit_keys()
+	_save()
+	_refresh_display()
+
+
+## Digits that don't exist in the current base are disabled.
+func _update_digit_keys() -> void:
+	for id in _buttons["programmer"]:
+		var def: Dictionary = _key_defs["programmer"][id]
+		var insert: String = def.get("insert", "")
+		if insert.length() == 1 and ProgrammerEvaluator.DIGITS.find(insert) >= 0:
+			_buttons["programmer"][id].disabled = ProgrammerEvaluator.DIGITS.find(insert) >= programmer.base
+
+
 # --- Display ---------------------------------------------------------------
 
 func _refresh_all() -> void:
@@ -325,54 +574,100 @@ func _refresh_all() -> void:
 	_refresh_angle()
 	_refresh_history()
 	_refresh_settings_panel()
+	_update_digit_keys()
+	converter_view.language = settings.language
+	converter_view.refresh()
 	_refresh_display()
 
 
 func _refresh_display() -> void:
-	var expr := _pretty(editor.text)
-	expression_label.text = expr + " =" if editor.just_evaluated else expr
+	memory_label.visible = settings.memory != 0.0 and mode in ["simple", "scientific"]
 	result_label.remove_theme_color_override("font_color")
+	result_label.visible = true
+	result_math.visible = false
+	if mode == "converter":
+		return
+	if mode == "programmer":
+		_refresh_programmer_display()
+		_fit_result_font()
+		return
+
+	expression_view.text = editor.text + ("=" if editor.just_evaluated else "")
+	expression_view.show_caret = not editor.just_evaluated and error_key == ""
+	expression_view.color = get_theme_color("muted" if editor.just_evaluated else "text", "App")
 	if error_key != "":
 		result_label.text = tr(error_key)
 		result_label.add_theme_color_override("font_color", get_theme_color("error", "App"))
 	elif editor.just_evaluated:
-		result_label.text = _format(evaluator.last_answer, true)
+		var fraction := Evaluator.to_fraction(evaluator.last_answer) if show_fraction else []
+		if not fraction.is_empty():
+			result_math.text = ("−" if fraction[0] < 0 else "") + "frac(%d;%d)" % [absi(fraction[0]), fraction[1]]
+			result_math.visible = true
+			result_label.visible = false
+		else:
+			result_label.text = _format(evaluator.last_answer, true)
 	elif editor.is_empty():
 		result_label.text = "0"
 	elif editor.text.contains("rand"):
 		result_label.text = "" # no live preview for random numbers
 	else:
-		var preview := evaluator.evaluate(editor.text)
+		var preview := _preview(editor.text)
 		result_label.text = _format(preview["value"], true) if preview["ok"] else ""
 		result_label.add_theme_color_override("font_color", get_theme_color("preview", "App"))
-	memory_label.visible = settings.memory != 0.0
 	_fit_result_font()
+
+
+func _refresh_programmer_display() -> void:
+	expression_view.text = programmer_editor.text + ("=" if programmer_editor.just_evaluated else "")
+	expression_view.show_caret = not programmer_editor.just_evaluated and error_key == ""
+	expression_view.color = get_theme_color("muted" if programmer_editor.just_evaluated else "text", "App")
+	base_label.text = BASE_NAMES[programmer.base]
+	var value = _programmer_value()
+	if error_key != "":
+		result_label.text = tr(error_key)
+		result_label.add_theme_color_override("font_color", get_theme_color("error", "App"))
+	elif value == null:
+		result_label.text = ""
+	else:
+		result_label.text = ProgrammerEvaluator.format_int(value, programmer.base)
+		if not programmer_editor.just_evaluated and not programmer_editor.is_empty():
+			result_label.add_theme_color_override("font_color", get_theme_color("preview", "App"))
+	for base in _base_buttons:
+		var button: Button = _base_buttons[base]
+		var digits := "—" if value == null else ProgrammerEvaluator.format_int(value, base)
+		button.text = "%s   %s" % [BASE_NAMES[base], digits]
+		button.set_pressed_no_signal(base == programmer.base)
 
 
 func _show_error(key: String) -> void:
 	editor.just_evaluated = false
+	programmer_editor.just_evaluated = false
 	error_key = key
 	feedback.play(Feedback.Kind.ERROR)
 	_shake(display)
 	_refresh_display()
 
 
-func _pretty(text: String) -> String:
-	var pretty := text
-	for pair in [["asin(", "sin⁻¹("], ["acos(", "cos⁻¹("], ["atan(", "tan⁻¹("], ["mod", " mod "], ["abs(", "abs("]]:
-		pretty = pretty.replace(pair[0], pair[1])
-	return pretty.replace(".", _decimal_separator())
-
-
 func _format(value: float, grouped := false) -> String:
 	var group := ""
 	if grouped:
-		group = "\u202F" if settings.language == "fr" else ","
-	return Evaluator.format_number(value, _decimal_separator(), group).replace("-", "−")
+		group = " " if settings.language == "fr" else ","
+	return Evaluator.format_number(value, _decimal_separator(), group, settings.precision).replace("-", "−")
 
 
 func _decimal_separator() -> String:
 	return "," if settings.language == "fr" else "."
+
+
+func _apply_language_formats() -> void:
+	var french := settings.language == "fr"
+	for view in [expression_view, result_math]:
+		view.decimal_separator = _decimal_separator()
+		view.list_separator = "; " if french else ", "
+	converter_view.language = settings.language
+	converter_view.decimal_separator = _decimal_separator()
+	converter_view.group_separator = " " if french else ","
+	converter_view.precision = settings.precision
 
 
 func _fit_result_font() -> void:
@@ -380,10 +675,16 @@ func _fit_result_font() -> void:
 	var available := result_label.size.x
 	if available <= 0.0:
 		return
-	var font_size := RESULT_FONT_MAX
-	while font_size > RESULT_FONT_MIN and font.get_string_size(result_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > available:
-		font_size -= 2
-	result_label.add_theme_font_size_override("font_size", font_size)
+	# Binary search on the font size (the text width grows with the size).
+	var low := RESULT_FONT_MIN
+	var high := RESULT_FONT_MAX
+	while low < high:
+		var middle := (low + high + 1) / 2
+		if font.get_string_size(result_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, middle).x <= available:
+			low = middle
+		else:
+			high = middle - 1
+	result_label.add_theme_font_size_override("font_size", low)
 
 
 # --- Animations ------------------------------------------------------------
@@ -421,7 +722,7 @@ func _show_message(text: String) -> void:
 	if _message_tween:
 		_message_tween.kill()
 	_message_tween = create_tween()
-	_message_tween.tween_interval(1.2)
+	_message_tween.tween_interval(1.4)
 	_message_tween.tween_property(message_label, "modulate:a", 0.0, 0.5)
 
 
@@ -475,8 +776,9 @@ func _update_layout() -> void:
 		page = "history" # docked history on wide screens
 	title_label.text = "APP_TITLE" if _wide else "APP_TITLE_SHORT"
 	side_panel.visible = page != ""
-	keypad.visible = _wide or page == ""
+	keypads.visible = _wide or page == ""
 	history_view.visible = page == "history"
+	functions_view.visible = page == "functions"
 	settings_view.visible = page == "settings"
 	tests_view.visible = page == "tests"
 	history_view.get_node("Header/CloseButton").visible = not _wide
@@ -484,16 +786,48 @@ func _update_layout() -> void:
 	settings_button.set_pressed_no_signal(page == "settings" or page == "tests")
 
 
-# --- Settings: angle, theme, language, feedback ----------------------------
+# --- Functions panel (f(x)) ------------------------------------------------
+
+func _build_functions_panel() -> void:
+	for category in Keypads.FUNCTION_CATALOG:
+		var label := Label.new()
+		label.theme_type_variation = &"SectionLabel"
+		label.text = category[0]
+		functions_list.add_child(label)
+		var grid := GridContainer.new()
+		grid.columns = 4
+		grid.add_theme_constant_override("h_separation", 6)
+		grid.add_theme_constant_override("v_separation", 6)
+		functions_list.add_child(grid)
+		for entry in category[1]:
+			var button := Button.new()
+			button.text = entry[0]
+			button.focus_mode = Control.FOCUS_NONE
+			button.theme_type_variation = &"SegmentButton"
+			button.custom_minimum_size = Vector2(0, 38)
+			button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+			button.pressed.connect(_on_function_chosen.bind(entry[1]))
+			grid.add_child(button)
+
+
+func _on_function_chosen(insert: String) -> void:
+	_insert_text(insert)
+	if not _wide:
+		_close_page()
+
+
+# --- Settings: angle, theme, language, precision, feedback -----------------
 
 func _toggle_angle_mode() -> void:
 	_set_angle_mode(1 - evaluator.angle_mode)
 	feedback.play(Feedback.Kind.KEY)
 
 
-func _set_angle_mode(mode: int) -> void:
-	evaluator.angle_mode = mode as Evaluator.AngleMode
-	settings.angle_mode = mode
+func _set_angle_mode(angle: int) -> void:
+	evaluator.angle_mode = angle as Evaluator.AngleMode
+	settings.angle_mode = angle
+	_preview_cache["text"] = null
 	_refresh_angle()
 	_refresh_settings_panel()
 	_refresh_display()
@@ -511,8 +845,8 @@ func _toggle_theme() -> void:
 	feedback.play(Feedback.Kind.KEY)
 
 
-func _set_theme_mode(mode: int) -> void:
-	settings.theme_mode = mode as Settings.ThemeMode
+func _set_theme_mode(theme_mode: int) -> void:
+	settings.theme_mode = theme_mode as Settings.ThemeMode
 	_apply_theme()
 	_refresh_settings_panel()
 	_save()
@@ -532,12 +866,26 @@ func _apply_theme() -> void:
 	theme = DARK_THEME if dark else LIGHT_THEME
 	theme_button.text = "☀" if dark else "☾"
 	RenderingServer.set_default_clear_color(get_theme_color("bg_bottom", "App"))
+	for view in [expression_view, result_math]:
+		view.color = get_theme_color("text", "App")
+		view.muted_color = get_theme_color("muted", "App")
+		view.accent_color = get_theme_color("accent", "App")
 	_refresh_display()
 
 
 func _set_language(language: String) -> void:
 	settings.language = language
+	_apply_language_formats()
 	TranslationServer.set_locale(language)
+	_save()
+
+
+func _set_precision(index: int) -> void:
+	settings.precision = Settings.PRECISIONS[index]
+	converter_view.precision = settings.precision
+	converter_view.refresh()
+	_refresh_history()
+	_refresh_display()
 	_save()
 
 
@@ -604,6 +952,7 @@ func _refresh_settings_panel() -> void:
 		"theme": settings.theme_mode,
 		"language": LANGUAGES.find(settings.language),
 		"angle": evaluator.angle_mode,
+		"precision": Settings.PRECISIONS.find(settings.precision),
 		"sound": 0 if settings.sound else 1,
 		"vibration": 0 if settings.vibration else 1,
 	}
@@ -627,6 +976,8 @@ func _on_setting_chosen(setting: String, index: int) -> void:
 			_set_language(LANGUAGES[index])
 		"angle":
 			_set_angle_mode(index)
+		"precision":
+			_set_precision(index)
 		"sound":
 			settings.sound = index == 0
 			_apply_feedback_settings()
@@ -639,11 +990,35 @@ func _on_setting_chosen(setting: String, index: int) -> void:
 
 # --- History ---------------------------------------------------------------
 
+func _history_text(entry: Dictionary) -> String:
+	return "%s = %s" % [_linear(entry["expr"]), _format(entry["value"], true)]
+
+
+## One-line form of an expression for lists ("3⁄4 + ³√27").
+func _linear(text: String) -> String:
+	var sep := "; " if settings.language == "fr" else ", "
+	return math_format.to_linear(text, sep).replace(".", _decimal_separator())
+
+
 func _refresh_history() -> void:
 	history_list.clear()
 	for entry in settings.history:
-		var index := history_list.add_item("%s = %s" % [_pretty(entry["expr"]), _format(entry["value"], true)])
-		history_list.set_item_tooltip(index, _pretty(entry["expr"]))
+		var index := history_list.add_item(_history_text(entry))
+		history_list.set_item_tooltip(index, _linear(entry["expr"]))
+	_update_history_state()
+
+
+## Adds the newest entry at the top without rebuilding the whole list.
+func _add_history_item(entry: Dictionary) -> void:
+	var index := history_list.add_item(_history_text(entry))
+	history_list.set_item_tooltip(index, _linear(entry["expr"]))
+	history_list.move_item(index, 0)
+	while history_list.item_count > MAX_HISTORY:
+		history_list.remove_item(history_list.item_count - 1)
+	_update_history_state()
+
+
+func _update_history_state() -> void:
 	history_empty.visible = settings.history.is_empty()
 	history_list.visible = not settings.history.is_empty()
 	clear_history_button.disabled = settings.history.is_empty()
@@ -651,10 +1026,13 @@ func _refresh_history() -> void:
 
 func _on_history_item_clicked(index: int, _at: Vector2, _mouse_button: int) -> void:
 	var entry: Dictionary = settings.history[index]
+	if mode not in ["simple", "scientific"]:
+		_set_mode("scientific")
 	editor.text = entry["expr"]
 	editor.just_evaluated = true
 	evaluator.last_answer = entry["value"]
 	error_key = ""
+	show_fraction = false
 	feedback.play(Feedback.Kind.KEY)
 	if not _wide:
 		_close_page()
@@ -670,7 +1048,9 @@ func _clear_history() -> void:
 # --- On-screen tests -------------------------------------------------------
 
 func _run_self_test() -> void:
+	var started := Time.get_ticks_usec()
 	var suite = SelfTest.new().run()
+	var elapsed_ms := (Time.get_ticks_usec() - started) / 1000.0
 	var ok: bool = suite.failed == 0
 	tests_summary.text = ("✓ " if ok else "✗ ") + tr("SELF_TEST_RESULT") % [suite.passed, suite.total()]
 	tests_summary.add_theme_color_override("font_color", get_theme_color("success" if ok else "error", "App"))
@@ -681,6 +1061,7 @@ func _run_self_test() -> void:
 	for section in suite.sections:
 		var color := success if section["passed"] == section["total"] else error
 		lines.append("[color=#%s]●[/color] %s  [color=#%s]%d / %d[/color]" % [color, section["name"], muted, section["passed"], section["total"]])
+	lines.append("[color=#%s]%.1f ms[/color]" % [muted, elapsed_ms])
 	if not suite.failures.is_empty():
 		lines.append("\n[b]%s[/b]" % tr("SELF_TEST_FAILURES"))
 		for failure in suite.failures:
@@ -706,16 +1087,30 @@ func _device_info() -> PackedStringArray:
 		"Dark mode: %s · Vibration: %s" % [
 			str(DisplayServer.is_dark_mode()) if DisplayServer.is_dark_mode_supported() else "n/a",
 			"yes" if Feedback.can_vibrate() else "no"],
+		"Memory: %.1f MB · FPS: %d" % [OS.get_static_memory_usage() / 1048576.0, Engine.get_frames_per_second()],
 		"Godot %s" % Engine.get_version_info()["string"],
 	])
 
 
 # --- Persistence -----------------------------------------------------------
 
+## Saves after a short delay so that fast typing doesn't hit the disk each time.
 func _save() -> void:
+	if _save_timer and _save_timer.is_inside_tree():
+		_save_timer.start()
+
+
+func _flush_save() -> void:
+	if _save_timer:
+		_save_timer.stop()
 	settings.angle_mode = evaluator.angle_mode
 	settings.last_answer = evaluator.last_answer
+	settings.converter = converter_view.get_state()
 	settings.save()
+
+
+func _on_converter_changed() -> void:
+	_save()
 
 
 # --- Keyboard & numeric keypad ---------------------------------------------
@@ -724,15 +1119,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed:
 		return
 	var key_event := event as InputEventKey
-	var id := _key_id_for_event(key_event)
-	if id == "":
+	var action := _action_for_event(key_event)
+	if action == "":
 		return
 	get_viewport().set_input_as_handled()
-	if key_event.echo and id != "back":
+	if key_event.echo and action != "key:back":
 		return
-	match id:
+	match action:
 		"copy":
 			_copy_result()
+		"copy_latex":
+			_copy_latex()
 		"paste":
 			_paste(DisplayServer.clipboard_get())
 		"angle":
@@ -745,34 +1142,54 @@ func _unhandled_input(event: InputEvent) -> void:
 			_set_language("en" if settings.language == "fr" else "fr")
 		"theme":
 			_toggle_theme()
+		"mode":
+			_cycle_mode()
 		_:
-			if _buttons.has(id):
-				_flash(_buttons[id])
-			_on_key_pressed(id)
+			if action.begins_with("mode:"):
+				_set_mode(action.substr(5))
+			elif action.begins_with("key:"):
+				var id := action.substr(4)
+				if _buttons[mode].has(id):
+					_flash(_buttons[mode][id])
+				_on_key_pressed(id)
+			elif mode != "converter":
+				_flash_insert(action)
+				_insert_text(action)
 
 
-func _key_id_for_event(event: InputEventKey) -> String:
+func _flash_insert(insert: String) -> void:
+	for id in _key_defs[mode]:
+		if _key_defs[mode][id].get("insert", "") == insert:
+			_flash(_buttons[mode][id])
+			return
+
+
+func _action_for_event(event: InputEventKey) -> String:
 	var keycode := event.keycode
 	if event.ctrl_pressed or event.meta_pressed:
 		match keycode:
 			KEY_C:
-				return "copy"
+				return "copy_latex" if event.shift_pressed else "copy"
 			KEY_V:
 				return "paste"
+			KEY_1, KEY_2, KEY_3, KEY_4:
+				return "mode:" + Keypads.MODES[keycode - KEY_1]
 		return ""
 	# Physical key first: the numeric keypad always types digits, even with
 	# NumLock off (where it would otherwise send Home, arrows, End...).
 	if KEYPAD_SHORTCUTS.has(event.physical_keycode):
-		return KEYPAD_SHORTCUTS[event.physical_keycode]
+		return "key:" + KEYPAD_SHORTCUTS[event.physical_keycode]
 	if KEYPAD_SHORTCUTS.has(keycode):
-		return KEYPAD_SHORTCUTS[keycode]
+		return "key:" + KEYPAD_SHORTCUTS[keycode]
 	match keycode:
 		KEY_ENTER:
-			return "equals"
+			return "key:copy" if mode == "converter" else "key:equals"
 		KEY_BACKSPACE:
-			return "back"
+			return "key:back"
 		KEY_ESCAPE, KEY_DELETE:
-			return "clear"
+			return "key:clear"
+		KEY_RIGHT:
+			return "key:next"
 		KEY_F2:
 			return "angle"
 		KEY_F3:
@@ -781,33 +1198,90 @@ func _key_id_for_event(event: InputEventKey) -> String:
 			return "settings"
 		KEY_F6:
 			return "theme"
+		KEY_F7:
+			return "mode"
 		KEY_TAB:
-			return "second"
+			return "key:second"
 	if event.unicode == 0:
 		return ""
-	return CHAR_SHORTCUTS.get(String.chr(event.unicode).to_lower(), "")
+	var character := String.chr(event.unicode)
+	if character.is_valid_int():
+		return "key:" + character
+	if mode == "programmer" and programmer.base == 16 and character.to_upper() in ["A", "B", "C", "D", "E", "F"]:
+		return "key:" + character.to_upper()
+	if mode == "converter":
+		match character:
+			"-":
+				return "key:neg"
+			".", ",":
+				return "key:dot"
+		return ""
+	return CHAR_ACTIONS.get(character.to_lower(), "")
 
 
 func _copy_result() -> void:
-	var value = null
-	if editor.just_evaluated:
-		value = evaluator.last_answer
-	elif not editor.is_empty() and error_key == "":
-		var preview := evaluator.evaluate(editor.text)
-		if preview["ok"]:
-			value = preview["value"]
-	if value == null:
+	var text := ""
+	match mode:
+		"converter":
+			text = converter_view.result_text(false)
+		"programmer":
+			var value = _programmer_value()
+			if value != null and error_key == "":
+				text = ProgrammerEvaluator.format_int(value, programmer.base, false)
+		_:
+			if editor.just_evaluated:
+				text = Evaluator.format_number(evaluator.last_answer, _decimal_separator(), "", settings.precision)
+			elif not editor.is_empty() and error_key == "":
+				var preview := _preview(editor.text)
+				if preview["ok"]:
+					text = Evaluator.format_number(preview["value"], _decimal_separator(), "", settings.precision)
+	if text == "":
 		feedback.play(Feedback.Kind.ERROR)
 		return
-	DisplayServer.clipboard_set(Evaluator.format_number(value, _decimal_separator()))
+	_set_clipboard(text.replace("−", "-"))
 	_show_message(tr("COPIED"))
 
 
+## Copies the expression (and its result) as LaTeX.
+func _copy_latex() -> void:
+	if editor.is_empty() or mode not in ["simple", "scientific"]:
+		feedback.play(Feedback.Kind.ERROR)
+		return
+	var latex := math_format.to_latex(editor.text)
+	if editor.just_evaluated:
+		var fraction := Evaluator.to_fraction(evaluator.last_answer) if show_fraction else []
+		var result := ""
+		if fraction.is_empty():
+			result = Evaluator.format_number(evaluator.last_answer, ".", "", settings.precision)
+			if result.contains("E"):
+				var parts := result.split("E")
+				result = parts[0] + " \\times 10^{" + parts[1] + "}"
+		else:
+			result = ("-" if fraction[0] < 0 else "") + "\\frac{%d}{%d}" % [absi(fraction[0]), fraction[1]]
+		latex += " = " + result
+	_set_clipboard(latex)
+	feedback.play(Feedback.Kind.KEY)
+	_show_message(tr("LATEX_COPIED"))
+
+
+func _set_clipboard(text: String) -> void:
+	_last_copied = text
+	if DisplayServer.has_feature(DisplayServer.FEATURE_CLIPBOARD):
+		DisplayServer.clipboard_set(text)
+
+
+## Pastes a number, an expression or LaTeX (\frac{1}{2}, \sqrt{2}...).
 func _paste(text: String) -> void:
-	var cleaned := text.strip_edges().replace(" ", "").replace("\u202F", "").replace("\u00A0", "")
+	var cleaned := text.strip_edges()
 	if cleaned == "":
 		return
-	if not evaluator.evaluate(cleaned)["ok"]:
+	if mode == "programmer" or mode == "converter":
+		feedback.play(Feedback.Kind.ERROR)
+		return
+	if cleaned.contains("\\") or cleaned.contains("{") or cleaned.begins_with("$"):
+		cleaned = math_format.latex_to_expression(cleaned)
+	cleaned = cleaned.replace(" ", "").replace(" ", "").replace(" ", "")
+	if cleaned == "" or not evaluator.evaluate(cleaned)["ok"]:
 		_show_error("ERR_SYNTAX")
 		return
 	cleaned = cleaned.replace(",", ".").replace("-", "−").replace("*", "×").replace("/", "÷")

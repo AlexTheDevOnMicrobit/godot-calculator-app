@@ -30,6 +30,7 @@ func _process(_delta: float) -> bool:
 func _run() -> void:
 	_main._set_language("en")
 	_main._set_angle_mode(0) # DEG
+	_main._set_mode("scientific")
 	_main.feedback.sound_enabled = false
 	_main._wide = false # force the phone layout
 	_main._update_layout()
@@ -139,9 +140,9 @@ func _run() -> void:
 
 	# Panels (narrow layout)
 	_char("h")
-	_check(_main.side_panel.visible and _main.history_view.visible and not _main.keypad.visible, "history panel shown")
+	_check(_main.side_panel.visible and _main.history_view.visible and not _main.keypads.visible, "history panel shown")
 	_char("h")
-	_check(not _main.side_panel.visible and _main.keypad.visible, "keypad shown again")
+	_check(not _main.side_panel.visible and _main.keypads.visible, "keypad shown again")
 	_key(KEY_F4)
 	_check(_main.settings_view.visible, "settings panel shown (F4)")
 	_main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
@@ -165,7 +166,8 @@ func _run() -> void:
 	_check(_main.tests_summary.text.begins_with("✓"), "on-screen tests pass (got '%s')" % _main.tests_summary.text)
 	_main._close_page()
 
-	# Settings persisted
+	# Settings persisted (saves are debounced: flush first)
+	_main._flush_save()
 	var saved = load("res://scripts/settings.gd").new()
 	saved.path = TEST_SETTINGS
 	saved.load_settings()
@@ -174,12 +176,139 @@ func _run() -> void:
 	# Wide layout docks the history next to the keypad
 	_main._wide = true
 	_main._update_layout()
-	_check(_main.keypad.visible and _main.history_view.visible, "wide layout shows keypad + history")
+	_check(_main.keypads.visible and _main.history_view.visible, "wide layout shows keypad + history")
 	_main._wide = false
 	_main._update_layout()
 
+	_test_beta3()
+
 	_main._clear_history()
 	_key(KEY_ESCAPE)
+
+
+func _test_beta3() -> void:
+	# --- Modes ---
+	for mode in ["simple", "scientific", "programmer", "converter"]:
+		_main._set_mode(mode)
+		var only_one := true
+		for other in _main._keypads:
+			if _main._keypads[other].visible != (other == mode):
+				only_one = false
+		_check(only_one and _main._mode_buttons[mode].button_pressed, "mode %s: its keypad only" % mode)
+	_main._set_mode("scientific")
+	_ctrl_key(KEY_1)
+	_check(_main.mode == "simple", "Ctrl+1 → Basic mode")
+	_key(KEY_F7)
+	_check(_main.mode == "scientific", "F7 cycles to Scientific")
+
+	# --- Basic mode: ± and % ---
+	_main._set_mode("simple")
+	_key(KEY_ESCAPE)
+	for id in ["5", "neg", "add", "8", "equals"]:
+		_press(id)
+	_check(_main.result_label.text == "3", "Basic: −5+8 = 3 (got '%s')" % _main.result_label.text)
+
+	# --- Scientific templates: fraction, root, exponent with → (Right arrow) ---
+	_main._set_mode("scientific")
+	_key(KEY_ESCAPE)
+	_press("frac")
+	_press("1")
+	_key(KEY_RIGHT)
+	_press("4")
+	_key(KEY_RIGHT)
+	_press("add")
+	_press("second")
+	_press("power") # 2nd xʸ = ⁿ√x
+	_press("3")
+	_key(KEY_RIGHT)
+	_press("8")
+	_key(KEY_RIGHT)
+	_check(_main.editor.text == "frac(1;4)+root(3;8)", "templates typed (got '%s')" % _main.editor.text)
+	_press("equals")
+	_check(_main.result_label.text == "2.25", "¼ + ∛8 = 2.25 (got '%s')" % _main.result_label.text)
+	_press("sd")
+	_check(_main.result_math.visible and _main.result_math.text == "frac(9;4)", "S⇔D shows 9/4 (got '%s')" % _main.result_math.text)
+	_press("sd")
+	_check(_main.result_label.visible and not _main.result_math.visible, "S⇔D back to decimal")
+	_key(KEY_ESCAPE)
+	_press("frac")
+	_press("2")
+	_press("equals") # unclosed fraction: = closes it, the denominator is missing
+	_check(_main.error_key == "ERR_SYNTAX", "incomplete fraction is a syntax error")
+
+	# --- Math view: caret and placeholders ---
+	_key(KEY_ESCAPE)
+	_press("sqrt")
+	_check(_main.expression_view.show_caret and _main.expression_view.content_width() > 0.0, "math view draws an open root")
+
+	# --- LaTeX copy / paste ---
+	_key(KEY_ESCAPE)
+	for id in ["frac", "1", "next", "2", "next", "add", "sqrt", "9", "next", "equals"]:
+		_press(id)
+	_ctrl_key(KEY_C, true)
+	_check(_main._last_copied == "\\frac{1}{2} + \\sqrt{9} = 3.5", "Ctrl+Shift+C copies LaTeX (got '%s')" % _main._last_copied)
+	_ctrl_key(KEY_C)
+	_check(_main._last_copied == "3.5", "Ctrl+C copies the result (got '%s')" % _main._last_copied)
+	_key(KEY_ESCAPE)
+	_main._paste("\\frac{3}{4}\\times 4 + \\sqrt[3]{27}")
+	_press("equals")
+	_check(_main.result_label.text == "6", "pasted LaTeX evaluates to 6 (got '%s')" % _main.result_label.text)
+
+	# --- Functions panel ---
+	_key(KEY_ESCAPE)
+	_press("fx")
+	_check(_main.functions_view.visible, "f(x) opens the functions panel")
+	_main._on_function_chosen("nCr(")
+	for id in ["5", "next", "2", "next", "equals"]:
+		_press(id)
+	_check(_main.result_label.text == "10", "nCr(5, 2) = 10 from the panel (got '%s')" % _main.result_label.text)
+
+	# --- Precision setting ---
+	_main._set_precision(1) # 2 decimals
+	_key(KEY_ESCAPE)
+	for ch in ["2", "/", "3", "="]:
+		_char(ch)
+	_check(_main.result_label.text == "0.67", "precision 2 → 0.67 (got '%s')" % _main.result_label.text)
+	_main._set_precision(0)
+
+	# --- Programmer mode ---
+	_main._set_mode("programmer")
+	_main._set_base(10)
+	_key(KEY_ESCAPE)
+	for id in ["2", "5", "5", "and", "1", "5", "equals"]:
+		_press(id)
+	_check(_main.result_label.text == "15", "255 AND 15 = 15 (got '%s')" % _main.result_label.text)
+	_main._set_base(16)
+	_check(_main.programmer_editor.text == "F", "switching to HEX keeps the value (got '%s')" % _main.programmer_editor.text)
+	_check(not _main._buttons["programmer"]["A"].disabled, "A-F enabled in HEX")
+	_char("a")
+	_check(_main.programmer_editor.text == "FA", "typing 'a' in HEX (got '%s')" % _main.programmer_editor.text)
+	_main._set_base(2)
+	_check(_main._buttons["programmer"]["2"].disabled and _main.programmer_editor.text == "11111010",
+		"BIN: digit 2 disabled, value kept (got '%s')" % _main.programmer_editor.text)
+	_check(_main._base_buttons[16].text.ends_with("FA"), "HEX row shows FA (got '%s')" % _main._base_buttons[16].text)
+	_main._set_base(10)
+
+	# --- Converter mode ---
+	_main._set_mode("converter")
+	_main.converter_view.set_state({ "category": "temperature", "from": 0, "to": 1, "value": "0" })
+	for id in ["1", "0", "0"]:
+		_press(id)
+	_check(_main.converter_view.result_text() == "212", "100 °C = 212 °F (got '%s')" % _main.converter_view.result_text())
+	_press("swap")
+	_check(_main.converter_view.value_text == "212" and _main.converter_view.result_text() == "100", "swap: 212 °F = 100 °C")
+	_key(KEY_ESCAPE)
+	_check(_main.converter_view.value_text == "0", "Esc clears the converter")
+	_main._set_mode("scientific")
+
+
+func _ctrl_key(keycode: Key, shift := false) -> void:
+	var ev := InputEventKey.new()
+	ev.keycode = keycode
+	ev.ctrl_pressed = true
+	ev.shift_pressed = shift
+	ev.pressed = true
+	_main._unhandled_input(ev)
 
 
 func _key(keycode: Key) -> void:
@@ -212,7 +341,7 @@ func _char(ch: String) -> void:
 
 
 func _press(id: String) -> void:
-	_main._buttons[id].emit_signal("pressed")
+	_main._buttons[_main.mode][id].emit_signal("pressed")
 
 
 func _check(condition: bool, label: String) -> void:

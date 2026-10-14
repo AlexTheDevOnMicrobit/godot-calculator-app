@@ -84,3 +84,36 @@ TEST_VIBRATION,Test vibration,Tester la vibration
 ABOUT,About,À propos
 ABOUT_TEXT,Version %s · made with Godot %s,Version %s · créée avec Godot %s
 THEME_TOOLTIP,Switch theme (F6),Changer de thème (F6)
+MODE_SIMPLE,Basic,Simple
+MODE_SCIENTIFIC,Scientific,Scientifique
+MODE_PROGRAMMER,Programmer,Programmeur
+MODE_CONVERTER,Converter,Convertir
+FUNCTIONS,Functions,Fonctions
+FX_TRIG,Trigonometry,Trigonométrie
+FX_POWERS,Powers & roots,Puissances & racines
+FX_LOG,Logarithms,Logarithmes
+FX_COMBI,Combinatorics & integers,Dénombrement & entiers
+FX_NUMBERS,Numbers,Nombres
+FX_RANDOM,Random,Hasard
+FX_CONSTANTS,Constants,Constantes
+PRECISION,Decimals,Décimales
+PREC_AUTO,Auto,Auto
+LATEX_TOOLTIP,Copy as LaTeX (Ctrl+Shift+C),Copier en LaTeX (Ctrl+Maj+C)
+LATEX_COPIED,LaTeX copied,LaTeX copié
+CONVERT_FROM,From,De
+CONVERT_TO,To,Vers
+TIP_NEGATE,Change sign (±),Changer de signe (±)
+TIP_NEXT,Next slot (→): next argument or leave the fraction / root / exponent,Case suivante (→) : argument suivant ou sortie de la fraction / racine / puissance
+TIP_FRAC,Fraction a⁄b (F),Fraction a⁄b (F)
+TIP_NROOT,n-th root ⁿ√x,Racine n-ième ⁿ√x
+TIP_SD,Result as fraction ⇔ decimal,Résultat en fraction ⇔ décimal
+TIP_FX,All functions,Toutes les fonctions
+TIP_AND,Bitwise AND (&),ET bit à bit (&)
+TIP_OR,Bitwise OR (|),OU bit à bit (|)
+TIP_XOR,Bitwise XOR,OU exclusif bit à bit
+TIP_NOT,Bitwise NOT (~),NON bit à bit (~)
+TIP_SHL,Shift left (<),Décalage à gauche (<)
+TIP_SHR,Shift right (>),Décalage à droite (>)
+TIP_BASE,Next base: HEX → DEC → OCT → BIN,Base suivante : HEX → DEC → OCT → BIN
+TIP_SWAP,Swap units,Inverser les unités
+TIP_COPY,Copy the result (Enter),Copier le résultat (Entrée)
