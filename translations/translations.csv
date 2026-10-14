@@ -1,0 +1,58 @@
+keys,en,fr
+APP_TITLE,Scientific Calculator,Calculatrice scientifique
+LANGUAGE_BUTTON,FR,EN
+LANGUAGE_TOOLTIP,Passer en français,Switch to English
+HISTORY,History,Historique
+HISTORY_TOOLTIP,Show / hide history (H),Afficher / masquer l'historique (H)
+HISTORY_EMPTY,No calculations yet,Aucun calcul pour l'instant
+CLEAR_HISTORY,Clear history,Effacer l'historique
+ANGLE_DEG,DEG,DEG
+ANGLE_RAD,RAD,RAD
+ANGLE_TOOLTIP,Angle unit: degrees / radians (F2),Unité d'angle : degrés / radians (F2)
+MEMORY_INDICATOR,M,M
+COPIED,Result copied,Résultat copié
+PASTED,Pasted,Collé
+ERR_SYNTAX,Syntax error,Erreur de syntaxe
+ERR_DIV_ZERO,Division by zero,Division par zéro
+ERR_DOMAIN,Math error,Erreur mathématique
+ERR_OVERFLOW,Overflow,Dépassement de capacité
+TIP_SECOND,"Second functions (inverse trig, eˣ, 10ˣ…)","Fonctions secondes (trigo inverse, eˣ, 10ˣ…)"
+TIP_PI,Pi (P),Pi (P)
+TIP_E,Euler's number e,Nombre d'Euler e
+TIP_LPAREN,Open parenthesis,Parenthèse ouvrante
+TIP_RPAREN,Close parenthesis,Parenthèse fermante
+TIP_SIN,Sine (S),Sinus (S)
+TIP_COS,Cosine (C),Cosinus (C)
+TIP_TAN,Tangent (T),Tangente (T)
+TIP_ASIN,Arcsine,Arc sinus
+TIP_ACOS,Arccosine,Arc cosinus
+TIP_ATAN,Arctangent,Arc tangente
+TIP_LN,Natural logarithm (L),Logarithme népérien (L)
+TIP_LOG,Base-10 logarithm (G),Logarithme décimal (G)
+TIP_EXP,Exponential eˣ,Exponentielle eˣ
+TIP_POW10,Power of ten 10ˣ,Puissance de dix 10ˣ
+TIP_SQUARE,Square,Carré
+TIP_CUBE,Cube,Cube
+TIP_POWER,Power (^),Puissance (^)
+TIP_MOD,Modulo,Modulo
+TIP_SQRT,Square root (R),Racine carrée (R)
+TIP_CBRT,Cube root,Racine cubique
+TIP_FACT,Factorial (!),Factorielle (!)
+TIP_ABS,Absolute value,Valeur absolue
+TIP_INV,Inverse 1/x,Inverse 1/x
+TIP_RAND,Random number between 0 and 1,Nombre aléatoire entre 0 et 1
+TIP_MC,Memory clear,Effacer la mémoire
+TIP_MR,Memory recall,Rappel mémoire
+TIP_MPLUS,Add to memory,Ajouter à la mémoire
+TIP_MMINUS,Subtract from memory,Soustraire de la mémoire
+TIP_PERCENT,Percent (%),Pourcentage (%)
+TIP_BACKSPACE,Delete last character (Backspace),Effacer le dernier caractère (Retour arrière)
+TIP_CLEAR,Clear all (Esc / Del),Tout effacer (Échap / Suppr)
+TIP_EXPONENT,Scientific notation ×10ⁿ,Notation scientifique ×10ⁿ
+TIP_ANS,Last answer,Dernier résultat
+TIP_EQUALS,Calculate (Enter),Calculer (Entrée)
+TIP_DECIMAL,Decimal point,Virgule décimale
+TIP_ADD,Add (+),Addition (+)
+TIP_SUB,Subtract (-),Soustraction (-)
+TIP_MUL,Multiply (*),Multiplication (*)
+TIP_DIV,Divide (/),Division (/)

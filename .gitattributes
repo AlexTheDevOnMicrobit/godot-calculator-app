@@ -1,0 +1,9 @@
+# Normalize EOL for all text files
+* text=auto eol=lf
+
+# Binary assets
+*.ttf binary
+*.otf binary
+*.png binary
+*.jpg binary
+*.translation binary

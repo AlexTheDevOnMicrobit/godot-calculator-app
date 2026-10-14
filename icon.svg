@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect x="8" y="8" width="112" height="112" rx="22" fill="#1a1c22"/>
+  <rect x="20" y="18" width="88" height="28" rx="7" fill="#12141a" stroke="#3d4a63" stroke-width="2"/>
+  <text x="100" y="40" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#f2f4f8" text-anchor="end">3.14</text>
+  <g font-family="DejaVu Sans, sans-serif" font-weight="bold" text-anchor="middle">
+    <rect x="20" y="54" width="26" height="24" rx="6" fill="#2b2f3a"/>
+    <text x="33" y="72" font-size="16" fill="#f2f4f8">7</text>
+    <rect x="51" y="54" width="26" height="24" rx="6" fill="#2b2f3a"/>
+    <text x="64" y="72" font-size="16" fill="#f2f4f8">8</text>
+    <rect x="82" y="54" width="26" height="24" rx="6" fill="#3d4a63"/>
+    <text x="95" y="72" font-size="18" fill="#cfe0ff">÷</text>
+    <rect x="20" y="84" width="26" height="24" rx="6" fill="#2b2f3a"/>
+    <text x="33" y="102" font-size="16" fill="#f2f4f8">π</text>
+    <rect x="51" y="84" width="26" height="24" rx="6" fill="#2b2f3a"/>
+    <text x="64" y="102" font-size="16" fill="#f2f4f8">√</text>
+    <rect x="82" y="84" width="26" height="24" rx="6" fill="#e08a2c"/>
+    <text x="95" y="102" font-size="18" fill="#1b1b1b">=</text>
+  </g>
+</svg>
